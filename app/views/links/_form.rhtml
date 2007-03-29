@@ -1,0 +1,13 @@
+<p>
+  <b>Omrl</b><br />
+  <%= form.text_field :omrl %>
+</p>
+
+<p>
+  <b>Link type</b><br />
+  <%= form.select(:link_type,%w{uses named_in approves flow_from flow_to created_by managed_by}) %>
+</p>
+<p>
+  <b>Signature</b><br />
+  <%= form.text_area :signature, :rows=>2 %>
+</p>

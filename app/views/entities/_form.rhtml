@@ -1,0 +1,15 @@
+<p>
+  <b>Type</b><br />
+  <%= form.select(:entity_type,%w{flow currency account context summary}) %>
+</p>
+
+<p>
+  <b>Specification</b><br />
+  <%= form.text_area :specification %>
+</p>
+
+<p>
+  <b>Access control</b><br />
+  <%= form.text_area :access_control, :rows=>4 %>
+</p>
+

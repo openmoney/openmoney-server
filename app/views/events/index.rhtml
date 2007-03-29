@@ -1,0 +1,26 @@
+<h1>Listing events</h1>
+
+<table>
+  <tr>
+    <th>Created at</th>
+    <th>Event type</th>
+    <th>Specification</th>
+    <th>State</th>
+  </tr>
+  
+<% for event in @events %>
+  <tr>
+    <td><%=h event.created_at %></td>
+    <td><%=h event.event_type %></td>
+    <td><%=h event.specification %></td>
+    <td><%=h event.state %></td>
+    <td><%= link_to 'Show', event_path(event) %></td>
+    <td><%= link_to 'Edit', edit_event_path(event) %></td>
+    <td><%= link_to 'Destroy', event_path(event), :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New event', new_event_path %>

@@ -1,0 +1,23 @@
+<p>
+  <b>Created at:</b>
+  <%=h @event.created_at %>
+</p>
+
+<p>
+  <b>Event type:</b>
+  <%=h @event.event_type %>
+</p>
+
+<p>
+  <b>Specification:</b>
+  <%=h @event.specification %>
+</p>
+
+<p>
+  <b>State:</b>
+  <%=h @event.state %>
+</p>
+
+
+<%= link_to 'Edit', edit_event_path(@event) %> |
+<%= link_to 'Back', events_path %>

@@ -1,0 +1,15 @@
+<h1>Editing entity</h1>
+
+<%= error_messages_for :entity %>
+
+<% form_for(:entity, :url => entity_path(@entity), :html => { :method => :put }) do |f| %>
+
+  <%= render(:partial => 'form', :object => f) %>
+  <p>
+    <%= submit_tag "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Create Link', new_link_path(@entity) %> |
+<%= link_to 'Show', entity_path(@entity) %> |
+<%= link_to 'Back', entities_path %>

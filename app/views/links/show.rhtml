@@ -1,0 +1,33 @@
+<p>
+  <b>Entity:</b>
+  <%=h @link.entity_id %>
+</p>
+
+<p>
+  <b>Omrl:</b>
+  <%=h @link.omrl %>
+</p>
+
+<p>
+  <b>Link type:</b>
+  <%=h @link.link_type %>
+</p>
+
+<p>
+  <b>Signature:</b>
+  <%=h @link.signature %>
+</p>
+
+<p>
+  <b>Created at:</b>
+  <%=h @link.created_at %>
+</p>
+
+<p>
+  <b>Updated at:</b>
+  <%=h @link.updated_at %>
+</p>
+
+
+<%= link_to 'Edit', edit_link_path(@entity,@link) %> |
+<%= link_to 'Back', links_path %>

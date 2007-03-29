@@ -1,0 +1,9 @@
+<p>
+  <b>Event type</b><br />
+  <%= form.select(:event_type,%w{CreateContext CreateCurrency CreateAccount JoinCurrency AcknowledgeFlow}) %>
+</p>
+
+<p>
+  <b>Specification</b><br />
+  <%= form.text_area :specification %>
+</p>

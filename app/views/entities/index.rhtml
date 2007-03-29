@@ -1,0 +1,29 @@
+<h1>Listing entities</h1>
+
+<table>
+  <tr>
+    <th>Created at</th>
+    <th>Updated at</th>
+    <th>Type</th>
+    <th>Access control</th>
+    <th>Specification</th>
+  </tr>
+  
+<% for entity in @entities %>
+  <tr>
+    <td><%=h entity.created_at %></td>
+    <td><%=h entity.updated_at %></td>
+    <td><%=h entity.entity_type %></td>
+    <td><%=h entity.access_control %></td>
+    <td><%=h entity.specification %></td>
+	<td><%= link_to 'New Link', new_link_path(entity) %></td>
+    <td><%= link_to 'Show', entity_path(entity) %></td>
+    <td><%= link_to 'Edit', edit_entity_path(entity) %></td>
+    <td><%= link_to 'Destroy', entity_path(entity), :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New entity', new_entity_path %>

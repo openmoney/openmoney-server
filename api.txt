@@ -1,0 +1,39 @@
+open money REST architecture, draft march '07
+
+REST API to two low level types of resources, entities and links:
+
+GET
+	/entities/<id>|<filter-spec> => return info on the entity or entities
+	/entities/<id>/links/<link-id>|<filter-spec> => return links for the entity (as specified by the filter spec)
+
+POST
+	/entities/ {specification,access_control,type} => create an entity of the given type
+	/entities/<id>/links/ {link_omrl,link_type,signature} => create a flow by linking the two entities
+
+DELETE
+	/entities/<id> => delete entity
+	/entities/<id>/links/<id> => delete link
+
+
+High-level REST API for the various types of entities and for flows
+
+GET
+	/<entity-type>/<id> => return info on the named entity type (accounts/currencies/contexts)
+	/<entity-type>/<id>/flows/<id>|<filter-spec> => return flow record(s) for the entity (as specified by the filter spec)
+	/<entity-type>/<id>/summary/<filter-spec> => return summaries of the flows to/from the entity (as specified by the filter
+
+POST
+	/accounts/<id>/flows {flow} => post a new flow (creates flow entity and necessary links)
+	/accounts {flow currency=0} => create an account (flow from must be ?)
+	/currencies  {flow currency=0} => create a currency (flow from must be an account)
+	/currencies/<id>/flows {flow currency=0} => join/leave a currency (from from must be an account)
+	/currencies/<idX>/flows {flow currency=<idX>} => approve flow (return signature)
+	/contexts {flow currency=0} => create a context (flow from must be ?)
+	/contexts/<id> {flow currency=0} => link an account/context/currency with this context
+	/contexts/<id> {flow currency != 0} => approve flow (return signature)
+	/notary {flow}
+
+DELETE
+	/<entity-type>/<id> => delete entity
+	/<entity-type>/<id>/flows/<flow-id> => reverse a flow
+	

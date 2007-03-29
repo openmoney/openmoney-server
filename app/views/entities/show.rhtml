@@ -1,0 +1,34 @@
+<p>
+  <b>Created at:</b>
+  <%=h @entity.created_at %>
+</p>
+
+<p>
+  <b>Updated at:</b>
+  <%=h @entity.updated_at %>
+</p>
+
+<p>
+  <b>Type:</b>
+  <%=h @entity.entity_type %>
+</p>
+
+<p>
+  <b>Access control:</b>
+  <%=h @entity.access_control %>
+</p>
+
+<p>
+  <b>Specification:</b>
+  <%=h @entity.specification %>
+</p>
+
+<p><strong>Links:</strong><br />
+<% for link in @entity.links %>
+to: <a href="<%=h link.omrl_url %>"><%=h link.omrl %></a>, type: <%=h link.link_type %> <%= link_to 'Details', link_path(@entity,link) %><br />
+<% end %>
+</p>
+
+<%= link_to 'New Link', new_link_path(@entity) %> |
+<%= link_to 'Edit', edit_entity_path(@entity) %> |
+<%= link_to 'Back', entities_path %>
