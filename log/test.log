@@ -1,0 +1,48 @@
+Spec::Rails::Runner::HelperEvalContextController: missing default helper path spec/rails/runner/helper_eval_context_helper
+Spec::Rails::Runner::ViewSpecController: missing default helper path spec/rails/runner/view_spec_helper
+  [4;36;1mSQL (0.001412)[0m   [0;1mSET SQL_AUTO_IS_NULL=0[0m
+  [4;35;1mSQL (0.010465)[0m   [0mBEGIN[0m
+  [4;36;1mEvent Columns (0.000000)[0m   [0;1mMysql::Error: #42S02Table 'rubyom_test.events' doesn't exist: SHOW FIELDS FROM events[0m
+  [4;35;1mSQL (0.000579)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000505)[0m   [0;1mBEGIN[0m
+  [4;35;1mEvent Columns (0.000000)[0m   [0mMysql::Error: #42S02Table 'rubyom_test.events' doesn't exist: SHOW FIELDS FROM events[0m
+  [4;36;1mSQL (0.001176)[0m   [0;1mROLLBACK[0m
+  [4;35;1mSQL (0.000658)[0m   [0mBEGIN[0m
+  [4;36;1mEvent Columns (0.000000)[0m   [0;1mMysql::Error: #42S02Table 'rubyom_test.events' doesn't exist: SHOW FIELDS FROM events[0m
+  [4;35;1mSQL (0.000456)[0m   [0mROLLBACK[0m
+Spec::Rails::Runner::HelperEvalContextController: missing default helper path spec/rails/runner/helper_eval_context_helper
+Spec::Rails::Runner::ViewSpecController: missing default helper path spec/rails/runner/view_spec_helper
+  [4;36;1mSQL (0.000730)[0m   [0;1mSET SQL_AUTO_IS_NULL=0[0m
+  [4;35;1mSQL (0.000641)[0m   [0mBEGIN[0m
+  [4;36;1mEvent Columns (0.010847)[0m   [0;1mSHOW FIELDS FROM events[0m
+  [4;35;1mSQL (0.038419)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.001728)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000688)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000768)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000511)[0m   [0mROLLBACK[0m
+Spec::Rails::Runner::HelperEvalContextController: missing default helper path spec/rails/runner/helper_eval_context_helper
+Spec::Rails::Runner::ViewSpecController: missing default helper path spec/rails/runner/view_spec_helper
+  [4;36;1mSQL (0.000537)[0m   [0;1mSET SQL_AUTO_IS_NULL=0[0m
+  [4;35;1mSQL (0.000410)[0m   [0mBEGIN[0m
+  [4;36;1mEvent Columns (0.008290)[0m   [0;1mSHOW FIELDS FROM events[0m
+  [4;35;1mSQL (0.038618)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000693)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.001074)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.009084)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000564)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000473)[0m   [0;1mBEGIN[0m
+  [4;35;1mEvent Load (0.002307)[0m   [0mSELECT * FROM events [0m
+  [4;36;1mSQL (0.000621)[0m   [0;1mROLLBACK[0m
+Spec::Rails::Runner::HelperEvalContextController: missing default helper path spec/rails/runner/helper_eval_context_helper
+Spec::Rails::Runner::ViewSpecController: missing default helper path spec/rails/runner/view_spec_helper
+  [4;36;1mSQL (0.000640)[0m   [0;1mSET SQL_AUTO_IS_NULL=0[0m
+  [4;35;1mSQL (0.000396)[0m   [0mBEGIN[0m
+  [4;36;1mEvent Columns (0.005954)[0m   [0;1mSHOW FIELDS FROM events[0m
+  [4;35;1mSQL (0.040167)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000482)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000607)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000519)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000489)[0m   [0mROLLBACK[0m
+  [4;36;1mSQL (0.000407)[0m   [0;1mBEGIN[0m
+  [4;35;1mEvent Load (0.002676)[0m   [0mSELECT * FROM events [0m
+  [4;36;1mSQL (0.000572)[0m   [0;1mROLLBACK[0m

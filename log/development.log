@@ -18871,3 +18871,26 @@ Processing LinksController#show (for 127.0.0.1 at 2007-03-28 16:43:00) [GET]
 Rendering layoutfalsecontent_typetext/htmlactionshow within layouts/application
 Rendering links/show
 Completed in 0.31592 (3 reqs/sec) | Rendering: 0.04779 (15%) | DB: 0.06424 (20%) | 200 OK [http://localhost/entities/66/links/15]
+  [4;36;1mSQL (0.000635)[0m   [0;1mSET SQL_AUTO_IS_NULL=0[0m
+  [4;35;1mSQL (0.012571)[0m   [0mSELECT * FROM schema_info[0m
+  [4;36;1mSQL (0.001949)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.014324)[0m   [0mSHOW FIELDS FROM entities[0m
+  [4;36;1mSQL (0.017709)[0m   [0;1mSHOW KEYS FROM entities[0m
+  [4;35;1mSQL (0.006830)[0m   [0mSHOW FIELDS FROM events[0m
+  [4;36;1mSQL (0.008626)[0m   [0;1mSHOW KEYS FROM events[0m
+  [4;35;1mSQL (0.006500)[0m   [0mSHOW FIELDS FROM links[0m
+  [4;36;1mSQL (0.011275)[0m   [0;1mSHOW KEYS FROM links[0m
+  [4;35;1mSQL (0.000519)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+  [4;36;1mSQL (0.106799)[0m   [0;1mDROP DATABASE IF EXISTS `rubyom_test`[0m
+  [4;35;1mSQL (0.001929)[0m   [0mCREATE DATABASE `rubyom_test`[0m
+  [4;36;1mSQL (0.000581)[0m   [0;1mSET SQL_AUTO_IS_NULL=0[0m
+  [4;35;1mSQL (0.000000)[0m   [0mMysql::Error: #42S02Unknown table 'entities': DROP TABLE entities[0m
+  [4;36;1mSQL (0.254967)[0m   [0;1mCREATE TABLE entities (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `created_at` datetime DEFAULT NULL, `updated_at` datetime DEFAULT NULL, `entity_type` varchar(255) DEFAULT NULL, `access_control` text DEFAULT NULL, `specification` text DEFAULT NULL) ENGINE=InnoDB[0m
+  [4;35;1mSQL (0.000000)[0m   [0mMysql::Error: #42S02Unknown table 'events': DROP TABLE events[0m
+  [4;36;1mSQL (0.006161)[0m   [0;1mCREATE TABLE events (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `created_at` datetime DEFAULT NULL, `event_type` varchar(255) DEFAULT NULL, `specification` text DEFAULT NULL, `state` varchar(255) DEFAULT NULL) ENGINE=InnoDB[0m
+  [4;35;1mSQL (0.000000)[0m   [0mMysql::Error: #42S02Unknown table 'links': DROP TABLE links[0m
+  [4;36;1mSQL (0.004635)[0m   [0;1mCREATE TABLE links (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `entity_id` int(11) DEFAULT NULL, `omrl` varchar(255) DEFAULT NULL, `link_type` varchar(255) DEFAULT NULL, `signature` text DEFAULT NULL, `created_at` datetime DEFAULT NULL, `updated_at` datetime DEFAULT NULL) ENGINE=InnoDB[0m
+  [4;35;1mSQL (0.006413)[0m   [0mCREATE TABLE schema_info (version int(11))[0m
+  [4;36;1mSQL (0.004453)[0m   [0;1mINSERT INTO schema_info (version) VALUES(0)[0m
+  [4;35;1mSQL (0.005251)[0m   [0mSHOW FIELDS FROM schema_info[0m
+  [4;36;1mSQL (0.004063)[0m   [0;1mUPDATE schema_info SET version = 3[0m

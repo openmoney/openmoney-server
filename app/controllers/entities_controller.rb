@@ -1,3 +1,9 @@
+######################################################################################
+# Copyright (C) 2007 Eric Harris-Braun (eric -at- harris-braun.com), et al
+# This software is distributed according to the license at 
+# http://openmoney.info/licenses/rubyom
+######################################################################################
+
 class EntitiesController < ApplicationController
   before_filter :check_for_entity_type
   # GET /entities

@@ -1,3 +1,9 @@
+######################################################################################
+# Copyright (C) 2007 Eric Harris-Braun (eric -at- harris-braun.com), et al
+# This software is distributed according to the license at 
+# http://openmoney.info/licenses/rubyom
+######################################################################################
+
 class EventsController < ApplicationController
   # GET /events
   # GET /events.xml

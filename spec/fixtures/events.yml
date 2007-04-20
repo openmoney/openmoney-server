@@ -1,0 +1,23 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+create_mwl_account:
+  id: 1
+  created_at: "" 
+  event_type: "CreateAccount"
+  specification:
+    specificaton:
+        name: mwl
+        parent_omrl: 63
+  state:
+ack_flow:
+  id: 2
+  created_at: "" 
+  event_type: "AcknowledgeFlow"
+  specification:
+    specificaton:
+        name: tx123432 
+        amount: 10 
+        description: some stuff
+    from_account_omrl: 65 
+    to_account_omrl: 66 
+    currency_omrl: 64
+  state:

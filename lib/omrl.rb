@@ -1,3 +1,8 @@
+######################################################################################
+# Copyright (C) 2007 Eric Harris-Braun (eric -at- harris-braun.com), et al
+# This software is distributed according to the license at 
+# http://openmoney.info/licenses/rubyom
+######################################################################################
 
 # OMRL = open money resource locator.
 # an omrl can be any of three things: 
