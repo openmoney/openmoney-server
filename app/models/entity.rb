@@ -21,7 +21,7 @@ class Entity < ActiveRecord::Base
       if (!n || n == "") 
         errors.add(:specification,"'name:' is required")
       else
-        if Entity.find(:first, :conditions => ["entity_type = ? and specification like ?", entity_type,"%name: #{n}%"])
+        if find_named_entity(n,entity_type)
           errors.add(:specification,"name '#{n}' already exists")
         end
       end
@@ -38,4 +38,15 @@ class Entity < ActiveRecord::Base
       @specification['name']
     end
   end
+  private
+
+  def Entity.find_named_entity(name,entity_type=nil)
+    if (entity_type) 
+      conditions = ["entity_type = ? and specification like ?", entity_type,"%name: #{name}%"]
+    else
+      conditions = ["specification like ?", "%name: #{name}%"]
+    end
+    Entity.find(:first, :conditions => conditions)
+  end
 end
+

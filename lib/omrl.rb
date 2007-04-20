@@ -19,17 +19,22 @@ class OMRL
   OM_URL = :url
 
   attr_reader :omrl
+
+  ######################################################################################
   def initialize(o = '')
     @omrl = o.to_s  #since a plain number is a valid omrl we always covert all input to a string
-  end
-  
-  def omrl=(o)
-    @type = nil #if we set the omrl we have to clear the cached values
+    @type = nil
     @url = nil
-    @entity = nil
-    @omrl = o
+    @local = nil
   end
   
+  ######################################################################################
+  def omrl=(o)
+    #if we set the omrl we have to clear the cached values
+    initialze(o)
+  end
+  
+  ######################################################################################
   #returns the type as one of the constants :om_num, :url or :om_name
   def type
     return @type if @type != nil #return cached value
@@ -43,43 +48,58 @@ class OMRL
     end
   end
   
+  ######################################################################################
   #does this omrl exist on this server?
   def local?
-    if (@local) 
-      @local[:entity]
+    return @local if @local != nil
+    
+    u = URI.parse(url)
+    if u.relative?
+      id = num
     else
-      @local = {}
-      u = URI.parse(url)
-      if u.relative?
-        id = num
-      else
-        # figure out if the non-relative url is local
+      raise "local? for non relative urls not implemented"
+      # figure out if the non-relative url is local
+    end
+    if (id == 0) 
+      @local = false
+    else
+      begin
+        e = Entity.find(id)
+        @local = e
+      rescue ActiveRecord::RecordNotFound
+        @local = false
       end
-      e = Entity.find(id) if id != 0
-      @local[:entity] = e
     end
   end
   
+  ######################################################################################
   #  return the URL for this omrl by resolving it
   def url
     return @url if @url != nil #return cached value
     @url = resolve_to_url
   end
 
+  ######################################################################################
   def num
     return @num if @num != nil #return cached value
     case type
     when OM_URL
-      raise "unable to convert a URL omrl to an OM_NAME [for omrl #{@omrl}]"
+      #TODO: is this right?  The num is just the id at the right hand of the URL?  
+      if @omrl =~/([0-9]+)$/
+        @num = $1
+      else
+        raise "unable to convert a URL omrl to an OM_NUM [for omrl #{@omrl}]"
+      end
     when OM_NUM
       @omrl
     when OM_NAME
-      @num = resolve_name_to_num
+      @num = resolve_name_to_num(@omrl)
     end
   end
   
   private
   
+  ######################################################################################
   #resolves the omrl down to a url 
   def resolve_to_url()
     case type
@@ -92,6 +112,7 @@ class OMRL
     end
   end
   
+  ######################################################################################
   def resolve_num_to_url(om_num)
     return '' if @omrl == ''
     return "/entities/#@omrl" if @omrl =~ /^\d+$/
@@ -100,6 +121,13 @@ class OMRL
   
   def resolve_name_to_num(om_num)
     return '' if @omrl == ''
-    raise "resolve_name_to_num not implemented! for omrl #{@omrl}"
+    begin
+      e = Entity.find_named_entity(@omrl)
+      @local = e
+      e.id.to_s
+    rescue   ActiveRecord::RecordNotFound
+      @local = false
+      raise "resolve_name_to_num not implemented! for non local omrl #{@omrl}"
+    end
   end
 end
