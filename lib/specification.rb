@@ -6,8 +6,9 @@
 
 module Specification 
   
-  # classes which mix in specification are assumed to be ActiveRecords, or at least be able to
-  # recieve the message errors.add
+  # Classes which mix in Specification are assumed to be ActiveRecords,
+  # or at least be able to recieve the message errors.add.  They are also assumed to
+  # have a "specification" attribute from which to get the yaml text to be validated
   
   ######################################################################################
   # Specifications are assumed to be hash tables stored as chunks of YAML.
@@ -19,7 +20,9 @@ module Specification
   def validate_specification(validations,attribute_name = :specification)
     unless @specification
       begin
-        @specification = YAML.load(specification)
+        #TODO: we need magic here to use the value of attribute_name instead of
+        # assuming that the attribute is called "specification"
+        @specification = YAML.load(specification) 
       rescue Exception => e
         errors.add(attribute_name,"specification does not appear to be valid YAML (#{e.to_s})")
       end

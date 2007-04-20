@@ -18894,3 +18894,584 @@ Completed in 0.31592 (3 reqs/sec) | Rendering: 0.04779 (15%) | DB: 0.06424 (20%)
   [4;36;1mSQL (0.004453)[0m   [0;1mINSERT INTO schema_info (version) VALUES(0)[0m
   [4;35;1mSQL (0.005251)[0m   [0mSHOW FIELDS FROM schema_info[0m
   [4;36;1mSQL (0.004063)[0m   [0;1mUPDATE schema_info SET version = 3[0m
+
+
+Processing EventsController#index (for 127.0.0.1 at 2007-04-20 13:16:12) [GET]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"action"=>"index", "controller"=>"events"}
+  [4;36;1mSQL (0.000601)[0m   [0;1mSET SQL_AUTO_IS_NULL=0[0m
+  [4;35;1mEvent Load (0.008076)[0m   [0mSELECT * FROM events [0m
+Rendering content_typetext/htmllayoutfalseactionindex within layouts/application
+Rendering events/index
+  [4;36;1mEvent Columns (0.006467)[0m   [0;1mSHOW FIELDS FROM events[0m
+Completed in 0.83042 (1 reqs/sec) | Rendering: 0.44321 (53%) | DB: 0.01514 (1%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#index (for 127.0.0.1 at 2007-04-20 13:18:55) [GET]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"action"=>"index", "controller"=>"events"}
+  [4;35;1mEvent Load (0.003206)[0m   [0mSELECT * FROM events [0m
+Rendering content_typetext/htmllayoutfalseactionindex within layouts/application
+Rendering events/index
+  [4;36;1mEvent Columns (0.009394)[0m   [0;1mSHOW FIELDS FROM events[0m
+Completed in 0.27306 (3 reqs/sec) | Rendering: 0.12978 (47%) | DB: 0.01260 (4%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#new (for 127.0.0.1 at 2007-04-20 13:19:18) [GET]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"action"=>"new", "controller"=>"events"}
+  [4;35;1mEvent Columns (0.006946)[0m   [0mSHOW FIELDS FROM events[0m
+Rendering  within layouts/application
+Rendering events/new
+Rendered events/_form (0.01928)
+Completed in 0.24564 (4 reqs/sec) | Rendering: 0.10855 (44%) | DB: 0.00695 (2%) | 200 OK [http://localhost/events/new]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:20:15) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123432\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 65\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;36;1mEvent::AcknowledgeFlow Columns (0.006698)[0m   [0;1mSHOW FIELDS FROM events[0m
+  [4;35;1mEntity Columns (0.011116)[0m   [0mSHOW FIELDS FROM entities[0m
+  [4;36;1mSQL (0.003091)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Load (0.002608)[0m   [0mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123432%') LIMIT 1[0m
+  [4;36;1mSQL (0.000633)[0m   [0;1mCOMMIT[0m
+Rendering layoutfalseactionnew within layouts/application
+Rendering events/new
+Rendered events/_form (0.00189)
+Completed in 0.33934 (2 reqs/sec) | Rendering: 0.02838 (8%) | DB: 0.02415 (7%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:32:27) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123433\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 65\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;35;1mEvent::AcknowledgeFlow Columns (0.007063)[0m   [0mSHOW FIELDS FROM events[0m
+  [4;36;1mEntity Columns (0.010509)[0m   [0;1mSHOW FIELDS FROM entities[0m
+  [4;35;1mSQL (0.000637)[0m   [0mBEGIN[0m
+  [4;36;1mEntity Load (0.067765)[0m   [0;1mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123433%') LIMIT 1[0m
+  [4;35;1mSQL (0.001258)[0m   [0mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:32:27', NULL, '--- \nname: tx123433\ndescription: some stuff\namount: 10\n', '2007-04-20 13:32:27')[0m
+  [4;36;1mSQL (0.001467)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.003257)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;36;1mLink Columns (0.010248)[0m   [0;1mSHOW FIELDS FROM links[0m
+  [4;35;1mLink Load (0.006555)[0m   [0mSELECT * FROM links WHERE (links.entity_id = 66) [0m
+  [4;36;1mSQL (0.000661)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.001576)[0m   [0mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(66, '2007-04-20 13:32:27', 'flow_to', '75', NULL, '2007-04-20 13:32:27')[0m
+  [4;36;1mSQL (0.001848)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.009974)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 65) [0m
+  [4;36;1mLink Load (0.002905)[0m   [0;1mSELECT * FROM links WHERE (links.entity_id = 65) [0m
+  [4;35;1mSQL (0.000540)[0m   [0mBEGIN[0m
+  [4;36;1mSQL (0.001056)[0m   [0;1mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(65, '2007-04-20 13:32:27', 'flow_from', '75', NULL, '2007-04-20 13:32:27')[0m
+  [4;35;1mSQL (0.009963)[0m   [0mCOMMIT[0m
+  [4;36;1mEntity Load (0.005907)[0m   [0;1mSELECT * FROM entities WHERE (entities.`id` = 64) [0m
+  [4;35;1mLink Load (0.007055)[0m   [0mSELECT * FROM links WHERE (links.entity_id = 64) [0m
+  [4;36;1mSQL (0.000702)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.000997)[0m   [0mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(64, '2007-04-20 13:32:27', 'approves', '75', NULL, '2007-04-20 13:32:27')[0m
+  [4;36;1mSQL (0.001317)[0m   [0;1mCOMMIT[0m
+  [4;35;1mSQL (0.149014)[0m   [0mBEGIN[0m
+  [4;36;1mSQL (0.001447)[0m   [0;1mINSERT INTO events (`specification`, `event_type`, `created_at`, `state`) VALUES('specification:\r\n name: tx123433\r\n amount: 10\r\n description: some stuff\r\nfrom_account_omrl: 65\r\nto_account_omrl: 66\r\ncurrency_omrl: 64', 'AcknowledgeFlow', '2007-04-20 13:32:28', NULL)[0m
+  [4;35;1mSQL (0.012334)[0m   [0mCOMMIT[0m
+Redirected to http://localhost:3000/events/14
+Completed in 0.76855 (1 reqs/sec) | DB: 0.31606 (41%) | 302 Found [http://localhost/events]
+
+
+Processing EventsController#show (for 127.0.0.1 at 2007-04-20 13:32:29) [GET]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"action"=>"show", "id"=>"14", "controller"=>"events"}
+  [4;36;1mEvent Columns (0.020407)[0m   [0;1mSHOW FIELDS FROM events[0m
+  [4;35;1mEvent Load (0.012717)[0m   [0mSELECT * FROM events WHERE (events.`id` = 14) [0m
+Rendering content_typetext/htmllayoutfalseactionshow within layouts/application
+Rendering events/show
+Completed in 0.25265 (3 reqs/sec) | Rendering: 0.06915 (27%) | DB: 0.03312 (13%) | 200 OK [http://localhost/events/14]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:32:53) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123434\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 699\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;36;1mEvent::AcknowledgeFlow Columns (0.105296)[0m   [0;1mSHOW FIELDS FROM events[0m
+  [4;35;1mEntity Columns (0.008463)[0m   [0mSHOW FIELDS FROM entities[0m
+  [4;36;1mSQL (0.003208)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Load (0.002601)[0m   [0mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123434%') LIMIT 1[0m
+  [4;36;1mSQL (0.001140)[0m   [0;1mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:32:53', NULL, '--- \nname: tx123434\ndescription: some stuff\namount: 10\n', '2007-04-20 13:32:53')[0m
+  [4;35;1mSQL (0.004701)[0m   [0mCOMMIT[0m
+  [4;36;1mEntity Load (0.002929)[0m   [0;1mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;35;1mLink Columns (0.011889)[0m   [0mSHOW FIELDS FROM links[0m
+  [4;36;1mLink Load (0.003668)[0m   [0;1mSELECT * FROM links WHERE (links.entity_id = 66) [0m
+  [4;35;1mSQL (0.000679)[0m   [0mBEGIN[0m
+  [4;36;1mSQL (0.001314)[0m   [0;1mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(66, '2007-04-20 13:32:54', 'flow_to', '76', NULL, '2007-04-20 13:32:54')[0m
+  [4;35;1mSQL (0.001522)[0m   [0mCOMMIT[0m
+  [4;36;1mEntity Load (0.002412)[0m   [0;1mSELECT * FROM entities WHERE (entities.`id` = 699) [0m
+  [4;35;1mSQL (0.000712)[0m   [0mBEGIN[0m
+  [4;36;1mEntity Destroy (0.009782)[0m   [0;1m DELETE FROM entities
+ WHERE `id` = 76
+[0m
+  [4;35;1mSQL (0.001474)[0m   [0mCOMMIT[0m
+Rendering layoutfalseactionnew within layouts/application
+Rendering events/new
+Rendered events/_form (0.00624)
+Completed in 0.80673 (1 reqs/sec) | Rendering: 0.02126 (2%) | DB: 0.16179 (20%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:33:52) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123434\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 69\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;36;1mEvent::AcknowledgeFlow Columns (0.009319)[0m   [0;1mSHOW FIELDS FROM events[0m
+  [4;35;1mEntity Columns (0.012297)[0m   [0mSHOW FIELDS FROM entities[0m
+  [4;36;1mSQL (0.001045)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Load (0.002774)[0m   [0mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123434%') LIMIT 1[0m
+  [4;36;1mSQL (0.001241)[0m   [0;1mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:33:53', NULL, '--- \nname: tx123434\ndescription: some stuff\namount: 10\n', '2007-04-20 13:33:53')[0m
+  [4;35;1mSQL (0.001451)[0m   [0mCOMMIT[0m
+  [4;36;1mEntity Load (0.002382)[0m   [0;1mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;35;1mLink Columns (0.010499)[0m   [0mSHOW FIELDS FROM links[0m
+  [4;36;1mLink Load (0.010882)[0m   [0;1mSELECT * FROM links WHERE (links.entity_id = 66) [0m
+  [4;35;1mSQL (0.000954)[0m   [0mBEGIN[0m
+  [4;36;1mSQL (0.001510)[0m   [0;1mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(66, '2007-04-20 13:33:53', 'flow_to', '77', NULL, '2007-04-20 13:33:53')[0m
+  [4;35;1mSQL (0.001527)[0m   [0mCOMMIT[0m
+  [4;36;1mEntity Load (0.002326)[0m   [0;1mSELECT * FROM entities WHERE (entities.`id` = 69) [0m
+  [4;35;1mSQL (0.000698)[0m   [0mBEGIN[0m
+  [4;36;1mEntity Destroy (0.001258)[0m   [0;1m DELETE FROM entities
+ WHERE `id` = 77
+[0m
+  [4;35;1mSQL (0.001357)[0m   [0mCOMMIT[0m
+Rendering layoutfalseactionnew within layouts/application
+Rendering events/new
+Rendered events/_form (0.13227)
+Completed in 1.41275 (0 reqs/sec) | Rendering: 0.15486 (10%) | DB: 0.06152 (4%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:34:23) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123435\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 65\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;36;1mEvent::AcknowledgeFlow Columns (0.005887)[0m   [0;1mSHOW FIELDS FROM events[0m
+  [4;35;1mEntity Columns (0.005946)[0m   [0mSHOW FIELDS FROM entities[0m
+  [4;36;1mSQL (0.004729)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Load (0.003307)[0m   [0mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123435%') LIMIT 1[0m
+  [4;36;1mSQL (0.001124)[0m   [0;1mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:34:24', NULL, '--- \nname: tx123435\ndescription: some stuff\namount: 10\n', '2007-04-20 13:34:24')[0m
+  [4;35;1mSQL (0.010991)[0m   [0mCOMMIT[0m
+  [4;36;1mEntity Load (0.013066)[0m   [0;1mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;35;1mLink Columns (0.029108)[0m   [0mSHOW FIELDS FROM links[0m
+  [4;36;1mLink Load (0.006297)[0m   [0;1mSELECT * FROM links WHERE (links.entity_id = 66) [0m
+  [4;35;1mSQL (0.000884)[0m   [0mBEGIN[0m
+  [4;36;1mSQL (0.001377)[0m   [0;1mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(66, '2007-04-20 13:34:24', 'flow_to', '78', NULL, '2007-04-20 13:34:24')[0m
+  [4;35;1mSQL (0.001659)[0m   [0mCOMMIT[0m
+  [4;36;1mEntity Load (0.006683)[0m   [0;1mSELECT * FROM entities WHERE (entities.`id` = 65) [0m
+  [4;35;1mLink Load (0.003229)[0m   [0mSELECT * FROM links WHERE (links.entity_id = 65) [0m
+  [4;36;1mSQL (0.000545)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.001145)[0m   [0mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(65, '2007-04-20 13:34:24', 'flow_from', '78', NULL, '2007-04-20 13:34:24')[0m
+  [4;36;1mSQL (0.001310)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.112251)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 64) [0m
+  [4;36;1mLink Load (0.014573)[0m   [0;1mSELECT * FROM links WHERE (links.entity_id = 64) [0m
+  [4;35;1mSQL (0.000659)[0m   [0mBEGIN[0m
+  [4;36;1mSQL (0.018722)[0m   [0;1mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(64, '2007-04-20 13:34:24', 'approves', '78', NULL, '2007-04-20 13:34:24')[0m
+  [4;35;1mSQL (0.001406)[0m   [0mCOMMIT[0m
+  [4;36;1mSQL (0.000484)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.001482)[0m   [0mINSERT INTO events (`specification`, `event_type`, `created_at`, `state`) VALUES('specification:\r\n name: tx123435\r\n amount: 10\r\n description: some stuff\r\nfrom_account_omrl: 65\r\nto_account_omrl: 66\r\ncurrency_omrl: 64', 'AcknowledgeFlow', '2007-04-20 13:34:24', NULL)[0m
+  [4;36;1mSQL (0.001256)[0m   [0;1mCOMMIT[0m
+Redirected to http://localhost:3000/events/15
+Completed in 0.94916 (1 reqs/sec) | DB: 0.24812 (26%) | 302 Found [http://localhost/events]
+
+
+Processing EventsController#show (for 127.0.0.1 at 2007-04-20 13:34:25) [GET]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"action"=>"show", "id"=>"15", "controller"=>"events"}
+  [4;35;1mEvent Columns (0.005797)[0m   [0mSHOW FIELDS FROM events[0m
+  [4;36;1mEvent Load (0.048109)[0m   [0;1mSELECT * FROM events WHERE (events.`id` = 15) [0m
+Rendering content_typetext/htmllayoutfalseactionshow within layouts/application
+Rendering events/show
+Completed in 0.49422 (2 reqs/sec) | Rendering: 0.01628 (3%) | DB: 0.05391 (10%) | 200 OK [http://localhost/events/15]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:45:38) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123436\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 659\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;35;1mEvent::AcknowledgeFlow Columns (0.019164)[0m   [0mSHOW FIELDS FROM events[0m
+  [4;36;1mEntity Columns (0.009593)[0m   [0;1mSHOW FIELDS FROM entities[0m
+  [4;35;1mSQL (0.003291)[0m   [0mBEGIN[0m
+  [4;36;1mEntity Load (0.004418)[0m   [0;1mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123436%') LIMIT 1[0m
+  [4;35;1mSQL (0.006345)[0m   [0mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:45:38', NULL, '--- \nname: tx123436\ndescription: some stuff\namount: 10\n', '2007-04-20 13:45:38')[0m
+  [4;36;1mSQL (0.001524)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.003537)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;36;1mLink Columns (0.008815)[0m   [0;1mSHOW FIELDS FROM links[0m
+  [4;35;1mLink Load (0.015681)[0m   [0mSELECT * FROM links WHERE (links.entity_id = 66) [0m
+  [4;36;1mSQL (0.000609)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.001331)[0m   [0mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(66, '2007-04-20 13:45:38', 'flow_to', '79', NULL, '2007-04-20 13:45:38')[0m
+  [4;36;1mSQL (0.001436)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.002267)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 659) [0m
+  [4;36;1mSQL (0.000858)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Destroy (0.000998)[0m   [0m DELETE FROM entities
+ WHERE `id` = 79
+[0m
+  [4;36;1mSQL (0.007829)[0m   [0;1mCOMMIT[0m
+Rendering layoutfalseactionnew within layouts/application
+Rendering events/new
+Rendered events/_form (0.00199)
+Completed in 0.58785 (1 reqs/sec) | Rendering: 0.01604 (2%) | DB: 0.08770 (14%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:47:00) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123436\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 659\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;35;1mEvent::AcknowledgeFlow Columns (0.011985)[0m   [0mSHOW FIELDS FROM events[0m
+  [4;36;1mEntity Columns (0.021219)[0m   [0;1mSHOW FIELDS FROM entities[0m
+  [4;35;1mSQL (0.006899)[0m   [0mBEGIN[0m
+  [4;36;1mEntity Load (0.002884)[0m   [0;1mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123436%') LIMIT 1[0m
+  [4;35;1mSQL (0.001181)[0m   [0mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:47:01', NULL, '--- \nname: tx123436\ndescription: some stuff\namount: 10\n', '2007-04-20 13:47:01')[0m
+  [4;36;1mSQL (0.001611)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.003029)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;36;1mLink Columns (0.006840)[0m   [0;1mSHOW FIELDS FROM links[0m
+  [4;35;1mLink Load (0.019587)[0m   [0mSELECT * FROM links WHERE (links.entity_id = 66) [0m
+  [4;36;1mSQL (0.000722)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.001075)[0m   [0mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(66, '2007-04-20 13:47:01', 'flow_to', '80', NULL, '2007-04-20 13:47:01')[0m
+  [4;36;1mSQL (0.001853)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.002755)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 659) [0m
+  [4;36;1mSQL (0.000601)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Destroy (0.001436)[0m   [0m DELETE FROM entities
+ WHERE `id` = 80
+[0m
+  [4;36;1mSQL (0.007285)[0m   [0;1mCOMMIT[0m
+Rendering layoutfalseactionnew within layouts/application
+Rendering events/new
+Rendered events/_form (0.00226)
+Completed in 1.04392 (0 reqs/sec) | Rendering: 0.02158 (2%) | DB: 0.09096 (8%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:47:33) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123436\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 659\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;35;1mEvent::AcknowledgeFlow Columns (0.007079)[0m   [0mSHOW FIELDS FROM events[0m
+  [4;36;1mEntity Columns (0.008654)[0m   [0;1mSHOW FIELDS FROM entities[0m
+  [4;35;1mSQL (0.003161)[0m   [0mBEGIN[0m
+  [4;36;1mEntity Load (0.002959)[0m   [0;1mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123436%') LIMIT 1[0m
+  [4;35;1mSQL (0.001525)[0m   [0mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:47:34', NULL, '--- \nname: tx123436\ndescription: some stuff\namount: 10\n', '2007-04-20 13:47:34')[0m
+  [4;36;1mSQL (0.001632)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.007020)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;36;1mSQL (0.000939)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Destroy (0.001080)[0m   [0m DELETE FROM entities
+ WHERE `id` = 81
+[0m
+  [4;36;1mSQL (0.001420)[0m   [0;1mCOMMIT[0m
+Rendering layoutfalseactionnew within layouts/application
+Rendering events/new
+Rendered events/_form (0.00262)
+Completed in 0.44424 (2 reqs/sec) | Rendering: 0.02743 (6%) | DB: 0.03547 (7%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:49:38) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123436\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 659\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;35;1mEvent::AcknowledgeFlow Columns (0.006537)[0m   [0mSHOW FIELDS FROM events[0m
+  [4;36;1mEntity Columns (0.008699)[0m   [0;1mSHOW FIELDS FROM entities[0m
+  [4;35;1mSQL (0.000616)[0m   [0mBEGIN[0m
+  [4;36;1mEntity Load (0.003395)[0m   [0;1mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123436%') LIMIT 1[0m
+  [4;35;1mSQL (0.007780)[0m   [0mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:49:39', NULL, '--- \nname: tx123436\ndescription: some stuff\namount: 10\n', '2007-04-20 13:49:39')[0m
+  [4;36;1mSQL (0.001531)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.003627)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;36;1mLink Columns (0.009800)[0m   [0;1mSHOW FIELDS FROM links[0m
+  [4;35;1mLink Load (0.003723)[0m   [0mSELECT * FROM links WHERE (links.entity_id = 66) [0m
+  [4;36;1mSQL (0.000581)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.001298)[0m   [0mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(66, '2007-04-20 13:49:39', 'flow_to', '82', NULL, '2007-04-20 13:49:39')[0m
+  [4;36;1mSQL (0.001705)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.002713)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 659) [0m
+  [4;36;1mSQL (0.000760)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Destroy (0.001740)[0m   [0m DELETE FROM entities
+ WHERE `id` = 82
+[0m
+  [4;36;1mSQL (0.046076)[0m   [0;1mCOMMIT[0m
+Rendering layoutfalseactionnew within layouts/application
+Rendering events/new
+Rendered events/_form (0.00180)
+Completed in 0.96520 (1 reqs/sec) | Rendering: 0.01867 (1%) | DB: 0.10058 (10%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:50:06) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123436\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 659\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;35;1mEvent::AcknowledgeFlow Columns (0.006092)[0m   [0mSHOW FIELDS FROM events[0m
+  [4;36;1mEntity Columns (0.010198)[0m   [0;1mSHOW FIELDS FROM entities[0m
+  [4;35;1mSQL (0.000947)[0m   [0mBEGIN[0m
+  [4;36;1mEntity Load (0.005820)[0m   [0;1mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123436%') LIMIT 1[0m
+  [4;35;1mSQL (0.001390)[0m   [0mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:50:06', NULL, '--- \nname: tx123436\ndescription: some stuff\namount: 10\n', '2007-04-20 13:50:06')[0m
+  [4;36;1mSQL (0.002099)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.002711)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;36;1mSQL (0.001998)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Destroy (0.001011)[0m   [0m DELETE FROM entities
+ WHERE `id` = 83
+[0m
+  [4;36;1mSQL (0.001401)[0m   [0;1mCOMMIT[0m
+Rendering layoutfalseactionnew within layouts/application
+Rendering events/new
+Rendered events/_form (0.01380)
+Completed in 0.42367 (2 reqs/sec) | Rendering: 0.02670 (6%) | DB: 0.03367 (7%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:51:45) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123436\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 659\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;35;1mEvent::AcknowledgeFlow Columns (0.006085)[0m   [0mSHOW FIELDS FROM events[0m
+  [4;36;1mEntity Columns (0.011110)[0m   [0;1mSHOW FIELDS FROM entities[0m
+  [4;35;1mSQL (0.009708)[0m   [0mBEGIN[0m
+  [4;36;1mEntity Load (0.003823)[0m   [0;1mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123436%') LIMIT 1[0m
+  [4;35;1mSQL (0.001311)[0m   [0mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:51:45', NULL, '--- \nname: tx123436\ndescription: some stuff\namount: 10\n', '2007-04-20 13:51:45')[0m
+  [4;36;1mSQL (0.001905)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.005881)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;36;1mSQL (0.000972)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Destroy (0.001144)[0m   [0m DELETE FROM entities
+ WHERE `id` = 84
+[0m
+  [4;36;1mSQL (0.001346)[0m   [0;1mCOMMIT[0m
+Rendering layoutfalseactionnew within layouts/application
+Rendering events/new
+Rendered events/_form (0.00219)
+Completed in 0.71632 (1 reqs/sec) | Rendering: 0.02297 (3%) | DB: 0.04329 (6%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:53:19) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123436\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 659\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;35;1mEvent::AcknowledgeFlow Columns (0.006157)[0m   [0mSHOW FIELDS FROM events[0m
+  [4;36;1mEntity Columns (0.086067)[0m   [0;1mSHOW FIELDS FROM entities[0m
+  [4;35;1mSQL (0.003381)[0m   [0mBEGIN[0m
+  [4;36;1mEntity Load (0.003073)[0m   [0;1mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123436%') LIMIT 1[0m
+  [4;35;1mSQL (0.001206)[0m   [0mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:53:19', NULL, '--- \nname: tx123436\ndescription: some stuff\namount: 10\n', '2007-04-20 13:53:19')[0m
+  [4;36;1mSQL (0.001240)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.004398)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;36;1mSQL (0.000646)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Destroy (0.001026)[0m   [0m DELETE FROM entities
+ WHERE `id` = 85
+[0m
+  [4;36;1mSQL (0.001663)[0m   [0;1mCOMMIT[0m
+Rendering layoutfalseactionnew within layouts/application
+Rendering events/new
+Rendered events/_form (0.00183)
+Completed in 0.54258 (1 reqs/sec) | Rendering: 0.02480 (4%) | DB: 0.10886 (20%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:54:33) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123436\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 659\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;35;1mEvent::AcknowledgeFlow Columns (0.007006)[0m   [0mSHOW FIELDS FROM events[0m
+  [4;36;1mEntity Columns (0.007396)[0m   [0;1mSHOW FIELDS FROM entities[0m
+  [4;35;1mSQL (0.003460)[0m   [0mBEGIN[0m
+  [4;36;1mEntity Load (0.002906)[0m   [0;1mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123436%') LIMIT 1[0m
+  [4;35;1mSQL (0.001127)[0m   [0mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:54:34', NULL, '--- \nname: tx123436\ndescription: some stuff\namount: 10\n', '2007-04-20 13:54:34')[0m
+  [4;36;1mSQL (0.002005)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.002520)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;36;1mSQL (0.000746)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Destroy (0.001503)[0m   [0m DELETE FROM entities
+ WHERE `id` = 86
+[0m
+  [4;36;1mSQL (0.001707)[0m   [0;1mCOMMIT[0m
+Rendering layoutfalseactionnew within layouts/application
+Rendering events/new
+Rendered events/_form (0.00254)
+Completed in 0.35237 (2 reqs/sec) | Rendering: 0.01609 (4%) | DB: 0.03038 (8%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:54:52) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123436\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 659\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;35;1mEvent::AcknowledgeFlow Columns (0.246211)[0m   [0mSHOW FIELDS FROM events[0m
+  [4;36;1mEntity Columns (0.008771)[0m   [0;1mSHOW FIELDS FROM entities[0m
+  [4;35;1mSQL (0.032790)[0m   [0mBEGIN[0m
+  [4;36;1mEntity Load (0.002773)[0m   [0;1mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123436%') LIMIT 1[0m
+  [4;35;1mSQL (0.005065)[0m   [0mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:54:53', NULL, '--- \nname: tx123436\ndescription: some stuff\namount: 10\n', '2007-04-20 13:54:53')[0m
+  [4;36;1mSQL (0.002071)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.132708)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;36;1mSQL (0.001481)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Destroy (0.000938)[0m   [0m DELETE FROM entities
+ WHERE `id` = 87
+[0m
+  [4;36;1mSQL (0.087120)[0m   [0;1mCOMMIT[0m
+Rendering layoutfalseactionnew within layouts/application
+Rendering events/new
+Rendered events/_form (0.00473)
+Completed in 1.45720 (0 reqs/sec) | Rendering: 0.01924 (1%) | DB: 0.51993 (35%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:55:21) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123436\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 659\r\nto_account_omrl: 669\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;35;1mEvent::AcknowledgeFlow Columns (0.006832)[0m   [0mSHOW FIELDS FROM events[0m
+  [4;36;1mEntity Columns (0.010411)[0m   [0;1mSHOW FIELDS FROM entities[0m
+  [4;35;1mSQL (0.000588)[0m   [0mBEGIN[0m
+  [4;36;1mEntity Load (0.003988)[0m   [0;1mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123436%') LIMIT 1[0m
+  [4;35;1mSQL (0.001351)[0m   [0mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:55:21', NULL, '--- \nname: tx123436\ndescription: some stuff\namount: 10\n', '2007-04-20 13:55:21')[0m
+  [4;36;1mSQL (0.009787)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.002423)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 669) [0m
+  [4;36;1mSQL (0.000528)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Destroy (0.001279)[0m   [0m DELETE FROM entities
+ WHERE `id` = 88
+[0m
+  [4;36;1mSQL (0.005582)[0m   [0;1mCOMMIT[0m
+Rendering layoutfalseactionnew within layouts/application
+Rendering events/new
+Rendered events/_form (0.00208)
+Completed in 0.39368 (2 reqs/sec) | Rendering: 0.01535 (3%) | DB: 0.04277 (10%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:58:21) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123436\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 65\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;35;1mEvent::AcknowledgeFlow Columns (0.010004)[0m   [0mSHOW FIELDS FROM events[0m
+  [4;36;1mEntity Columns (0.019026)[0m   [0;1mSHOW FIELDS FROM entities[0m
+  [4;35;1mSQL (0.000599)[0m   [0mBEGIN[0m
+  [4;36;1mEntity Load (0.002819)[0m   [0;1mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123436%') LIMIT 1[0m
+  [4;35;1mSQL (0.001237)[0m   [0mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:58:21', NULL, '--- \nname: tx123436\ndescription: some stuff\namount: 10\n', '2007-04-20 13:58:21')[0m
+  [4;36;1mSQL (0.008407)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.003027)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;36;1mLink Columns (0.008026)[0m   [0;1mSHOW FIELDS FROM links[0m
+  [4;35;1mLink Load (0.006552)[0m   [0mSELECT * FROM links WHERE (links.entity_id = 66) [0m
+  [4;36;1mSQL (0.000676)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.001901)[0m   [0mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(66, '2007-04-20 13:58:22', 'flow_to', '89', NULL, '2007-04-20 13:58:22')[0m
+  [4;36;1mSQL (0.001372)[0m   [0;1mCOMMIT[0m
+  [4;35;1mEntity Load (0.002465)[0m   [0mSELECT * FROM entities WHERE (entities.`id` = 65) [0m
+  [4;36;1mLink Load (0.003364)[0m   [0;1mSELECT * FROM links WHERE (links.entity_id = 65) [0m
+  [4;35;1mSQL (0.000629)[0m   [0mBEGIN[0m
+  [4;36;1mSQL (0.001017)[0m   [0;1mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(65, '2007-04-20 13:58:22', 'flow_from', '89', NULL, '2007-04-20 13:58:22')[0m
+  [4;35;1mSQL (0.001344)[0m   [0mCOMMIT[0m
+  [4;36;1mEntity Load (0.002440)[0m   [0;1mSELECT * FROM entities WHERE (entities.`id` = 64) [0m
+  [4;35;1mLink Load (0.003856)[0m   [0mSELECT * FROM links WHERE (links.entity_id = 64) [0m
+  [4;36;1mSQL (0.000666)[0m   [0;1mBEGIN[0m
+  [4;35;1mSQL (0.001019)[0m   [0mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(64, '2007-04-20 13:58:22', 'approves', '89', NULL, '2007-04-20 13:58:22')[0m
+  [4;36;1mSQL (0.003792)[0m   [0;1mCOMMIT[0m
+  [4;35;1mSQL (0.000516)[0m   [0mBEGIN[0m
+  [4;36;1mSQL (0.001320)[0m   [0;1mINSERT INTO events (`specification`, `event_type`, `created_at`, `state`) VALUES('specification:\r\n name: tx123436\r\n amount: 10\r\n description: some stuff\r\nfrom_account_omrl: 65\r\nto_account_omrl: 66\r\ncurrency_omrl: 64', 'AcknowledgeFlow', '2007-04-20 13:58:22', NULL)[0m
+  [4;35;1mSQL (0.001366)[0m   [0mCOMMIT[0m
+Redirected to http://localhost:3000/events/16
+Completed in 0.50713 (1 reqs/sec) | DB: 0.08744 (17%) | 302 Found [http://localhost/events]
+
+
+Processing EventsController#show (for 127.0.0.1 at 2007-04-20 13:58:23) [GET]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"action"=>"show", "id"=>"16", "controller"=>"events"}
+  [4;36;1mEvent Columns (0.005831)[0m   [0;1mSHOW FIELDS FROM events[0m
+  [4;35;1mEvent Load (0.004878)[0m   [0mSELECT * FROM events WHERE (events.`id` = 16) [0m
+Rendering content_typetext/htmllayoutfalseactionshow within layouts/application
+Rendering events/show
+Completed in 0.15380 (6 reqs/sec) | Rendering: 0.01528 (9%) | DB: 0.01071 (6%) | 200 OK [http://localhost/events/16]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 13:58:44) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123437\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 659\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;36;1mEvent::AcknowledgeFlow Columns (0.019811)[0m   [0;1mSHOW FIELDS FROM events[0m
+  [4;35;1mEntity Columns (0.013636)[0m   [0mSHOW FIELDS FROM entities[0m
+  [4;36;1mSQL (0.000674)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Load (0.003143)[0m   [0mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123437%') LIMIT 1[0m
+  [4;36;1mSQL (0.001134)[0m   [0;1mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 13:58:45', NULL, '--- \nname: tx123437\ndescription: some stuff\namount: 10\n', '2007-04-20 13:58:45')[0m
+  [4;35;1mSQL (0.009749)[0m   [0mCOMMIT[0m
+  [4;36;1mEntity Load (0.002987)[0m   [0;1mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;35;1mLink Columns (0.105039)[0m   [0mSHOW FIELDS FROM links[0m
+  [4;36;1mLink Load (0.006242)[0m   [0;1mSELECT * FROM links WHERE (links.entity_id = 66) [0m
+  [4;35;1mSQL (0.000644)[0m   [0mBEGIN[0m
+  [4;36;1mSQL (0.001352)[0m   [0;1mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(66, '2007-04-20 13:58:45', 'flow_to', '90', NULL, '2007-04-20 13:58:45')[0m
+  [4;35;1mSQL (0.001401)[0m   [0mCOMMIT[0m
+  [4;36;1mEntity Load (0.003213)[0m   [0;1mSELECT * FROM entities WHERE (entities.`id` = 659) [0m
+  [4;35;1mSQL (0.000639)[0m   [0mBEGIN[0m
+  [4;36;1mEntity Destroy (0.001321)[0m   [0;1m DELETE FROM entities
+ WHERE `id` = 90
+[0m
+  [4;35;1mSQL (0.001311)[0m   [0mCOMMIT[0m
+Rendering layoutfalseactionnew within layouts/application
+Rendering events/new
+Rendered events/_form (0.00267)
+Completed in 0.75821 (1 reqs/sec) | Rendering: 0.02974 (3%) | DB: 0.17230 (22%) | 200 OK [http://localhost/events]
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 14:01:55) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123437\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 659\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+
+
+SyntaxError (./script/../config/../app/models/event.rb:126: odd number list for Hash):
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:203:in `load_without_new_constant_marking'
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:203:in `load_file'
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:342:in `new_constants_in'
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:202:in `load_file'
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:94:in `require_or_load'
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:248:in `load_missing_constant'
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:452:in `const_missing'
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:464:in `const_missing'
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:260:in `load_missing_constant'
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:468:in `const_missing'
+    .//app/controllers/events_controller.rb:43:in `create'
+    /usr/local/lib/ruby/gems/1.8/gems/actionpack-1.13.3/lib/action_controller/base.rb:1095:in `send'
+    /usr/local/lib/ruby/gems/1.8/gems/actionpack-1.13.3/lib/action_controller/base.rb:1095:in `perform_action_without_filters'
+    /usr/local/lib/ruby/gems/1.8/gems/actionpack-1.13.3/lib/action_controller/filters.rb:632:in `call_filter'
+    /usr/local/lib/ruby/gems/1.8/gems/actionpack-1.13.3/lib/action_controller/filters.rb:619:in `perform_action_without_benchmark'
+    /usr/local/lib/ruby/gems/1.8/gems/actionpack-1.13.3/lib/action_controller/benchmarking.rb:66:in `perform_action_without_rescue'
+    /usr/local/lib/ruby/1.8/benchmark.rb:293:in `measure'
+    /usr/local/lib/ruby/gems/1.8/gems/actionpack-1.13.3/lib/action_controller/benchmarking.rb:66:in `perform_action_without_rescue'
+    /usr/local/lib/ruby/gems/1.8/gems/actionpack-1.13.3/lib/action_controller/rescue.rb:83:in `perform_action'
+    /usr/local/lib/ruby/gems/1.8/gems/actionpack-1.13.3/lib/action_controller/base.rb:430:in `send'
+    /usr/local/lib/ruby/gems/1.8/gems/actionpack-1.13.3/lib/action_controller/base.rb:430:in `process_without_filters'
+    /usr/local/lib/ruby/gems/1.8/gems/actionpack-1.13.3/lib/action_controller/filters.rb:624:in `process_without_session_management_support'
+    /usr/local/lib/ruby/gems/1.8/gems/actionpack-1.13.3/lib/action_controller/session_management.rb:114:in `process'
+    /usr/local/lib/ruby/gems/1.8/gems/actionpack-1.13.3/lib/action_controller/base.rb:330:in `process'
+    /usr/local/lib/ruby/gems/1.8/gems/rails-1.2.3/lib/dispatcher.rb:41:in `dispatch'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel/rails.rb:78:in `process'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel/rails.rb:76:in `synchronize'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel/rails.rb:76:in `process'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel.rb:618:in `process_client'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel.rb:617:in `each'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel.rb:617:in `process_client'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel.rb:736:in `run'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel.rb:736:in `initialize'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel.rb:736:in `new'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel.rb:736:in `run'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel.rb:720:in `initialize'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel.rb:720:in `new'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel.rb:720:in `run'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel/configurator.rb:271:in `run'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel/configurator.rb:270:in `each'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel/configurator.rb:270:in `run'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/bin/mongrel_rails:127:in `run'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/lib/mongrel/command.rb:211:in `run'
+    /usr/local/lib/ruby/gems/1.8/gems/mongrel-1.0.1/bin/mongrel_rails:243
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:488:in `load'
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:488:in `load'
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:342:in `new_constants_in'
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:488:in `load'
+    /usr/local/lib/ruby/gems/1.8/gems/rails-1.2.3/lib/commands/servers/mongrel.rb:60
+    /usr/local/lib/ruby/site_ruby/1.8/rubygems/custom_require.rb:27:in `gem_original_require'
+    /usr/local/lib/ruby/site_ruby/1.8/rubygems/custom_require.rb:27:in `require'
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:495:in `require'
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:342:in `new_constants_in'
+    /usr/local/lib/ruby/gems/1.8/gems/activesupport-1.4.2/lib/active_support/dependencies.rb:495:in `require'
+    /usr/local/lib/ruby/gems/1.8/gems/rails-1.2.3/lib/commands/server.rb:39
+    /usr/local/lib/ruby/site_ruby/1.8/rubygems/custom_require.rb:27:in `gem_original_require'
+    /usr/local/lib/ruby/site_ruby/1.8/rubygems/custom_require.rb:27:in `require'
+    script/server:3
+
+
+Rendering /usr/local/lib/ruby/gems/1.8/gems/actionpack-1.13.3/lib/action_controller/templates/rescues/layout.rhtml (500 Internal Error)
+
+
+Processing EventsController#create (for 127.0.0.1 at 2007-04-20 14:03:53) [POST]
+  Session ID: 6c32bf5f9bc419a7fe332e8395f1123a
+  Parameters: {"commit"=>"Create", "event"=>{"specification"=>"specification:\r\n  name: tx123437\r\n  amount: 10\r\n  description: some stuff\r\nfrom_account_omrl: 659\r\nto_account_omrl: 66\r\ncurrency_omrl: 64", "event_type"=>"AcknowledgeFlow"}, "action"=>"create", "controller"=>"events"}
+  [4;36;1mEvent::AcknowledgeFlow Columns (0.007177)[0m   [0;1mSHOW FIELDS FROM events[0m
+  [4;35;1mEntity Columns (0.022245)[0m   [0mSHOW FIELDS FROM entities[0m
+  [4;36;1mSQL (0.000621)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Load (0.014659)[0m   [0mSELECT * FROM entities WHERE (entity_type = 'flow' and specification like '%name: tx123437%') LIMIT 1[0m
+  [4;36;1mSQL (0.002023)[0m   [0;1mINSERT INTO entities (`entity_type`, `updated_at`, `access_control`, `specification`, `created_at`) VALUES('flow', '2007-04-20 14:03:54', NULL, '--- \nname: tx123437\ndescription: some stuff\namount: 10\n', '2007-04-20 14:03:54')[0m
+  [4;35;1mSQL (0.014600)[0m   [0mCOMMIT[0m
+  [4;36;1mEntity Load (0.161782)[0m   [0;1mSELECT * FROM entities WHERE (entities.`id` = 66) [0m
+  [4;35;1mLink Columns (0.009390)[0m   [0mSHOW FIELDS FROM links[0m
+  [4;36;1mLink Load (0.004074)[0m   [0;1mSELECT * FROM links WHERE (links.entity_id = 66) [0m
+  [4;35;1mSQL (0.000574)[0m   [0mBEGIN[0m
+  [4;36;1mSQL (0.002204)[0m   [0;1mINSERT INTO links (`entity_id`, `updated_at`, `link_type`, `omrl`, `signature`, `created_at`) VALUES(66, '2007-04-20 14:03:54', 'flow_to', '91', NULL, '2007-04-20 14:03:54')[0m
+  [4;35;1mSQL (0.214050)[0m   [0mCOMMIT[0m
+  [4;36;1mEntity Load (0.002181)[0m   [0;1mSELECT * FROM entities WHERE (entities.`id` = 659) [0m
+  [4;35;1mSQL (0.000580)[0m   [0mBEGIN[0m
+  [4;36;1mLink Destroy (0.002142)[0m   [0;1m DELETE FROM links
+ WHERE `id` = 36
+[0m
+  [4;35;1mSQL (0.004180)[0m   [0mCOMMIT[0m
+  [4;36;1mSQL (0.001073)[0m   [0;1mBEGIN[0m
+  [4;35;1mEntity Destroy (0.001231)[0m   [0m DELETE FROM entities
+ WHERE `id` = 91
+[0m
+  [4;36;1mSQL (0.001716)[0m   [0;1mCOMMIT[0m
+Rendering layoutfalseactionnew within layouts/application
+Rendering events/new
+Rendered events/_form (0.00233)
+Completed in 1.31295 (0 reqs/sec) | Rendering: 0.02481 (1%) | DB: 0.46650 (35%) | 200 OK [http://localhost/events]

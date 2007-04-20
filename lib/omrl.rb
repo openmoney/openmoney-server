@@ -12,11 +12,12 @@
 # additionally omrls can be absolute or relative.  i.e. a relative open money number is just a number (i.e. an id)
 # and a relative openmoney name is just text followed by ~ or ^ to distinguish between accounts and currencies
 
-OM_NUM = :num
-OM_NAME = :name
-OM_URL = :url
 
 class OMRL
+  OM_NUM = :num
+  OM_NAME = :name
+  OM_URL = :url
+
   attr_reader :omrl
   def initialize(o = '')
     @omrl = o.to_s  #since a plain number is a valid omrl we always covert all input to a string
@@ -29,7 +30,7 @@ class OMRL
     @omrl = o
   end
   
-  #returns the type as a symbol :om_num, :url or :om_name
+  #returns the type as one of the constants :om_num, :url or :om_name
   def type
     return @type if @type != nil #return cached value
     @type = case @omrl

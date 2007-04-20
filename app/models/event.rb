@@ -123,7 +123,7 @@ class Event < ActiveRecord::Base
             'currency_omrl'=>'approves',
             }.each {|from_omrl,link_type| links << create_link(@specification[from_omrl],entity_omrl,link_type)}
         rescue Exception => e
-          links.each |link| link.destroy
+          links.each {|link| link.destroy}
           raise e
         end
         
@@ -145,6 +145,7 @@ protected
       end
       link
     else
+      raise "#{omrl.url} not local"
       Post.new(omrl.url << '/links',link_params)
     end
   end
