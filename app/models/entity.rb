@@ -5,8 +5,32 @@
 ######################################################################################
 
 class Entity < ActiveRecord::Base
-  has_many :links
   include Specification
+  has_many :links, :before_add => :link_allowed
+
+  ######################################################################################
+  # this is a factory method that creates Entities of the correct type if they have been
+  # subclassed, otherwise it raises an exception
+  def self.create(params)
+    class_name = "Entity::#{params[:entity_type]}"
+    begin
+      class_name.constantize.new(params)
+    rescue Exception => e
+      raise "Unknown entity type: #{params[:entity_type,]} (#{e.to_s})"
+    end
+  end
+
+  ######################################################################################
+  # before adding a link to an entity, we have to let the entity have a crack at 
+  # agreeing to the link
+  def link_allowed(link)
+    typed_entity = Entity.create({:entity_type => entity_type, :specification =>specification})
+    if not typed_entity.allow_link?(link) 
+      errors.add(:base,"link not allowed: #{@link_error}")
+    end
+  end
+  
+  ######################################################################################
   # access control should never be visible when converting to xml
   def to_xml(options = {})
      options[:except] ||= []
@@ -14,6 +38,7 @@ class Entity < ActiveRecord::Base
      super(options)
   end
   
+  ######################################################################################
   def validate_on_create
     validate_specification({'name' => :required})
     if @specification
@@ -28,6 +53,8 @@ class Entity < ActiveRecord::Base
     end
   end
   
+  ######################################################################################
+  # return an omrl for this entity
   def omrl(type = OMRL::OM_NAME,relative = true)
     case type
     when OMRL::OM_URL
@@ -48,9 +75,10 @@ class Entity < ActiveRecord::Base
   def attribute(attrib)
     load_specification
     @specification[attrib]
-  end
+  end  
   
-  
+  ######################################################################################
+  # CLASS METHODS
   ######################################################################################
   # class method to return a named entity optionally of a given type
   # NOTE: This may change because the
@@ -71,5 +99,36 @@ class Entity < ActiveRecord::Base
     e = Entity.find(id)
     e.name
   end
+  
+  ######################################################################################
+  # Entity class types
+  ######################################################################################
+  class Account < Entity
+    def allow_link?
+      @link_error = "account link error"
+    end
+  end
+
+  ######################################################################################
+  class Currency < Entity
+    def allow_link?
+      @link_error = "currency link error"
+    end
+  end
+
+  ######################################################################################
+  class Flow < Entity
+    def allow_link?
+      @link_error = "flow link error"
+    end
+  end
+
+  ######################################################################################
+  class Context < Entity
+    def allow_link?
+      @link_error = "context link error"
+    end
+  end
+  
 end
 

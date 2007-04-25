@@ -42,7 +42,7 @@ class EventsController < ApplicationController
   def create
     @event = Event.create(params[:event])
     respond_to do |format|
-      # I need to add something here to make enmeshment unwind if the event.save fails.
+      # TODO: need to add something here to make enmeshment unwind if the event.save fails.
       # perhaps even merging the two
       if @event.enmesh && @event.save
         flash[:notice] = 'Event was successfully created.'

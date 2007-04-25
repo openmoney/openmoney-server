@@ -142,7 +142,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     e.entity_type.should == "flow"
   end
   
-  specify "enmeshing a repeat joincurrency event should fail" do
+  specify "enmeshing a repeat JoinCurrency event should fail" do
     e = Event.create({
       :event_type => "JoinCurrency",
       :specification => <<-eos
@@ -154,6 +154,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     e.errors.full_messages.should_not == []
     enmesh_result.should be_false
   end
+  
   specify "creating a ca context should fail validation" do
     e = Entity.new({
       :entity_type => "context",
