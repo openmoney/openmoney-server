@@ -21,14 +21,14 @@ class Entity < ActiveRecord::Base
       if (!n || n == "") 
         errors.add(:specification,"'name:' is required")
       else
-        if find_named_entity(n,entity_type)
+        if Entity.find_named_entity(n,entity_type)
           errors.add(:specification,"name '#{n}' already exists")
         end
       end
     end
   end
   
-  def omrl(type = OMRL::OM_NUM,relative = true)
+  def omrl(type = OMRL::OM_NAME,relative = true)
     case type
     when OMRL::OM_URL
       "/entities/#{self.id}"
@@ -38,8 +38,23 @@ class Entity < ActiveRecord::Base
       @specification['name']
     end
   end
-  private
-
+  
+  ######################################################################################
+  # returns the name of the entity
+  def name
+    attribute("name")
+  end
+  
+  def attribute(attrib)
+    load_specification
+    @specification[attrib]
+  end
+  
+  
+  ######################################################################################
+  # class method to return a named entity optionally of a given type
+  # NOTE: This may change because the
+  # name may be moved to being a column of entity rather than part of the yaml spec block.
   def Entity.find_named_entity(name,entity_type=nil)
     if (entity_type) 
       conditions = ["entity_type = ? and specification like ?", entity_type,"%name: #{name}%"]
@@ -47,6 +62,14 @@ class Entity < ActiveRecord::Base
       conditions = ["specification like ?", "%name: #{name}%"]
     end
     Entity.find(:first, :conditions => conditions)
+  end
+  
+  ######################################################################################
+  # class method to return a the name of a know entity.  NOTE:This may change because the
+  # name may be moved to being a column of entity rather than part of the yaml spec block.
+  def Entity.get_entity_name(id)
+    e = Entity.find(id)
+    e.name
   end
 end
 

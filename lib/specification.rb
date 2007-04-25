@@ -20,9 +20,7 @@ module Specification
   def validate_specification(validations,attribute_name = :specification)
     unless @specification
       begin
-        #TODO: we need magic here to use the value of attribute_name instead of
-        # assuming that the attribute is called "specification"
-        @specification = YAML.load(specification) 
+        load_specification(attribute_name)
       rescue Exception => e
         errors.add(attribute_name,"specification does not appear to be valid YAML (#{e.to_s})")
       end
@@ -37,5 +35,16 @@ module Specification
       end
     end
   end
+  
+  ######################################################################################
+  # loads the yaml specification into a hash
+  def load_specification(attribute_name = :specification)
+    unless @specification
+      #TODO: we need magic here to use the value of attribute_name instead of
+      # assuming that the attribute is called "specification"
+      @specification = YAML.load(specification) 
+    end
+  end
+  
   
 end

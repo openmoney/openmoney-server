@@ -25,6 +25,8 @@ class OMRL
     @omrl = o.to_s  #since a plain number is a valid omrl we always covert all input to a string
     @type = nil
     @url = nil
+    @num = nil
+    @name = nil
     @local = nil
   end
   
@@ -76,7 +78,7 @@ class OMRL
   #  return the URL for this omrl by resolving it
   def url
     return @url if @url != nil #return cached value
-    @url = resolve_to_url
+    @url = resolve_to_url()
   end
 
   ######################################################################################
@@ -91,12 +93,22 @@ class OMRL
         raise "unable to convert a URL omrl to an OM_NUM [for omrl #{@omrl}]"
       end
     when OM_NUM
-      @omrl
+      @num = @omrl
     when OM_NAME
       @num = resolve_name_to_num(@omrl)
     end
   end
-  
+  ######################################################################################
+  def name
+    return @name if @name != nil #return cached value
+    case type
+    when OM_URL, OM_NUM
+      @name = Entity.get_entity_name(num)
+    when OM_NAME
+      @name = @omrl
+    end
+  end
+
   private
   
   ######################################################################################
@@ -108,26 +120,26 @@ class OMRL
     when OM_NUM
       resolve_num_to_url(@omrl)
     when OM_NAME
-      resolve_num_to_url(num(@omrl))
+      resolve_num_to_url(num)
     end
   end
   
   ######################################################################################
   def resolve_num_to_url(om_num)
-    return '' if @omrl == ''
-    return "/entities/#@omrl" if @omrl =~ /^\d+$/
-    raise "resolve_num_to_url not implemented for external om nums! [omrl #{@omrl}]"
+    return '' if om_num == ''
+    return "/entities/#{om_num}" if om_num =~ /^\d+$/
+    raise "resolve_num_to_url not implemented for external om nums! [omrl #{@omrl} = num #{om_num}]"
   end
   
-  def resolve_name_to_num(om_num)
-    return '' if @omrl == ''
+  def resolve_name_to_num(om_name)
+    return '' if om_name == ''
     begin
-      e = Entity.find_named_entity(@omrl)
+      e = Entity.find_named_entity(om_name)
       @local = e
       e.id.to_s
     rescue   ActiveRecord::RecordNotFound
       @local = false
-      raise "resolve_name_to_num not implemented! for non local omrl #{@omrl}"
+      raise "resolve_name_to_num not implemented! for non local omrl #{@omrl} name=#{om_name}"
     end
   end
 end

@@ -24,6 +24,9 @@ context "An OM_NAME omrl" do
   specify "should convert to a num" do
     @omrl.num.should == "4"
   end
+  specify "should convert to a url" do
+    @omrl.url.should == "/entities/4"
+  end
 end
 
 context "An OM_NUM omrl" do
@@ -36,17 +39,29 @@ context "An OM_NUM omrl" do
   specify "should convert to a num" do
     @omrl.num.should == "1"
   end
+  specify "should convert to a name" do
+    @omrl.name.should == "ca"
+  end
+  specify "should convert to a url" do
+    @omrl.url.should == "/entities/1"
+  end
 end
 
 context "An OM_URL omrl" do
   setup do
-    @omrl = OMRL.new("/entities/1")
+    @omrl = OMRL.new("/entities/5")
   end
   specify "should be of type OM_URL" do
     @omrl.type.should == OMRL::OM_URL
   end
+  specify "should convert to a name" do
+    @omrl.name.should == "mwl"
+  end
   specify "should convert to a num" do
-    @omrl.num.should == "1"
+    @omrl.num.should == "5"
+  end
+  specify "should convert to a url" do
+    @omrl.url.should == "/entities/5"
   end
 end
 

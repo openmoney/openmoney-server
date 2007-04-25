@@ -33,7 +33,7 @@ class Event < ActiveRecord::Base
   # the abstract act of enmeshing is simply to validate the specification of the event
   # and then (if it's valid) to yeild to the block which which can add further errors
   # if it wants.
-  def enmesh(validations,attribute_name = :specification)
+  def _enmesh(validations,attribute_name = :specification)
     validate_specification(validations,attribute_name)
     if errors.empty? 
       errs = []
@@ -50,7 +50,7 @@ class Event < ActiveRecord::Base
   # the entity record.  If the creation of the entity is succesfull it in turns yields
   # to the callers block which can do something with the created entity.
   class CreateEvent < Event
-    def enmesh(entity_type,validations)
+    def _enmesh(entity_type,validations)
       validations ||= {'specification' => :required}
       super(validations) do |errs|
         entity = Entity.new({:entity_type => entity_type,:specification => @specification['specification'].to_yaml})
@@ -73,7 +73,7 @@ class Event < ActiveRecord::Base
     # to include the parent entities omrl.  It also implements the block which
     # links the new entity to the parent entity
     def enmesh_parent_omrl(entity_type)
-      enmesh(entity_type,{'specification' => :required, 'parent_omrl' => :required}) {|entity| create_link(@specification['parent_omrl'],entity.omrl,'named_in')}
+      _enmesh(entity_type,{'specification' => :required, 'parent_omrl' => :required}) {|entity| create_link(@specification['parent_omrl'],entity.omrl,'named_in')}
     end
   end
 
@@ -101,7 +101,7 @@ class Event < ActiveRecord::Base
   ######################################################################################
   class JoinCurrency < Event
     def enmesh
-      super({'account_omrl' => :required, 'currency_omrl' => :required}) do |errs|
+      _enmesh({'account_omrl' => :required, 'currency_omrl' => :required}) do |errs|
         begin
           create_link(@specification['currency_omrl'],@specification['account_omrl'],'uses')
         rescue Exception => e
@@ -114,7 +114,7 @@ class Event < ActiveRecord::Base
   ######################################################################################
   class AcknowledgeFlow < CreateEvent
     def enmesh
-      super('flow',{'specification' => :required,'from_account_omrl' => :required,'to_account_omrl' => :required,'currency_omrl' => :required}) do |entity|
+      _enmesh('flow',{'specification' => :required,'from_account_omrl' => :required,'to_account_omrl' => :required,'currency_omrl' => :required}) do |entity|
         links = []
         begin
           entity_omrl = entity.omrl

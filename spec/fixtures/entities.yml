@@ -1,6 +1,14 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-context_ca:
+context_root:
   id: 1
+  created_at: 2007-03-14 11:11:40
+  updated_at: 2007-03-14 11:11:40
+  entity_type: context
+  access_control: 
+  specification: 
+      name: root
+context_ca:
+  id: 2
   created_at: 2007-03-14 11:11:40
   updated_at: 2007-03-14 11:11:40
   entity_type: context
@@ -8,7 +16,7 @@ context_ca:
   specification: 
       name: ca
 context_us:
-  id: 2
+  id: 3
   created_at: 2007-03-14 11:11:40
   updated_at: 2007-03-14 11:11:40
   entity_type: context
@@ -16,7 +24,7 @@ context_us:
   specification: 
       name: us
 currency_bucks:
-  id: 3
+  id: 4
   created_at: 2007-03-14 11:11:40
   updated_at: 2007-03-14 11:11:40
   entity_type: currency
@@ -24,7 +32,7 @@ currency_bucks:
   specification: 
     name: bucks
 account_zippy:
-  id: 4
+  id: 5
   created_at: 2007-03-14 11:11:40
   updated_at: 2007-03-14 11:11:40
   entity_type: account
@@ -32,7 +40,7 @@ account_zippy:
   specification:
     name: zippy
 account_mwl:
-  id: 5
+  id: 6
   created_at: 2007-03-14 11:11:40
   updated_at: 2007-03-14 11:11:40
   entity_type: account
@@ -40,7 +48,7 @@ account_mwl:
   specification:
     name: mwl
 flow_tx1:
-  id: 6
+  id: 7
   created_at: 2007-03-14 11:11:40
   updated_at: 2007-03-14 11:11:40
   entity_type: flow

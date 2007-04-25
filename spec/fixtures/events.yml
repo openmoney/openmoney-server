@@ -1,23 +1,75 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-create_mwl_account:
+create_canada_context:
   id: 1
-  created_at: "" 
+  created_at: 2007-03-14 11:11:40
+  event_type: "CreateContext"
+  specification:
+    specification:
+        name: ca
+    parent_omrl: root
+  state:
+create_us_context:
+  id: 2
+  created_at: 2007-03-14 11:11:40
+  event_type: "CreateContext"
+  specification:
+    specification:
+        name: us
+    parent_omrl: root
+  state:
+create_mwl_account:
+  id: 3
+  created_at: 2007-03-14 11:11:40
   event_type: "CreateAccount"
   specification:
-    specificaton:
+    specification:
         name: mwl
-        parent_omrl: 63
+    parent_omrl: ca
   state:
-ack_flow:
-  id: 2
-  created_at: "" 
+create_zippy_account:
+  id: 4
+  created_at: 2007-03-14 11:11:40
+  event_type: "CreateAccount"
+  specification:
+    specification:
+        name: zippy
+    parent_omrl: us
+  state:
+create_bucks_currency:
+  id: 5
+  created_at: 2007-03-14 11:11:40
+  event_type: "CreateCurrency"
+  specification:
+    specification:
+        name: bucks
+    parent_omrl: us
+  state:
+join_bucks_zippy:
+  id: 6
+  created_at: 2007-03-14 11:11:40
+  event_type: "JoinCurrency"
+  specification:
+    currency_omrl: bucks
+    account_omrl: zippy
+  state:
+join_bucks_mwl:
+  id: 7
+  created_at: 2007-03-14 11:11:40
+  event_type: "JoinCurrency"
+  specification:
+    currency_omrl: bucks
+    account_omrl: mwl
+  state:
+ack_flow_zippy_mwl_in_bucks:
+  id: 8
+  created_at: 2007-03-14 11:11:40
   event_type: "AcknowledgeFlow"
   specification:
-    specificaton:
-        name: tx123432 
+    specification:
+        name: tx1 
         amount: 10 
         description: some stuff
-    from_account_omrl: 65 
-    to_account_omrl: 66 
-    currency_omrl: 64
+    from_account_omrl: zippy
+    to_account_omrl: mwl
+    currency_omrl: bucks
   state:
