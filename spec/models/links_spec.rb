@@ -36,13 +36,12 @@ context "linking entities" do
     }.each { |link_type,to_entity| lambda {create_link(from_omrl,to_entity,link_type)}.should raise_error}
   end
 
-  specify "should only link from currency with: named_id, approves, created_by, managed_by, uses link" do
+  specify "should only link from currency with: approves, created_by, managed_by, uses link" do
     from_omrl = "bucks"
-    { "named_in"=>"us",
-      "approves"=>"tx1",
+    { "approves"=>"tx1",
       "created_by"=>"mwl",
       "managed_by"=>"zippy",
-      "uses"=>"account"
+      "uses"=>"zippy"
       }.each { |link_type,to_entity| lambda {create_link(from_omrl,to_entity,link_type)}.should_not raise_error}
     { "flow_to"=>"tx1",
       "flow_from"=>"tx1",

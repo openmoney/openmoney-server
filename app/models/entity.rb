@@ -106,13 +106,19 @@ class Entity < ActiveRecord::Base
     e = Entity.find(id)
     e.name
   end
+
+  ######################################################################################
+  # class method to find an entity by omrl
+  def Entity.find_entity_by_omrl(o)
+    OMRL.new(o).local?
+  end
   
   ######################################################################################
   # Entity class types
   ######################################################################################
   class Context < Entity
     def allow_link?(link)
-      return false if not link_type_err_check(%W(named_in approves managed_by created_by),link)
+      return false if not link_type_err_check({"approves"=>"flow", "named_in"=>["account","context"], "managed_by"=>"account", "created_by"=>"account"},link)
       true
     end
   end
@@ -120,7 +126,7 @@ class Entity < ActiveRecord::Base
   ######################################################################################
   class Account < Entity
     def allow_link?(link)
-      return false if not link_type_err_check(%W(flow_from flow_to),link)
+      return false if not link_type_err_check({"flow_from"=>"flow","flow_to"=>"flow"},link)
       true
     end
   end
@@ -128,7 +134,7 @@ class Entity < ActiveRecord::Base
   ######################################################################################
   class Currency < Entity
     def allow_link?(link)
-      return false if not link_type_err_check(%W(named_in approves uses managed_by created_by),link)
+      return false if not link_type_err_check({"approves"=>"flow", "uses"=>"account", "managed_by"=>"account", "created_by"=>"account"},link)
       true
     end
   end
@@ -143,10 +149,21 @@ class Entity < ActiveRecord::Base
 
   ######################################################################################
   protected
-  def link_type_err_check(valid_type_list,link)
-    if not valid_type_list.include?(link.link_type)
-      @link_error = "improper link type: #{link.link_type}"
+  def link_type_err_check(valid_type_map,link)
+    if not valid_type_map.include?(link.link_type)
+      @link_error = "improper link type: #{link.link_type} for #{entity_type}"
       return false
+    else
+      valid_link_to_entity_types = valid_type_map[link.link_type]
+      if valid_link_to_entity_types.class != Array
+        valid_link_to_entity_types = [valid_link_to_entity_types]
+      end
+      #TODO this will fail for non-local omrls
+      link_to_entity_type = Entity.find_entity_by_omrl(link.omrl).entity_type
+      if not valid_link_to_entity_types.include?(link_to_entity_type)
+        @link_error = "improper entity type #{link_to_entity_type} to link to via #{link.link_type}"
+        return false
+      end
     end
     return true
   end
