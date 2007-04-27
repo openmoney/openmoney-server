@@ -16,7 +16,7 @@ context "linking entities" do
     }.each { |link_type,to_entity| lambda {create_link(from_omrl,to_entity,link_type)}.should_not raise_error}
     { "uses" => "bucks",
       "flow_to"=>"tx1",
-      "flow_from"=>"tx1",
+      "flow_from"=>"tx1"
     }.each { |link_type,to_entity| lambda {create_link(from_omrl,to_entity,link_type)}.should raise_error}
   end
   specify "linking context to the wrong type of entity should fail" do
@@ -32,7 +32,7 @@ context "linking entities" do
       "created_by"=>"tx1",
       "managed_by"=>"us",
       "managed_by"=>"bucks",
-      "managed_by"=>"tx1",
+      "managed_by"=>"tx1"
     }.each { |link_type,to_entity| lambda {create_link(from_omrl,to_entity,link_type)}.should raise_error}
   end
 
@@ -85,7 +85,7 @@ context "linking entities" do
     from_omrl = "mwl"
     { "flow_from"=>"ca",
       "flow_from"=>"bucks",
-      "flow_to"=>"ca"
+      "flow_to"=>"ca",
       "flow_to"=>"bucks"
     }.each { |link_type,to_entity| lambda {create_link(from_omrl,to_entity,link_type)}.should raise_error}
   end
