@@ -5,7 +5,7 @@ create_canada_context:
   event_type: "CreateContext"
   specification:
     specification:
-        name: ca
+      name: ca
     parent_omrl: root
   state:
 create_us_context:
@@ -14,7 +14,7 @@ create_us_context:
   event_type: "CreateContext"
   specification:
     specification:
-        name: us
+      name: us
     parent_omrl: root
   state:
 create_mwl_account:

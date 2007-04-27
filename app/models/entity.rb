@@ -8,15 +8,19 @@ class Entity < ActiveRecord::Base
   include Specification
   has_many :links, :before_add => :link_allowed
 
+  def link_error
+    @link_error
+  end
+
   ######################################################################################
   # this is a factory method that creates Entities of the correct type if they have been
   # subclassed, otherwise it raises an exception
   def self.create(params)
-    class_name = "Entity::#{params[:entity_type]}"
+    class_name = "Entity::#{params[:entity_type].capitalize}"
     begin
       class_name.constantize.new(params)
     rescue Exception => e
-      raise "Unknown entity type: #{params[:entity_type,]} (#{e.to_s})"
+      raise "Unknown entity type: #{params[:entity_type]} (#{e.to_s})"
     end
   end
 
@@ -25,9 +29,12 @@ class Entity < ActiveRecord::Base
   # agreeing to the link
   def link_allowed(link)
     typed_entity = Entity.create({:entity_type => entity_type, :specification =>specification})
-    if not typed_entity.allow_link?(link) 
-      errors.add(:base,"link not allowed: #{@link_error}")
+    if !typed_entity.allow_link?(link) 
+      err = "link not allowed: #{typed_entity.link_error}"
+      errors.add_to_base(err)
+      raise err
     end
+    true
   end
   
   ######################################################################################
@@ -103,32 +110,45 @@ class Entity < ActiveRecord::Base
   ######################################################################################
   # Entity class types
   ######################################################################################
+  class Context < Entity
+    def allow_link?(link)
+      return false if not link_type_err_check(%W(named_in approves managed_by created_by),link)
+      true
+    end
+  end
+  
+  ######################################################################################
   class Account < Entity
-    def allow_link?
-      @link_error = "account link error"
+    def allow_link?(link)
+      return false if not link_type_err_check(%W(flow_from flow_to),link)
+      true
     end
   end
 
   ######################################################################################
   class Currency < Entity
-    def allow_link?
-      @link_error = "currency link error"
+    def allow_link?(link)
+      return false if not link_type_err_check(%W(named_in approves uses managed_by created_by),link)
+      true
     end
   end
 
   ######################################################################################
   class Flow < Entity
-    def allow_link?
-      @link_error = "flow link error"
+    #flows aren't linked to anything, things are linked to flows
+    def allow_link?(link)
+      false 
     end
   end
 
   ######################################################################################
-  class Context < Entity
-    def allow_link?
-      @link_error = "context link error"
+  protected
+  def link_type_err_check(valid_type_list,link)
+    if not valid_type_list.include?(link.link_type)
+      @link_error = "improper link type: #{link.link_type}"
+      return false
     end
+    return true
   end
-  
 end
 
