@@ -5,8 +5,14 @@
 ######################################################################################
 
 class Entity < ActiveRecord::Base
+
+  Types = %w(context account currency flow)
+
   include Specification
   has_many :links, :before_add => :link_allowed
+  
+  validates_inclusion_of :entity_type, :in => Types
+
 
   def link_error
     @link_error
@@ -118,7 +124,7 @@ class Entity < ActiveRecord::Base
   ######################################################################################
   class Context < Entity
     def allow_link?(link)
-      return false if not link_type_err_check({"approves"=>"flow", "named_in"=>["account","context"], "managed_by"=>"account", "created_by"=>"account"},link)
+      return false if not link_type_err_check({"approves"=>"flow", "named_in"=>["account","context","currency"], "managed_by"=>"account", "created_by"=>"account"},link)
       true
     end
   end
@@ -151,7 +157,7 @@ class Entity < ActiveRecord::Base
   protected
   def link_type_err_check(valid_type_map,link)
     if not valid_type_map.include?(link.link_type)
-      @link_error = "improper link type: #{link.link_type} for #{entity_type}"
+      @link_error = "improper link type (#{link.link_type}) for #{entity_type}"
       return false
     else
       valid_link_to_entity_types = valid_type_map[link.link_type]
@@ -161,7 +167,7 @@ class Entity < ActiveRecord::Base
       #TODO this will fail for non-local omrls
       link_to_entity_type = Entity.find_entity_by_omrl(link.omrl).entity_type
       if not valid_link_to_entity_types.include?(link_to_entity_type)
-        @link_error = "improper entity type #{link_to_entity_type} to link to via #{link.link_type}"
+        @link_error = "improper entity type (#{link_to_entity_type}) to link to via #{link.link_type}"
         return false
       end
     end

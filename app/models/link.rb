@@ -5,7 +5,11 @@
 ######################################################################################
 
 class Link < ActiveRecord::Base
+
+  Types = %w(named_in approves created_by managed_by flow_to flow_from uses)
+
   belongs_to :entity
+  validates_inclusion_of :link_type, :in => Types
   
   def omrl_url
     o = OMRL.new(omrl)

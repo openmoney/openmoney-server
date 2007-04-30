@@ -141,7 +141,7 @@ protected
     if (from_entity) 
       link = Link.new(link_params)
       unless from_entity.links << link
-        raise "couldn't create the link!"
+        raise "couldn't create the link! #{link.errors.full_messages.join(',')}"
       end
       link
     else

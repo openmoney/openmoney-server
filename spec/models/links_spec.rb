@@ -3,10 +3,6 @@ require File.dirname(__FILE__) + '/../spec_helper'
 context "linking entities" do
   fixtures :entities
   
-  setup do
-    @link_types = %W(named_in approves created_by managed_by flow_to flow_from)
-  end
-
   specify "should only link from context with: named_id, approves, created_by, managed_by link" do
     from_omrl = "ca"
     { "named_in"=>"root",
@@ -90,7 +86,7 @@ context "linking entities" do
   end
 
   specify "should always fail if linking from flow" do
-    @link_types.each { |link_type| lambda {create_link("tx1","ca",link_type)}.should raise_error  }
+    Link::Types.each { |link_type| lambda {create_link("tx1","ca",link_type)}.should raise_error  }
   end
       
 end

@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/../spec_helper'
-
+require 'pp'
 module EventSpecHelper
   def valid_attributes
     { :event_type => 'CreateAccount',
@@ -66,7 +66,7 @@ eos
     
 end
 
-context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks currency and tx1 flow in bucks from zippy to mwl" do
+context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks currency and tx1 flow in bucks from zippy to mwl, THEN:" do
   fixtures :events
 
   setup do
@@ -76,7 +76,10 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
       evt = Event.create({:event_type => event.event_type,:specification => event.specification})
       evt.enmesh
 #      puts "specification: "<<event.specification
-      puts "ERROR: #{evt.errors.full_messages.join(",")}" if !evt.errors.empty?
+      if !evt.errors.empty?
+        puts "ERROR: enmeshing event #{evt.errors.full_messages.join(",")} \n" 
+        pp evt
+      end
     end
   end
 
