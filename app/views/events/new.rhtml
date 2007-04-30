@@ -2,11 +2,11 @@
 
 <%= error_messages_for :event %>
 
-<% form_for(:event, :url => events_path) do |f| %>
+<% form_for(:event, :url => events_path, :html => { :name => 'event'}) do |f| %>
 
   <%= render(:partial => 'form', :object => f) %>
   <p>
-    <%= submit_tag "Create" %>
+    <%= submit_tag "Add Event to Churn" %>
   </p>
 <% end %>
 
