@@ -144,7 +144,27 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     Entity.get_entity_name(e.id).should == e.name
     e.entity_type.should == "flow"
   end
+    
+  specify "creating a ca context should fail validation (dup)" do
+    e = Entity.new({
+      :entity_type => "context",
+      :specification => <<-eos
+        name: ca
+        eos
+    })
+    e.should_not be_valid
+  end
   
+  specify "creating an ecuador context should be valid" do
+    e = Entity.new({
+      :entity_type => "context",
+      :specification => <<-eos
+        name: ec
+        eos
+    })
+    e.should be_valid
+  end
+
   specify "enmeshing a repeat JoinCurrency event should fail" do
     e = Event.create({
       :event_type => "JoinCurrency",
@@ -154,28 +174,10 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
   eos
       })
     enmesh_result = e.enmesh
-    e.errors.full_messages.should_not == []
+    e.errors.full_messages.should == ["Specification - enmeshing error: duplicate link attempt: mwl already uses bucks"]
     enmesh_result.should be_false
   end
-  
-  specify "creating a ca context should fail validation" do
-    e = Entity.new({
-      :entity_type => "context",
-      :specification => <<-eos
-        name: ca
-        eos
-    })
-    e.should_not be_valid
-  end
-  specify "creating a ecuador context should be valid" do
-    e = Entity.new({
-      :entity_type => "context",
-      :specification => <<-eos
-        name: ec
-        eos
-    })
-    e.should be_valid
-  end
+
 end
 
 

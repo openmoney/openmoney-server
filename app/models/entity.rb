@@ -35,11 +35,19 @@ class Entity < ActiveRecord::Base
   # agreeing to the link
   def link_allowed(link)
     typed_entity = Entity.create({:entity_type => entity_type, :specification =>specification})
+    typed_entity.id = id
     if !typed_entity.allow_link?(link) 
       err = "link not allowed: #{typed_entity.link_error}"
       errors.add_to_base(err)
       raise err
     end
+
+    if links.find(:first, :conditions => ["omrl = ? and link_type = ?",link.omrl,link.link_type] )
+      err = "duplicate link attempt: #{link.omrl} already #{link.link_type} #{name}"
+      errors.add_to_base(err)
+      raise err
+    end
+
     true
   end
   
@@ -164,8 +172,7 @@ class Entity < ActiveRecord::Base
       if valid_link_to_entity_types.class != Array
         valid_link_to_entity_types = [valid_link_to_entity_types]
       end
-      #TODO this will fail for non-local omrls
-      link_to_entity_type = Entity.find_entity_by_omrl(link.omrl).entity_type
+      link_to_entity_type = link.link_to_entity.entity_type
       if not valid_link_to_entity_types.include?(link_to_entity_type)
         @link_error = "improper entity type (#{link_to_entity_type}) to link to via #{link.link_type}"
         return false
