@@ -23,9 +23,16 @@
   <pre><%=h @entity.specification %></pre>
 </p>
 
-<p><strong>Links:</strong><br />
+<p><strong>Links From:</strong><br />
 <% for link in @entity.links %>
 to: <a href="<%=h link.omrl_url %>"><%=h link.omrl %></a>, type: <%=h link.link_type %> <%= link_to 'Details', link_path(@entity,link) %><br />
+<% end %>
+</p>
+
+<p><strong>Local Links To:</strong><br />
+<% for link in Link.find(:all, :conditions => ["omrl = ?",@entity.name]) %>
+	<% @e = Entity.find(link.entity_id) %>
+from: <a href="<%=h @e.omrl(OMRL::OM_URL)%>"><%=h @e.name %></a>, type: <%=h link.link_type %> <%= link_to 'Details', link_path(@e,link) %><br />
 <% end %>
 </p>
 
