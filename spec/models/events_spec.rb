@@ -93,7 +93,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     e.entity_type.should == "context"
     links = e.links
     links.should have(1).items
-    links[0].link_type.should == "named_in"
+    links[0].link_type.should == "names"
     links[0].omrl.should == "mwl"
   end
 
@@ -103,9 +103,9 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     e.entity_type.should == "context"
     links = e.links
     links.should have(2).items
-    links[0].link_type.should == "named_in"
+    links[0].link_type.should == "names"
     links[0].omrl.should == "zippy"
-    links[1].link_type.should == "named_in"
+    links[1].link_type.should == "names"
     links[1].omrl.should == "bucks"
   end
 
@@ -116,9 +116,9 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     links = e.links
 #    links.should == ""
     links.should have(3).items
-    links[0].link_type.should == "uses"
+    links[0].link_type.should == "is_used_by"
     links[0].omrl.should == "zippy"
-    links[1].link_type.should == "uses"
+    links[1].link_type.should == "is_used_by"
     links[1].omrl.should == "mwl"
     links[2].link_type.should == "approves"
     links[2].omrl.should == "tx1"
@@ -174,7 +174,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
   eos
       })
     enmesh_result = e.enmesh
-    e.errors.full_messages.should == ["Specification - enmeshing error: duplicate link attempt: mwl already uses bucks"]
+    e.errors.full_messages.should == ["Specification - enmeshing error: duplicate link attempt: bucks already is_used_by mwl "]
     enmesh_result.should be_false
   end
 

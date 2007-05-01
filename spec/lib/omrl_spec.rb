@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+
 context "A local omrl" do
+  fixtures :entities
   specify "should report local?" do
     omrl = OMRL.new(1)
     omrl.should_be_local
@@ -8,6 +10,7 @@ context "A local omrl" do
 end
 
 context "A non local omrl" do
+  fixtures :entities
   specify "should fail to report local?" do
     omrl = OMRL.new(66)
     omrl.should_not_be_local
@@ -15,6 +18,7 @@ context "A non local omrl" do
 end
 
 context "An OM_NAME omrl" do
+  fixtures :entities
   setup do
     @omrl = OMRL.new("zippy")
   end
@@ -30,6 +34,7 @@ context "An OM_NAME omrl" do
 end
 
 context "An OM_NUM omrl" do
+  fixtures :entities
   setup do
     @omrl = OMRL.new(1)
   end
@@ -48,6 +53,7 @@ context "An OM_NUM omrl" do
 end
 
 context "An OM_URL omrl" do
+  fixtures :entities
   setup do
     @omrl = OMRL.new("/entities/5")
   end

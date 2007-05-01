@@ -11,16 +11,14 @@
   <b>Specification</b><br />
   <%= form.text_area :specification %>
 </p>
-
-<script type="text/javascript">
-//<![CDATA[
+<%= javascript_tag <<'eos'
 function check() {
 	e = document.event
 	x = $("event_event_type")
 	switch(x.getValue()) {
 		case "CreateContext": $("event_specification").value = "specification: \n  name: \nparent_omrl: ";
 			break;
-		case "CreateCurrency": $("event_specification").value = "specification: \n  name: \nparent_omrl: ";
+		case "CreateCurrency": $("event_specification").value = "specification: \n  name: \nparent_omrl: \naccount_omrl: ";
 			break;
 		case "CreateAccount": $("event_specification").value = "specification: \n  name: \nparent_omrl: ";
 			break;
@@ -30,5 +28,5 @@ function check() {
 	}
 }
 check();
-//]]>
-</script>
+eos
+%>

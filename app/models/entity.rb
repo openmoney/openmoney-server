@@ -10,9 +10,7 @@ class Entity < ActiveRecord::Base
 
   include Specification
   has_many :links, :before_add => :link_allowed
-  
   validates_inclusion_of :entity_type, :in => Types
-
 
   def link_error
     @link_error
@@ -42,8 +40,9 @@ class Entity < ActiveRecord::Base
       raise err
     end
 
+    #TODO: what if the omrl is not the same type?  Then this will fail.
     if links.find(:first, :conditions => ["omrl = ? and link_type = ?",link.omrl,link.link_type] )
-      err = "duplicate link attempt: #{link.omrl} already #{link.link_type} #{name}"
+      err = "duplicate link attempt: #{name} already #{link.link_type} #{link.omrl}"
       errors.add_to_base(err)
       raise err
     end
@@ -64,12 +63,8 @@ class Entity < ActiveRecord::Base
     validate_specification({'name' => :required})
     if @specification
       n = @specification['name']
-      if (!n || n == "") 
-        errors.add(:specification,"'name:' is required")
-      else
-        if Entity.find_named_entity(n,entity_type)
-          errors.add(:specification,"name '#{n}' already exists")
-        end
+      if Entity.find_named_entity(n,entity_type)
+        errors.add(:specification,"name '#{n}' already exists")
       end
     end
   end
@@ -132,7 +127,7 @@ class Entity < ActiveRecord::Base
   ######################################################################################
   class Context < Entity
     def allow_link?(link)
-      return false if not link_type_err_check({"approves"=>"flow", "named_in"=>["account","context","currency"], "managed_by"=>"account", "created_by"=>"account"},link)
+      return false if not link_type_err_check({"approves"=>"flow", "names"=>["account","context","currency"]},link)
       true
     end
   end
@@ -140,7 +135,7 @@ class Entity < ActiveRecord::Base
   ######################################################################################
   class Account < Entity
     def allow_link?(link)
-      return false if not link_type_err_check({"flow_from"=>"flow","flow_to"=>"flow"},link)
+      return false if not link_type_err_check({"declares"=>"flow","accepts"=>"flow","begins"=>"currency"},link)
       true
     end
   end
@@ -148,7 +143,7 @@ class Entity < ActiveRecord::Base
   ######################################################################################
   class Currency < Entity
     def allow_link?(link)
-      return false if not link_type_err_check({"approves"=>"flow", "uses"=>"account", "managed_by"=>"account", "created_by"=>"account"},link)
+      return false if not link_type_err_check({"approves"=>"flow", "is_used_by"=>"account"},link)
       true
     end
   end

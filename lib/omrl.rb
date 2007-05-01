@@ -133,11 +133,11 @@ class OMRL
   
   def resolve_name_to_num(om_name)
     return '' if om_name == ''
-    begin
-      e = Entity.find_named_entity(om_name)
+    e = Entity.find_named_entity(om_name)
+    if e
       @local = e
       e.id.to_s
-    rescue   ActiveRecord::RecordNotFound
+    else
       @local = false
       raise "resolve_name_to_num not implemented! for non local omrl #{@omrl} name=#{om_name}"
     end

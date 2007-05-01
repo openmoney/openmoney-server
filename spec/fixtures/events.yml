@@ -41,8 +41,9 @@ create_bucks_currency:
   event_type: "CreateCurrency"
   specification:
     specification:
-        name: bucks
+      name: bucks
     parent_omrl: us
+    account_omrl: zippy
   state:
 join_bucks_zippy:
   id: 6

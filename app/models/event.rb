@@ -60,7 +60,7 @@ class Event < ActiveRecord::Base
           begin
             yield entity
           rescue Exception => e
-            errs  << e.to_s
+            errs  << e.to_s # << e.backtrace
             entity.destroy
           end
         end
@@ -72,8 +72,14 @@ class Event < ActiveRecord::Base
     # any subclasses of Create event.  It sets up the standard validation for the specification
     # to include the parent entities omrl.  It also implements the block which
     # links the new entity to the parent entity
-    def enmesh_parent_omrl(entity_type)
-      _enmesh(entity_type,{'specification' => :required, 'parent_omrl' => :required}) {|entity| create_link(@specification['parent_omrl'],entity.omrl,'named_in')}
+    def enmesh_parent_omrl(entity_type,extra_links = nil)
+      specification = {'specification' => :required, 'parent_omrl' => :required}
+      extra_links.each {|spec,link_type| specification[spec] = :required} if extra_links.is_a?(Hash)
+      
+      _enmesh(entity_type,specification) do |entity|
+        create_link(@specification['parent_omrl'],entity.omrl,'names')
+        extra_links.each {|spec,link_type| create_link(@specification[spec],entity.omrl,link_type)}  if extra_links.is_a?(Hash)
+      end
     end
   end
 
@@ -87,7 +93,7 @@ class Event < ActiveRecord::Base
   ######################################################################################
   class CreateCurrency < CreateEvent
     def enmesh
-      enmesh_parent_omrl 'currency'
+      enmesh_parent_omrl('currency',{'account_omrl' => 'begins'})
     end
   end
 
@@ -103,7 +109,7 @@ class Event < ActiveRecord::Base
     def enmesh
       _enmesh({'account_omrl' => :required, 'currency_omrl' => :required}) do |errs|
         begin
-          create_link(@specification['currency_omrl'],@specification['account_omrl'],'uses')
+          create_link(@specification['currency_omrl'],@specification['account_omrl'],'is_used_by')
         rescue Exception => e
           errs  << e.to_s
         end
@@ -118,8 +124,8 @@ class Event < ActiveRecord::Base
         links = []
         begin
           entity_omrl = entity.omrl
-          { 'from_account_omrl'=>'flow_from',
-            'to_account_omrl'=>'flow_to',
+          { 'from_account_omrl'=>'declares',
+            'to_account_omrl'=>'accepts',
             'currency_omrl'=>'approves',
             }.each {|from_omrl,link_type| links << create_link(@specification[from_omrl],entity_omrl,link_type)}
         rescue Exception => e

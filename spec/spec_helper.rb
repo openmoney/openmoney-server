@@ -19,7 +19,7 @@ module Spec
         # You can set up your global fixtures here, or you
         # can do it in individual contexts using "fixtures :table_a, table_b".
         #
-#        self.global_fixtures = :entities
+ #       self.global_fixtures = :entities
       end
     end
   end

@@ -6,7 +6,7 @@
 
 class Link < ActiveRecord::Base
 
-  Types = %w(named_in approves created_by managed_by flow_to flow_from uses)
+  Types = %w(names approves is_owned_by is_managed_by accepts declares is_used_by)
 
   belongs_to :entity
   validates_inclusion_of :link_type, :in => Types
