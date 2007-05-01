@@ -26,10 +26,10 @@ context "An OM_NAME omrl" do
     @omrl.type.should == OMRL::OM_NAME
   end
   specify "should convert to a num" do
-    @omrl.num.should == "4"
+    @omrl.num.should == entities(:account_zippy).id.to_s
   end
   specify "should convert to a url" do
-    @omrl.url.should == "/entities/4"
+    @omrl.url.should == "/entities/" << entities(:account_zippy).id.to_s
   end
 end
 
@@ -45,7 +45,7 @@ context "An OM_NUM omrl" do
     @omrl.num.should == "1"
   end
   specify "should convert to a name" do
-    @omrl.name.should == "ca"
+    @omrl.name.should == "root"
   end
   specify "should convert to a url" do
     @omrl.url.should == "/entities/1"
@@ -55,7 +55,7 @@ end
 context "An OM_URL omrl" do
   fixtures :entities
   setup do
-    @omrl = OMRL.new("/entities/5")
+    @omrl = OMRL.new("/entities/6")
   end
   specify "should be of type OM_URL" do
     @omrl.type.should == OMRL::OM_URL
@@ -64,10 +64,10 @@ context "An OM_URL omrl" do
     @omrl.name.should == "mwl"
   end
   specify "should convert to a num" do
-    @omrl.num.should == "5"
+    @omrl.num.should == "6"
   end
   specify "should convert to a url" do
-    @omrl.url.should == "/entities/5"
+    @omrl.url.should == "/entities/6"
   end
 end
 

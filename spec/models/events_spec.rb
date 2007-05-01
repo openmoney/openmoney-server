@@ -174,7 +174,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
   eos
       })
     enmesh_result = e.enmesh
-    e.errors.full_messages.should == ["Specification - enmeshing error: duplicate link attempt: bucks already is_used_by mwl "]
+    e.errors.full_messages.should == ["Specification - enmeshing error: duplicate link attempt: bucks already is_used_by mwl"]
     enmesh_result.should be_false
   end
 
