@@ -103,7 +103,8 @@ class OMRL
     return @name if @name != nil #return cached value
     case type
     when OM_URL, OM_NUM
-      @name = Entity.get_entity_name(num)
+      raise "not implemented!"
+      #@name = Entity.get_entity_name(num)
     when OM_NAME
       @name = @omrl
     end
@@ -126,20 +127,19 @@ class OMRL
   
   ######################################################################################
   def resolve_num_to_url(om_num)
-    return '' if om_num == ''
     return "/entities/#{om_num}" if om_num =~ /^\d+$/
     raise "resolve_num_to_url not implemented for external om nums! [omrl #{@omrl} = num #{om_num}]"
   end
   
   def resolve_name_to_num(om_name)
-    return '' if om_name == ''
-    e = Entity.find_named_entity(om_name)
-    if e
-      @local = e
-      e.id.to_s
+    if om_name == ''
+      return "1"
+    end
+    l = Link.find_name_link(om_name)
+    if l
+      l.omrl
     else
-      @local = false
-      raise "resolve_name_to_num not implemented! for non local omrl #{@omrl} name=#{om_name}"
+      raise "resolve_name_to_num not implemented for non local omrl #{@omrl} name=#{om_name}"
     end
   end
 end

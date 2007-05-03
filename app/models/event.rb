@@ -12,8 +12,11 @@
 # or linking together of existing entities by creating new link objects.
 
 class Event < ActiveRecord::Base
+  Types = %w(CreateContext CreateCurrency CreateAccount JoinCurrency AcknowledgeFlow)
+
   validates_presence_of :event_type
   validates_presence_of :specification
+  validates_inclusion_of :event_type, :in => Types
   
   include Specification
   
@@ -51,9 +54,9 @@ class Event < ActiveRecord::Base
   # to the callers block which can do something with the created entity.
   class CreateEvent < Event
     def _enmesh(entity_type,validations)
-      validations ||= {'specification' => :required}
+      validations ||= {'name' => :required}
       super(validations) do |errs|
-        entity = Entity.new({:entity_type => entity_type,:specification => @specification['specification'].to_yaml})
+        entity = Entity.new({:entity_type => entity_type,:specification => @specification["#{entity_type}_specification"].to_yaml})
         if (!entity.save)
           errs << "Error#{(entity.errors.count>1)? 's' : ''} creating entity: #{entity.errors.full_messages.join(',')}"
         else
@@ -72,13 +75,15 @@ class Event < ActiveRecord::Base
     # any subclasses of Create event.  It sets up the standard validation for the specification
     # to include the parent entities omrl.  It also implements the block which
     # links the new entity to the parent entity
-    def enmesh_parent_omrl(entity_type,extra_links = nil)
-      specification = {'specification' => :required, 'parent_omrl' => :required}
-      extra_links.each {|spec,link_type| specification[spec] = :required} if extra_links.is_a?(Hash)
+    def enmesh_parent_omrl(entity_type,extra_links_from = nil,extra_links_to = nil)
+      specification = {'name' => :required, 'parent_context' => :required, "#{entity_type}_specification" => :required}
+      extra_links_to.each {|spec,link_type| specification[spec] = :required} if extra_links_to.is_a?(Hash)
+      extra_links_from.each {|spec,link_type| specification[spec] = :required} if extra_links_from.is_a?(Hash)
       
       _enmesh(entity_type,specification) do |entity|
-        create_link(@specification['parent_omrl'],entity.omrl,'names')
-        extra_links.each {|spec,link_type| create_link(@specification[spec],entity.omrl,link_type)}  if extra_links.is_a?(Hash)
+        create_link(@specification['parent_context'],entity.omrl,'names',{:name => @specification['name']})
+        extra_links_from.each {|spec,link_type| create_link(entity.omrl,@specification[spec],link_type)}  if extra_links_from.is_a?(Hash)
+        extra_links_to.each {|spec,link_type| create_link(@specification[spec],entity.omrl,link_type)}  if extra_links_to.is_a?(Hash)
       end
     end
   end
@@ -93,7 +98,7 @@ class Event < ActiveRecord::Base
   ######################################################################################
   class CreateCurrency < CreateEvent
     def enmesh
-      enmesh_parent_omrl('currency',{'account_omrl' => 'begins'})
+      enmesh_parent_omrl('currency',{'originating_account' => 'originates_from'})
     end
   end
 
@@ -107,9 +112,9 @@ class Event < ActiveRecord::Base
   ######################################################################################
   class JoinCurrency < Event
     def enmesh
-      _enmesh({'account_omrl' => :required, 'currency_omrl' => :required}) do |errs|
+      _enmesh({'currency' => :required, 'account' => :required}) do |errs|
         begin
-          create_link(@specification['currency_omrl'],@specification['account_omrl'],'is_used_by')
+          create_link(@specification['currency'],@specification['account'],'is_used_by')
         rescue Exception => e
           errs  << e.to_s
         end
@@ -120,13 +125,13 @@ class Event < ActiveRecord::Base
   ######################################################################################
   class AcknowledgeFlow < CreateEvent
     def enmesh
-      _enmesh('flow',{'specification' => :required,'from_account_omrl' => :required,'to_account_omrl' => :required,'currency_omrl' => :required}) do |entity|
+      _enmesh('flow',{'flow_specification' => :required,'declaring_account' => :required,'accepting_account' => :required,'currency' => :required}) do |entity|
         links = []
         begin
           entity_omrl = entity.omrl
-          { 'from_account_omrl'=>'declares',
-            'to_account_omrl'=>'accepts',
-            'currency_omrl'=>'approves',
+          { 'declaring_account'=>'declares',
+            'accepting_account'=>'accepts',
+            'currency'=>'approves',
             }.each {|from_omrl,link_type| links << create_link(@specification[from_omrl],entity_omrl,link_type)}
         rescue Exception => e
           links.each {|link| link.destroy}
@@ -140,8 +145,9 @@ class Event < ActiveRecord::Base
 protected
   ######################################################################################
   # 
-  def create_link(from_omrl,to_omrl,link_type)
+  def create_link(from_omrl,to_omrl,link_type,sepecification = nil)
     link_params = {:link_type => link_type,:omrl => to_omrl}
+    link_params[:specification] = specification if specification
     omrl = OMRL.new(from_omrl)
     from_entity = omrl.local?
     if (from_entity) 

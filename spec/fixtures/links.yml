@@ -1,17 +1,45 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
+names_context_ca_in_root:
   id: 1
   entity_id: 1
-  omrl: MyString
-  link_type: MyString
-  signature: MyText
+  omrl: 2
+  link_type: names
+  specification:
+    name: ca
   created_at: 2007-03-16 11:27:41
   updated_at: 2007-03-16 11:27:41
-two:
+names_context_us_in_root:
   id: 2
   entity_id: 1
-  omrl: MyString
-  link_type: MyString
-  signature: MyText
+  omrl: 3
+  link_type: names
+  specification:
+    name: us
+  created_at: 2007-03-16 11:27:41
+  updated_at: 2007-03-16 11:27:41
+names_account_zippy_in_us:
+  id: 3
+  entity_id: 3
+  omrl: 5
+  link_type: names
+  specification:
+    name: zippy
+  created_at: 2007-03-16 11:27:41
+  updated_at: 2007-03-16 11:27:41
+names_currency_bucks_in_us:
+  id: 4
+  entity_id: 3
+  omrl: 4
+  link_type: names
+  specification:
+    name: bucks
+  created_at: 2007-03-16 11:27:41
+  updated_at: 2007-03-16 11:27:41
+originates_from_currency_bucks_zippy:
+  id: 5
+  entity_id: 4
+  omrl: zippy
+  link_type: originates_from
+  specification:
   created_at: 2007-03-16 11:27:41
   updated_at: 2007-03-16 11:27:41

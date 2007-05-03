@@ -5,9 +5,9 @@
 
 <p>
   <b>Link type</b><br />
-  <%= form.select(:link_type,%w{uses named_in approves flow_from flow_to created_by managed_by}) %>
+  <%= form.select(:link_type,Link::Types) %>
 </p>
 <p>
-  <b>Signature</b><br />
-  <%= form.text_area :signature, :rows=>2 %>
+  <b>Specification</b><br />
+  <%= form.text_area :specification, :rows=>4 %>
 </p>

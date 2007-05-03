@@ -42,7 +42,7 @@ class Entity < ActiveRecord::Base
 
     #TODO: what if the omrl is not the same type?  Then this will fail.
     if links.find(:first, :conditions => ["omrl = ? and link_type = ?",link.omrl,link.link_type] )
-      err = "duplicate link attempt: #{name} already #{link.link_type} #{link.omrl}"
+      err = "duplicate link attempt: #{omrl} already #{link.link_type} #{link.omrl}"
       errors.add_to_base(err)
       raise err
     end
@@ -59,54 +59,48 @@ class Entity < ActiveRecord::Base
   end
   
   ######################################################################################
-  def validate_on_create
-    validate_specification({'name' => :required})
-    if @specification
-      n = @specification['name']
-      if Entity.find_named_entity(n,entity_type)
-        errors.add(:specification,"name '#{n}' already exists")
-      end
-    end
-  end
+#  def validate_on_create
+#    validate_specification({'name' => :required})
+#    if @specification
+#      n = @specification['name']
+#      if Entity.find_named_entity(n,entity_type)
+#        errors.add(:specification,"name '#{n}' already exists")
+#      end
+#    end
+#  end
   
   ######################################################################################
   # return an omrl for this entity
   def omrl(type = OMRL::OM_NAME,relative = true)
-    case type
-    when OMRL::OM_URL
-      "/entities/#{self.id}"
-    when OMRL::OM_NUM
-      "#{self.id}"
-    when OMRL::OM_NAME
-      @specification['name']
+    if type == OMRL::OM_NAME
+      #TODO deal with the multiple omrls for the same entitiy
+      l = Link.find(:first,:conditions => ["link_type = 'names' and omrl = ?", id.to_s])
+      if l
+        return l.specification_attribute("name")
+      else
+        type = OMRL::OM_NUM
+      end
     end
+    if type == OMRL::OM_NUM
+      return id.to_s
+    end
+    "/entities/#{id}"
   end
-  
-  ######################################################################################
-  # returns the name of the entity
-  def name
-    attribute("name")
-  end
-  
-  def attribute(attrib)
-    load_specification
-    @specification[attrib]
-  end  
-  
+    
   ######################################################################################
   # CLASS METHODS
   ######################################################################################
   # class method to return a named entity optionally of a given type
   # NOTE: This may change because the
   # name may be moved to being a column of entity rather than part of the yaml spec block.
-  def Entity.find_named_entity(name,entity_type=nil)
-    if (entity_type) 
-      conditions = ["entity_type = ? and specification like ?", entity_type,"%name: #{name}%"]
-    else
-      conditions = ["specification like ?", "%name: #{name}%"]
-    end
-    Entity.find(:first, :conditions => conditions)
-  end
+#  def Entity.find_named_entity(name,entity_type=nil)
+#    if (entity_type) 
+#      conditions = ["entity_type = ? and specification like ?", entity_type,"%name: #{name}%"]
+#    else
+#      conditions = ["specification like ?", "%name: #{name}%"]
+#    end
+#    Entity.find(:first, :conditions => conditions)
+#  end
   
   ######################################################################################
   # class method to return a the name of a know entity.  NOTE:This may change because the
@@ -135,7 +129,7 @@ class Entity < ActiveRecord::Base
   ######################################################################################
   class Account < Entity
     def allow_link?(link)
-      return false if not link_type_err_check({"declares"=>"flow","accepts"=>"flow","begins"=>"currency"},link)
+      return false if not link_type_err_check({"declares"=>"flow","accepts"=>"flow"},link)
       true
     end
   end
@@ -143,7 +137,7 @@ class Entity < ActiveRecord::Base
   ######################################################################################
   class Currency < Entity
     def allow_link?(link)
-      return false if not link_type_err_check({"approves"=>"flow", "is_used_by"=>"account"},link)
+      return false if not link_type_err_check({"approves"=>"flow", "is_used_by"=>"account","originates_from"=>"account"},link)
       true
     end
   end
@@ -167,9 +161,13 @@ class Entity < ActiveRecord::Base
       if valid_link_to_entity_types.class != Array
         valid_link_to_entity_types = [valid_link_to_entity_types]
       end
-      link_to_entity_type = link.link_to_entity.entity_type
-      if not valid_link_to_entity_types.include?(link_to_entity_type)
-        @link_error = "improper entity type (#{link_to_entity_type}) to link to via #{link.link_type}"
+      e = Entity.find_entity_by_omrl(link.omrl)
+      if !e 
+        @link_error = "unable to find omrl #{link.omrl} to link to it!"
+        return false
+      end
+      if not valid_link_to_entity_types.include?(e.entity_type)
+        @link_error = "#{link.link_type} link can not made to a #{e.entity_type} (omrl=#{e.omrl})"
         return false
       end
     end

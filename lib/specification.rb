@@ -46,5 +46,11 @@ module Specification
     end
   end
   
+  ######################################################################################
+  # returns the an attribute of the specification by name, loading it if necessary  
+  def specification_attribute(attribute)
+    load_specification
+    @specification[attribute]
+  end  
   
 end

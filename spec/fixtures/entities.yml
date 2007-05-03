@@ -54,6 +54,5 @@ flow_tx1:
   entity_type: flow
   access_control: 
   specification: 
-    name: tx1
     description: some stuff
     amount: 10      

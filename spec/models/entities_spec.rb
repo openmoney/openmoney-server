@@ -6,7 +6,6 @@ context "Creating an entity (in general)" do
     lambda {e = Entity.create({
       :entity_type => "bogus_entity_type",
       :specification => <<-eos
-        name: ec
         eos
     })}.should raise_error
   end
@@ -15,9 +14,22 @@ context "Creating an entity (in general)" do
     lambda {e = Entity.create({
       :entity_type => "context",
       :specification => <<-eos
-        name: ec
         eos
     })}.should_not raise_error
   end
 
+end
+
+context "fixtures" do
+  fixtures :entities
+  fixtures :links
+  
+  specify "entity omrls" do
+    entities(:account_zippy).omrl.should == "zippy"
+    entities(:context_us).omrl.should == "us"
+    entities(:context_ca).omrl.should == "ca"
+    entities(:currency_bucks).omrl.should == "bucks"
+    entities(:flow_tx1).omrl.should == "7"
+    entities(:account_mwl).omrl.should == "6"
+  end
 end

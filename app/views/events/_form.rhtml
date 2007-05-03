@@ -3,7 +3,7 @@
 <p>
   <b>Event type</b><br />
   <select id="event_event_type" name="event[event_type]" onChange="check(this)">
-	 <%= options_for_select(%w{CreateContext CreateCurrency CreateAccount JoinCurrency AcknowledgeFlow}) %>
+	 <%= options_for_select(Event::Types) %>
   </select>
 </p>
 
@@ -13,18 +13,19 @@
 </p>
 <%= javascript_tag <<'eos'
 function check() {
-	e = document.event
-	x = $("event_event_type")
-	switch(x.getValue()) {
-		case "CreateContext": $("event_specification").value = "specification: \n  name: \nparent_omrl: ";
+	var e = document.event;
+	var type = $("event_event_type");
+	var spec = $("event_specification");
+	switch(type.getValue()) {
+		case "CreateContext": spec.value = "name: \nparent_context: \ncontext_specification: ";
 			break;
-		case "CreateCurrency": $("event_specification").value = "specification: \n  name: \nparent_omrl: \naccount_omrl: ";
+		case "CreateCurrency": spec.value = "name: \nparent_context: \noriginating_account: \ncurrency_specification: ";
 			break;
-		case "CreateAccount": $("event_specification").value = "specification: \n  name: \nparent_omrl: ";
+		case "CreateAccount": spec.value = "name: \nparent_context: \naccount_specification: ";
 			break;
-		case "JoinCurrency": $("event_specification").value = "currency_omrl: \naccount_omrl: ";
+		case "JoinCurrency": spec.value = "currency: \naccount: ";
 			break;
-		case "AcknowledgeFlow": $("event_specification").value = "specification: \n  name: \n  amount: \n  description: \nfrom_account_omrl: \nto_account_omrl: \ncurrency_omrl: ";
+		case "AcknowledgeFlow": spec.value = "flow_specification: \n  amount: \n  description: \ndeclaring_account: \naccepting_account: \ncurrency: ";
 	}
 }
 check();

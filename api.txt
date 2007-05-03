@@ -1,6 +1,6 @@
 open money REST architecture, draft march '07
 
-REST API to two low level types of resources, entities and links:
+Low-level API to the mesh which has two types of resources, entities and links:
 
 GET
 	/entities/<id>|<filter-spec> => return info on the entity or entities
@@ -14,13 +14,25 @@ DELETE
 	/entities/<id> => delete entity
 	/entities/<id>/links/<id> => delete link
 
-
-High-level REST API for the various types of entities and for flows
+High-level read-only API to the mesh for the various types of entities and for flows:
 
 GET
 	/<entity-type>/<id> => return info on the named entity type (accounts/currencies/contexts)
-	/<entity-type>/<id>/flows/<id>|<filter-spec> => return flow record(s) for the entity (as specified by the filter spec)
-	/<entity-type>/<id>/summary/<filter-spec> => return summaries of the flows to/from the entity (as specified by the filter
+	/account|currency/<id>/flows/<id>|<filter-spec> => return flow record(s) for the entity (as specified by the filter spec)
+	/account|currency/<id>/summary/<filter-spec> => return summaries of the flows to/from the entity (as specified by the filter
+
+High-level API to the churn (used to create the the mesh):
+
+GET
+	/events/<id>|<filter-spec> => return info on the events
+
+POST
+	/events {event} => post a new event (creates entities and necessary links)
+	
+	
+	
+
+Obsolete:
 
 POST
 	/accounts/<id>/flows {flow} => post a new flow (creates flow entity and necessary links)

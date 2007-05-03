@@ -1,6 +1,6 @@
 <p>
   <b>Type</b><br />
-  <%= form.select(:entity_type,%w{flow currency account context summary}) %>
+  <%= form.select(:entity_type,Entity::Types) %>
 </p>
 
 <p>
