@@ -4,73 +4,77 @@ create_canada_context:
   created_at: 2007-03-14 11:11:40
   event_type: "CreateContext"
   specification:
-    specification:
-      name: ca
-    parent_omrl: root
+    name: ca
+    parent_context: 1
+    context_specification:
+      description: Canada
   state:
 create_us_context:
   id: 2
   created_at: 2007-03-14 11:11:40
   event_type: "CreateContext"
   specification:
-    specification:
-      name: us
-    parent_omrl: root
+    name: us
+    parent_context: 1
+    context_specification: 
+      description: The USA
   state:
 create_mwl_account:
   id: 3
   created_at: 2007-03-14 11:11:40
   event_type: "CreateAccount"
   specification:
-    specification:
-        name: mwl
-    parent_omrl: ca
+    name: mwl
+    parent_context: ca
+    account_specification: 
+      description: "Michael Linton"
   state:
 create_zippy_account:
   id: 4
   created_at: 2007-03-14 11:11:40
   event_type: "CreateAccount"
   specification:
-    specification:
-        name: zippy
-    parent_omrl: us
+    name: zippy
+    parent_context: us
+    account_specification: 
+      description: "Eric Harris-Braun"
   state:
 create_bucks_currency:
   id: 5
   created_at: 2007-03-14 11:11:40
   event_type: "CreateCurrency"
   specification:
-    specification:
-      name: bucks
-    parent_omrl: us
-    account_omrl: zippy
+    name: bucks
+    parent_context: us
+    currency_specification:
+      description: "Eric's cool currency"
+    originating_account: zippy
   state:
 join_bucks_zippy:
   id: 6
   created_at: 2007-03-14 11:11:40
   event_type: "JoinCurrency"
   specification:
-    currency_omrl: bucks
-    account_omrl: zippy
+    currency: bucks
+    account: zippy
   state:
 join_bucks_mwl:
   id: 7
   created_at: 2007-03-14 11:11:40
   event_type: "JoinCurrency"
   specification:
-    currency_omrl: bucks
-    account_omrl: mwl
+    currency: bucks
+    account: mwl
   state:
 ack_flow_zippy_mwl_in_bucks:
   id: 8
   created_at: 2007-03-14 11:11:40
   event_type: "AcknowledgeFlow"
   specification:
-    specification:
-        name: tx1 
-        amount: 10 
-        description: some stuff
-    from_account_omrl: zippy
-    to_account_omrl: mwl
-    currency_omrl: bucks
+    flow_specification: 
+      amount: 10
+      description: some stuff
+    declaring_account: zippy
+    accepting_account: mwl
+    currency: bucks
   state:

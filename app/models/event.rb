@@ -53,6 +53,8 @@ class Event < ActiveRecord::Base
   # the entity record.  If the creation of the entity is succesfull it in turns yields
   # to the callers block which can do something with the created entity.
   class CreateEvent < Event
+    attr :created_entity
+  
     def _enmesh(entity_type,validations)
       validations ||= {'name' => :required}
       super(validations) do |errs|
@@ -60,6 +62,7 @@ class Event < ActiveRecord::Base
         if (!entity.save)
           errs << "Error#{(entity.errors.count>1)? 's' : ''} creating entity: #{entity.errors.full_messages.join(',')}"
         else
+          @created_entity = entity
           begin
             yield entity
           rescue Exception => e
@@ -81,7 +84,7 @@ class Event < ActiveRecord::Base
       extra_links_from.each {|spec,link_type| specification[spec] = :required} if extra_links_from.is_a?(Hash)
       
       _enmesh(entity_type,specification) do |entity|
-        create_link(@specification['parent_context'],entity.omrl,'names',{:name => @specification['name']})
+        create_link(@specification['parent_context'],entity.omrl,'names',"name: #{@specification['name']}")
         extra_links_from.each {|spec,link_type| create_link(entity.omrl,@specification[spec],link_type)}  if extra_links_from.is_a?(Hash)
         extra_links_to.each {|spec,link_type| create_link(@specification[spec],entity.omrl,link_type)}  if extra_links_to.is_a?(Hash)
       end
@@ -128,7 +131,7 @@ class Event < ActiveRecord::Base
       _enmesh('flow',{'flow_specification' => :required,'declaring_account' => :required,'accepting_account' => :required,'currency' => :required}) do |entity|
         links = []
         begin
-          entity_omrl = entity.omrl
+          entity_omrl = "#{@specification['declaring_account']}\##{entity.id}"  #TODO needs fixing when when using FQOMRL
           { 'declaring_account'=>'declares',
             'accepting_account'=>'accepts',
             'currency'=>'approves',
@@ -145,9 +148,9 @@ class Event < ActiveRecord::Base
 protected
   ######################################################################################
   # 
-  def create_link(from_omrl,to_omrl,link_type,sepecification = nil)
+  def create_link(from_omrl,to_omrl,link_type,link_specification = nil)
     link_params = {:link_type => link_type,:omrl => to_omrl}
-    link_params[:specification] = specification if specification
+    link_params[:specification] = link_specification if link_specification
     omrl = OMRL.new(from_omrl)
     from_entity = omrl.local?
     if (from_entity) 

@@ -74,12 +74,14 @@ class Entity < ActiveRecord::Base
   def omrl(type = OMRL::OM_NAME,relative = true)
     if type == OMRL::OM_NAME
       #TODO deal with the multiple omrls for the same entitiy
-      l = Link.find(:first,:conditions => ["link_type = 'names' and omrl = ?", id.to_s])
-      if l
-        return l.specification_attribute("name")
+      if (entity_type == "flow")
+        e = Link.find_declaring_entity(id)
+        return "#{e.omrl}\##{id}" if e  #TODO this will fail when we get to fully qualified omrls
       else
-        type = OMRL::OM_NUM
+        n = Link.find_entity_name(id)
       end
+      return n if n
+      type = OMRL::OM_NUM
     end
     if type == OMRL::OM_NUM
       return id.to_s

@@ -33,17 +33,22 @@ end
 context "Creating and enmeshing a context event" do
 #  fixtures :entities
   setup do
-    create_root_context
+    @root = create_root_context
     
     @e = Event.create({
         :event_type => "CreateContext",
         :specification => <<-eos
-parent_omrl: root
-specification: 
-  name: ec
+parent_context: 1
+context_specification: ---
+name: ec
 eos
       })
     @enmesh_result = @e.enmesh
+  end
+  
+  specify "(root context should be created)" do
+    @root.id.should == 1
+    @root.errors.full_messages.should == []
   end
 
   specify "should create a CreateContext event" do
@@ -59,9 +64,14 @@ eos
   end
   
   specify "should create a context entity" do
-    e = Entity.find_named_entity("ec")
+    e = Entity.find_entity_by_omrl("ec")
     e.should_not be_nil
     e.entity_type.should == "context"
+  end
+
+  specify "which should be available through created_entity" do
+    e = Entity.find_entity_by_omrl("ec")
+    @e.created_entity.should == e
   end
     
 end
@@ -75,9 +85,12 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     e.each do |event|
       evt = Event.create({:event_type => event.event_type,:specification => event.specification})
       evt.enmesh
+      if e.id == 8
+        @tx = evt.created_entity
+      end
 #      puts "specification: "<<event.specification
       if !evt.errors.empty?
-        puts "ERROR: enmeshing event #{evt.errors.full_messages.join(",")} \n" 
+#        puts "ERROR: enmeshing event #{evt.errors.full_messages.join(",")} \n" 
         pp evt
       end
     end
@@ -88,29 +101,29 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
   end
   
   specify "canada context should exist and should be a context and be correctly linked" do
-    e = Entity.find_named_entity("ca")
+    e = Entity.find_entity_by_omrl("ca")
     e.should_not be_nil
     e.entity_type.should == "context"
     links = e.links
     links.should have(1).items
     links[0].link_type.should == "names"
-    links[0].omrl.should == "mwl"
+    links[0].specification_attribute("name") == "mwl"
   end
 
   specify "us context should exist and should be a context and be correctly linked" do
-    e = Entity.find_named_entity("us")
+    e = Entity.find_entity_by_omrl("us")
     e.should_not be_nil
     e.entity_type.should == "context"
     links = e.links
     links.should have(2).items
     links[0].link_type.should == "names"
-    links[0].omrl.should == "zippy"
+    links[0].specification_attribute("name").should == "zippy"
     links[1].link_type.should == "names"
-    links[1].omrl.should == "bucks"
+    links[1].specification_attribute("name") == "bucks"
   end
 
   specify "bucks currency should exist and be linked to context, accounts and flow" do
-    e = Entity.find_named_entity("bucks")
+    e = Entity.find_entity_by_omrl("bucks")
     e.should_not be_nil
     e.entity_type.should == "currency"
     links = e.links
@@ -123,25 +136,24 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     links[2].link_type.should == "is_used_by"
     links[2].omrl.should == "mwl"
     links[3].link_type.should == "approves"
-    links[3].omrl.should == "tx1"
+    links[3].omrl.should == "zippy.8"
   end
 
   specify "ecuador context should not exist" do
-    Entity.find_named_entity("ec").should_be nil
+    Entity.find_entity_by_omrl("ec").should_be nil
   end
 
   specify "mwl account should exist and should be an account and linked to flow tx1" do
-    e = Entity.find_named_entity("mwl")
+    e = Entity.find_entity_by_omrl("mwl")
     e.should_not be_nil
     e.entity_type.should == "account"
-    e.name.should == "mwl"
     links = e.links
     links.should have(1).items
-    links[0].omrl.should == "tx1"
+    links[0].omrl.should == "zippy.8"
   end
 
   specify "tx1 flow should exist and should be a flow and be linked" do
-    e = Entity.find_named_entity("tx1")
+    e = Entity.find_entity_by_omrl("zippy.tx1")
     e.should_not be_nil
     Entity.get_entity_name(e.id).should == e.name
     e.entity_type.should == "flow"
@@ -152,6 +164,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
       :entity_type => "context",
       :specification => <<-eos
         name: ca
+        parent_context: 1
         eos
     })
     e.should_not be_valid
@@ -162,6 +175,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
       :entity_type => "context",
       :specification => <<-eos
         name: ec
+        parent_context: 1
         eos
     })
     e.should be_valid
@@ -171,8 +185,8 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     e = Event.create({
       :event_type => "JoinCurrency",
       :specification => <<-eos
-        currency_omrl: bucks
-        account_omrl: mwl
+        currency: bucks
+        account: mwl
   eos
       })
     enmesh_result = e.enmesh
@@ -185,11 +199,13 @@ end
 
 def create_root_context
   e = Entity.new({
+    :id => 1,
     :entity_type => "context",
     :specification => <<-eos
-      name: root
     eos
   })
+  e.id = 1
   e.save
+  e
 end
 

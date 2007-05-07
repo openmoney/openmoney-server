@@ -29,7 +29,14 @@ context "fixtures" do
     entities(:context_us).omrl.should == "us"
     entities(:context_ca).omrl.should == "ca"
     entities(:currency_bucks).omrl.should == "bucks"
-    entities(:flow_tx1).omrl.should == "7"
-    entities(:account_mwl).omrl.should == "6"
+    entities(:flow_tx1).omrl.should == 'zippy#7'
+    entities(:account_mwl).omrl.should == "mwl"
   end
+  specify "find_by_omrl should find entities by omrl" do
+    Entity.find_entity_by_omrl("mwl").should == entities(:account_mwl)
+  end
+#  specify "find_by_omrl should not find entities for bad omrl" do
+#    Entity.find_entity_by_omrl("xxx").should == nil
+#  end
+
 end

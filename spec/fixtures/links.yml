@@ -43,3 +43,36 @@ originates_from_currency_bucks_zippy:
   specification:
   created_at: 2007-03-16 11:27:41
   updated_at: 2007-03-16 11:27:41
+names_account_mwl_in_ca:
+  id: 6
+  entity_id: 2
+  omrl: 6
+  link_type: names
+  specification:
+    name: mwl
+  created_at: 2007-03-16 11:27:41
+  updated_at: 2007-03-16 11:27:41
+declares_flow_tx1:
+  id: 7
+  entity_id: 4
+  omrl: zippy#7
+  link_type: declares
+  specification:
+  created_at: 2007-03-16 11:27:41
+  updated_at: 2007-03-16 11:27:41
+accpets_flow_tx1:
+  id: 8
+  entity_id: 6
+  omrl: zippy#7
+  link_type: accepts
+  specification:
+  created_at: 2007-03-16 11:27:41
+  updated_at: 2007-03-16 11:27:41
+approves_flow_tx1:
+  id: 9
+  entity_id: 4
+  omrl: zippy#7
+  link_type: approves
+  specification:
+  created_at: 2007-03-16 11:27:41
+  updated_at: 2007-03-16 11:27:41

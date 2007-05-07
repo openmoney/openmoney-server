@@ -21,7 +21,7 @@ class Link < ActiveRecord::Base
       validate_specification({'name' => :required})
       if @specification
         n = @specification['name']
-        if Link.find_name_link(n,entity_id)
+        if Link.find_naming_link(n,entity_id)
           errors.add(:specification,"name '#{n}' already exists")
         end
       end
@@ -29,7 +29,6 @@ class Link < ActiveRecord::Base
     false
   end
 
-  
   def omrl_url
     o = OMRL.new(omrl)
     o.url
@@ -39,7 +38,7 @@ class Link < ActiveRecord::Base
   # CLASS METHODS
   ######################################################################################
   # class method to return a naming link optionally of from a given entity
-  def Link.find_name_link(name,entity_id=nil)
+  def Link.find_naming_link(name,entity_id=nil)
     if (entity_id) 
       conditions = ["link_type = 'names' and entity_id = ? and specification like ?", entity_id,"%name: #{name}%"]
     else
@@ -48,5 +47,21 @@ class Link < ActiveRecord::Base
     Link.find(:first, :conditions => conditions)
   end
 
+  ######################################################################################
+  def Link.find_declaring_entity(num)
+    conditions = ["link_type = 'declares' and omrl = ?", num]
+    link = Link.find(:first, :conditions => conditions)
+    link.entity if link
+  end
+  
+
+  ######################################################################################
+  def Link.find_entity_name(num)
+    conditions = ["link_type = 'names' and omrl = ?", num]
+    link = Link.find(:first, :conditions => conditions)
+    #TODO handles only the first naming link!!
+    return link.specification_attribute("name") if link
+    nil
+  end
 
 end

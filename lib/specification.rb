@@ -22,7 +22,7 @@ module Specification
       begin
         load_specification(attribute_name)
       rescue Exception => e
-        errors.add(attribute_name,"specification does not appear to be valid YAML (#{e.to_s})")
+        errors.add(attribute_name,"specification (#{specification}) does not appear to be valid YAML (#{e.to_s})")
       end
     end
     

@@ -75,8 +75,8 @@ context "linking entities" do
     from = :currency_bucks
     { "approves"=>:flow_tx1,
       "originates_from"=>:account_zippy,
-#      "is_used_by"=>:account_mwl,
-#      "is_used_by"=>:account_zippy
+      "is_used_by"=>:account_mwl,
+      "is_used_by"=>:account_zippy
       }.each { |link_type,to_entity| lambda {create_link(from,to_entity,link_type)}.should_not raise_error}
     { "accepts"=>:flow_tx1,
       "declares"=>:flow_tx1,

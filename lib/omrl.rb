@@ -103,8 +103,7 @@ class OMRL
     return @name if @name != nil #return cached value
     case type
     when OM_URL, OM_NUM
-      raise "not implemented!"
-      #@name = Entity.get_entity_name(num)
+      @name = Link.find_entity_name(num)
     when OM_NAME
       @name = @omrl
     end
@@ -131,13 +130,17 @@ class OMRL
     raise "resolve_num_to_url not implemented for external om nums! [omrl #{@omrl} = num #{om_num}]"
   end
   
+  ######################################################################################
   def resolve_name_to_num(om_name)
     if om_name == ''
       return "1"
     end
-    l = Link.find_name_link(om_name)
+    if om_name =~ /#(.*)/
+      return $1
+    end
+    l = Link.find_naming_link(om_name)
     if l
-      l.omrl
+      l.omrl  #TODO: this works because a naming link must allways use a OMRL_NUM?????
     else
       raise "resolve_name_to_num not implemented for non local omrl #{@omrl} name=#{om_name}"
     end

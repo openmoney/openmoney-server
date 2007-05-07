@@ -17,11 +17,11 @@ function check() {
 	var type = $("event_event_type");
 	var spec = $("event_specification");
 	switch(type.getValue()) {
-		case "CreateContext": spec.value = "name: \nparent_context: \ncontext_specification: ";
+		case "CreateContext": spec.value = "name: \nparent_context: \ncontext_specification: \n  description: ";
 			break;
-		case "CreateCurrency": spec.value = "name: \nparent_context: \noriginating_account: \ncurrency_specification: ";
+		case "CreateCurrency": spec.value = "name: \nparent_context: \noriginating_account: \ncurrency_specification: \n  description: ";
 			break;
-		case "CreateAccount": spec.value = "name: \nparent_context: \naccount_specification: ";
+		case "CreateAccount": spec.value = "name: \nparent_context: \naccount_specification: \n  description: ";
 			break;
 		case "JoinCurrency": spec.value = "currency: \naccount: ";
 			break;
