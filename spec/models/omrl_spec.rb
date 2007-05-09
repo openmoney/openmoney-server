@@ -1,5 +1,87 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+context "parsing an omrl" do
+  specify "should report CURRENCY for currency omrls" do
+    omrl = OMRL.new('bucks~us')
+    omrl.kind.should == OMRL::CURRENCY
+    omrl.should be_currency
+    omrl.should_not be_account
+    omrl.should_not be_flow
+  end
+
+  specify "should report ACCOUNT for account omrls" do
+    omrl = OMRL.new('zippy^us')
+    omrl.kind.should == OMRL::ACCOUNT
+    omrl.should be_account
+    omrl.should_not be_currency
+    omrl.should_not be_flow
+  end
+
+  specify "should report FLOW for absolute account omrls" do
+    omrl = OMRL.new('bucks#22~us')
+    omrl.kind.should == OMRL::FLOW
+    omrl.should be_flow
+    omrl.should_not be_currency
+    omrl.should_not be_account
+  end
+    
+  specify "should report FLOW for absolute currency omrls" do
+    omrl = OMRL.new('zippy#22^us')
+    omrl.kind.should == OMRL::FLOW
+    omrl.should be_flow
+    omrl.should_not be_currency
+    omrl.should_not be_account
+  end
+
+  specify "should report FLOW for relative omrls" do
+    omrl = OMRL.new('zippy#22')
+    omrl.kind.should == OMRL::FLOW
+    omrl.should be_flow
+    omrl.should_not be_currency
+    omrl.should_not be_account
+  end
+
+  specify "should report relative for relative omrls" do
+    omrl = OMRL.new('zippy#22')
+    omrl.should be_relative
+  end
+
+  specify "should parse entity_name for relative omrls" do
+    omrl = OMRL.new('zippy')
+    omrl.entity_name.should == 'zippy'
+  end
+  
+  specify "should parse entity_name for relative flow omrls" do
+    omrl = OMRL.new('zippy#22')
+    omrl.entity_name.should == 'zippy#22'
+  end
+  
+  specify "should parse entity_name for absolute flow omrls" do
+    omrl = OMRL.new('zippy#22^us')
+    omrl.entity_name.should == 'zippy#22'
+  end
+
+  specify "should parse entity_name for absolute account omrls" do
+    omrl = OMRL.new('zippy^us')
+    omrl.entity_name.should == 'zippy'
+  end
+
+  specify "should parse entity_name for absolute currency omrls" do
+    omrl = OMRL.new('bucks~us')
+    omrl.entity_name.should == 'bucks'
+  end
+
+  specify "should parse context for absolute currency omrls" do
+    omrl = OMRL.new('bucks~us')
+    omrl.context.should == 'us'
+  end
+
+  specify "should parse context for absolute account omrls" do
+    omrl = OMRL.new('zippy^us')
+    omrl.context.should == 'us'
+  end
+end
+
 
 context "A local omrl" do
   fixtures :entities

@@ -6,17 +6,28 @@
 
 # OMRL = open money resource locator.
 # an omrl can be any of three things: 
-#   1- an open money name like zippy^cc.ny.us or bucks~vegetarians.us
-#   2- an open money number like 1^2233.12.1 or 76~3334321.1
+#   1- an open money name like zippy^cc.ny.us or bucks~vegetarians.us or a transaction like zippy#32^cc.ny.us
+#   2- an open money number like 1^2233.12.1 or 76~3334321.1 or a transaction like 1#32^2233.12.1
 #   3- a transport url like: http://openmoney.info/entities/1 (or a relative one like this: /entities/1)
 # additionally omrls can be absolute or relative.  i.e. a relative open money number is just a number (i.e. an id)
-# and a relative openmoney name is just text followed by ~ or ^ to distinguish between accounts and currencies
+# and a relative openmoney name is just text.  The context will then be figured out according to the situation.
 
+# This class models an OMRL, and provides downward resolution of Names to Numbers and URLs as well as upward
+# resolution for nums and URLs to names.
 
 class OMRL
+  
   OM_NUM = :num
   OM_NAME = :name
   OM_URL = :url
+  
+  CURRENCY = :currency
+  FLOW = :flow
+  ACCOUNT = :account
+  
+  SEPARATOR_CURRENCY = '~'
+  SEPARATOR_ACCOUNT = '^'
+  SEPARATOR_FLOW = '#'
 
   attr_reader :omrl
 
@@ -24,10 +35,15 @@ class OMRL
   def initialize(o = '')
     @omrl = o.to_s  #since a plain number is a valid omrl we always covert all input to a string
     @type = nil
+    @kind = nil
     @url = nil
     @num = nil
     @name = nil
     @local = nil
+    @relative = nil
+    @entity_name = nil
+    @context = nil
+    @parsed = nil
   end
   
   ######################################################################################
@@ -37,7 +53,80 @@ class OMRL
   end
   
   ######################################################################################
-  #returns the type as one of the constants :om_num, :url or :om_name
+  #returns whether this is a relative url
+  def relative?
+    parse
+    @relative
+  end
+  
+  ######################################################################################
+  # returns the entity_name, i.e. the part before the separator
+  def entity_name
+    return @entity_name if @entity_name #return cached value
+    parse
+    @entity_name
+  end
+
+  ######################################################################################
+  #returns the context, i.e. the part after the separator
+  def context
+    return @context if @context #return cached value
+    parse
+    @context
+  end
+  
+  ######################################################################################
+  #returns the kind of OMRL as one of the constants CURRENCY FLOW ACCOUNT
+  def kind
+    return @kind if @kind #return cached value
+    parse
+    @kind
+  end
+  
+  def currency?
+    parse
+    kind == CURRENCY
+  end
+
+  def account?
+    parse
+    kind == ACCOUNT
+  end
+
+  def flow?
+    parse
+    kind == FLOW
+  end
+  
+  ######################################################################################
+  # parses the omrl
+  def parse
+    return if @parsed
+    @parsed = true
+    if @omrl =~ /^(.*)([#{SEPARATOR_CURRENCY}#{SEPARATOR_ACCOUNT}])(.*)$/
+      @relative = false
+      @entity_name = $1
+      separator = $2
+      @context = $3
+      if @entity_name =~ /#{SEPARATOR_FLOW}/
+        @kind = FLOW
+      else
+        @kind = case separator
+        when SEPARATOR_ACCOUNT
+          ACCOUNT
+        when SEPARATOR_CURRENCY
+          CURRENCY
+        end
+      end
+    else
+      @relative = true
+      @entity_name = @omrl
+      @kind = (@entity_name =~ /#{SEPARATOR_FLOW}/) ? FLOW : nil
+    end
+  end
+
+  ######################################################################################
+  #returns the type as one of the constants OM_NUM, OM_URL or OM_NAME
   def type
     return @type if @type != nil #return cached value
     @type = case @omrl
@@ -49,7 +138,11 @@ class OMRL
       OM_NAME
     end
   end
-  
+
+
+  ######################################################################################
+  ######################################################################################
+  # resolution routines
   ######################################################################################
   #does this omrl exist on this server?
   def local?
@@ -82,6 +175,7 @@ class OMRL
   end
 
   ######################################################################################
+  #  return the num for this omrl by resolving it
   def num
     return @num if @num != nil #return cached value
     case type
@@ -98,6 +192,7 @@ class OMRL
       @num = resolve_name_to_num(@omrl)
     end
   end
+  
   ######################################################################################
   def name
     return @name if @name != nil #return cached value
