@@ -64,13 +64,13 @@ eos
   end
   
   specify "should create a context entity" do
-    e = Entity.find_entity_by_omrl("ec")
+    e = Entity.find_by_omrl("ec")
     e.should_not be_nil
     e.entity_type.should == "context"
   end
 
   specify "which should be available through created_entity" do
-    e = Entity.find_entity_by_omrl("ec")
+    e = Entity.find_by_omrl("ec")
     @e.created_entity.should == e
   end
     
@@ -101,7 +101,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
   end
   
   specify "canada context should exist and should be a context and be correctly linked" do
-    e = Entity.find_entity_by_omrl("ca")
+    e = Entity.find_by_omrl("ca")
     e.should_not be_nil
     e.entity_type.should == "context"
     links = e.links
@@ -111,7 +111,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
   end
 
   specify "us context should exist and should be a context and be correctly linked" do
-    e = Entity.find_entity_by_omrl("us")
+    e = Entity.find_by_omrl("us")
     e.should_not be_nil
     e.entity_type.should == "context"
     links = e.links
@@ -123,7 +123,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
   end
 
   specify "bucks currency should exist and be linked to context, accounts and flow" do
-    e = Entity.find_entity_by_omrl("bucks")
+    e = Entity.find_by_omrl("bucks")
     e.should_not be_nil
     e.entity_type.should == "currency"
     links = e.links
@@ -140,11 +140,11 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
   end
 
   specify "ecuador context should not exist" do
-    Entity.find_entity_by_omrl("ec").should_be nil
+    Entity.find_by_omrl("ec").should_be nil
   end
 
   specify "mwl account should exist and should be an account and linked to flow tx1" do
-    e = Entity.find_entity_by_omrl("mwl")
+    e = Entity.find_by_omrl("mwl")
     e.should_not be_nil
     e.entity_type.should == "account"
     links = e.links
@@ -153,7 +153,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
   end
 
   specify "tx1 flow should exist and should be a flow and be linked" do
-    e = Entity.find_entity_by_omrl("zippy.tx1")
+    e = Entity.find_by_omrl("zippy.tx1")
     e.should_not be_nil
     Entity.get_entity_name(e.id).should == e.name
     e.entity_type.should == "flow"

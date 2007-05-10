@@ -84,7 +84,7 @@ class Event < ActiveRecord::Base
       extra_links_from.each {|spec,link_type| specification[spec] = :required} if extra_links_from.is_a?(Hash)
       
       _enmesh(entity_type,specification) do |entity|
-        create_link(@specification['parent_context'],entity.omrl,'names',"name: #{@specification['name']}")
+        create_link(@specification['parent_context'],entity.omrl(OMRL::OM_NUM),'names',"name: #{@specification['name']}")
         extra_links_from.each {|spec,link_type| create_link(entity.omrl,@specification[spec],link_type)}  if extra_links_from.is_a?(Hash)
         extra_links_to.each {|spec,link_type| create_link(@specification[spec],entity.omrl,link_type)}  if extra_links_to.is_a?(Hash)
       end

@@ -24,12 +24,13 @@ class OMRL
   CURRENCY = :currency
   FLOW = :flow
   ACCOUNT = :account
+  CONTEXT = :context
   
   SEPARATOR_CURRENCY = '~'
   SEPARATOR_ACCOUNT = '^'
   SEPARATOR_FLOW = '#'
 
-  attr_reader :omrl
+  attr_reader :omrl, :flow_declarer, :flow_id, :separator, :parsed
 
   ######################################################################################
   def initialize(o = '')
@@ -41,9 +42,14 @@ class OMRL
     @name = nil
     @local = nil
     @relative = nil
-    @entity_name = nil
-    @context = nil
+    @name_entity = nil
+    @name_context = nil
+    @num_entity = nil
+    @num_context = nil
     @parsed = nil
+    @flow_declarer = nil
+    @flow_id = nil
+    @separator = nil
   end
   
   ######################################################################################
@@ -60,25 +66,33 @@ class OMRL
   end
   
   ######################################################################################
-  # returns the entity_name, i.e. the part before the separator
-  def entity_name
-    return @entity_name if @entity_name #return cached value
+  # returns the entity, i.e. the part before the separator
+  def entity
     parse
-    @entity_name
+    return @name_entity if om_name?
+    return @num_entity if om_num?
   end
 
   ######################################################################################
   #returns the context, i.e. the part after the separator
   def context
-    return @context if @context #return cached value
     parse
-    @context
+    return @name_context if om_name?
+    return @num_context if om_num?
+  end
+  
+  ######################################################################################
+  #returns the nth sub-context where 0 is the left-most context
+  # because entity ids are unique in this implementation, this is an easy way to find
+  # the entity id of an OM_NUM omrl context
+  def context_leaf(position = 0)
+    c = context
+    c.split(/\./)[position]
   end
   
   ######################################################################################
   #returns the kind of OMRL as one of the constants CURRENCY FLOW ACCOUNT
   def kind
-    return @kind if @kind #return cached value
     parse
     @kind
   end
@@ -97,21 +111,32 @@ class OMRL
     parse
     kind == FLOW
   end
+
+  def context?
+    parse
+    kind == CONTEXT
+  end
   
   ######################################################################################
   # parses the omrl
   def parse
-    return if @parsed
+    return if @parsed != nil
     @parsed = true
+    return if om_url?
+
     if @omrl =~ /^(.*)([#{SEPARATOR_CURRENCY}#{SEPARATOR_ACCOUNT}])(.*)$/
-      @relative = false
-      @entity_name = $1
-      separator = $2
-      @context = $3
-      if @entity_name =~ /#{SEPARATOR_FLOW}/
+      entity = $1
+      @separator = $2
+
+      @relative = $3 == ""
+      context = $3 if !@relative
+
+      if entity =~ /(.*)#{SEPARATOR_FLOW}(.*)/
+        @flow_declarer = $1
+        @flow_id = $2
         @kind = FLOW
       else
-        @kind = case separator
+        @kind = case @separator
         when SEPARATOR_ACCOUNT
           ACCOUNT
         when SEPARATOR_CURRENCY
@@ -119,10 +144,28 @@ class OMRL
         end
       end
     else
-      @relative = true
-      @entity_name = @omrl
-      @kind = (@entity_name =~ /#{SEPARATOR_FLOW}/) ? FLOW : nil
+      if @omrl =~ /\./
+        context = @omrl
+        @kind = CONTEXT
+        @relative = false
+      else
+        @relative = true
+        entity = @omrl
+        @kind = (@entity =~ /#{SEPARATOR_FLOW}/) ? FLOW : nil
+      end
     end
+
+    context.gsub!(/\.$/,'') if context
+    case type
+    when OM_NAME
+      @name_entity = entity
+      @name_context = context
+    when OM_NUM
+      @num_entity = entity
+      @num_context = context
+    end
+    
+    @kind
   end
 
   ######################################################################################
@@ -138,32 +181,89 @@ class OMRL
       OM_NAME
     end
   end
+  
+  def om_num?
+    type == OM_NUM
+  end
 
+  def om_name?
+    type == OM_NAME
+  end
+
+  def om_url?
+    type == OM_URL
+  end
 
   ######################################################################################
   ######################################################################################
   # resolution routines
   ######################################################################################
+
   #does this omrl exist on this server?
+  # TODO: for now this is a cheat because it just looks to see if the context names match up
+  # with the link pattern.  Later this needs to be true name resolution
   def local?
     return @local if @local != nil
-    
-    u = URI.parse(url)
-    if u.relative?
-      id = num
-    else
-      raise "local? for non relative urls not implemented"
-      # figure out if the non-relative url is local
-    end
-    if (id == 0) 
-      @local = false
-    else
-      begin
-        e = Entity.find(id)
-        @local = e
-      rescue ActiveRecord::RecordNotFound
-        @local = false
+
+    raise "haven't implemented local? for OM_URLs!" if om_url?
+
+    parse
+
+    if om_num?
+      case @kind
+      when CONTEXT
+        entity_id = context_leaf
+      when FLOW
+        entity_id = flow_id
+      else
+        entity_id = entity
       end
+    else
+      if relative?
+        l = Link.find_naming_link(flow? ? @flow_declarer : @name_entity)
+        if l
+          raise "Can't disambiguate relative omrl:  There is more than one entity with the name #{@name_entity}" if l.is_a?(Array)
+          entity_id = get_entity_id_from_link(l)
+        end
+      else
+        context_ids = Link.find_context_entity_ids(context)
+        if context_ids
+          @num_context = context_ids.join('.')
+          if context?
+            entity_id = context_ids[0]
+          else
+            l = Link.find_naming_link(flow? ? @flow_declarer : @name_entity,context_ids[0])
+            if l
+              entity_id = @num_entity = get_entity_id_from_link(l)
+            end
+          end
+        end
+      end
+    end
+    
+    @local = false
+    if entity_id
+      begin
+        # this only works because all entities have unique ids!
+        @local = Entity.find(entity_id)
+      rescue ActiveRecord::RecordNotFound
+        #local was set to false above, no need to do it here
+      end
+    end
+    
+    @local
+  end
+  
+  def get_entity_id_from_link(link)
+    o = OMRL.new(link.omrl)
+    raise "WOHA! A naming link omrl must be a OM_NUM omrl (was #{link.omrl})" if !o.om_num?
+    if flow?
+      # we've proven that the declarer exists locally so the entity id for the flow
+      # should just be the id from this omrl
+      flow_id
+    else
+      #otherwise the entity id should be the entity section of the link omrl
+      o.entity
     end
   end
   
@@ -171,7 +271,7 @@ class OMRL
   #  return the URL for this omrl by resolving it
   def url
     return @url if @url != nil #return cached value
-    @url = resolve_to_url()
+    @url = resolve_to_url
   end
 
   ######################################################################################
@@ -189,7 +289,7 @@ class OMRL
     when OM_NUM
       @num = @omrl
     when OM_NAME
-      @num = resolve_name_to_num(@omrl)
+      @num = resolve_name_to_num
     end
   end
   
@@ -198,7 +298,7 @@ class OMRL
     return @name if @name != nil #return cached value
     case type
     when OM_URL, OM_NUM
-      @name = Link.find_entity_name(num)
+      @name = Link.find_entity(num)
     when OM_NAME
       @name = @omrl
     end
@@ -208,36 +308,43 @@ class OMRL
   
   ######################################################################################
   #resolves the omrl down to a url 
-  def resolve_to_url()
+  def resolve_to_url
     case type
     when OM_URL
       @omrl
     when OM_NUM
-      resolve_num_to_url(@omrl)
+      resolve_num_to_url
     when OM_NAME
       resolve_num_to_url(num)
     end
   end
   
   ######################################################################################
-  def resolve_num_to_url(om_num)
-    return "/entities/#{om_num}" if om_num =~ /^\d+$/
-    raise "resolve_num_to_url not implemented for external om nums! [omrl #{@omrl} = num #{om_num}]"
+  def resolve_num_to_url
+    parse
+    if local?
+      if flow?
+        return "/entities/#{@flow_id}"
+      else
+        return "/entities/#{@num_entity}"
+      end
+    end
+    raise "resolve_num_to_url not implemented for external om nums! [omrl #{@omrl} = num #{@num_entity}]"
   end
   
   ######################################################################################
-  def resolve_name_to_num(om_name)
-    if om_name == ''
+  def resolve_name_to_num
+    raise "WHOA! this OMRL isn't an OM_NAME" if type != OM_NAME
+
+    #special case for the null root omrl
+    if @omrl == ''
       return "1"
     end
-    if om_name =~ /#(.*)/
-      return $1
-    end
-    l = Link.find_naming_link(om_name)
-    if l
-      l.omrl  #TODO: this works because a naming link must allways use a OMRL_NUM?????
+
+    if local?
+      "#{@num_entity}#{@separator}#{@num_context}"
     else
-      raise "resolve_name_to_num not implemented for non local omrl #{@omrl} name=#{om_name}"
+      raise "resolve_name_to_num not implemented for non local omrl #{@omrl} name=#{@name_entity}"
     end
   end
 end

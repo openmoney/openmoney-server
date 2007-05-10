@@ -114,7 +114,7 @@ class Entity < ActiveRecord::Base
 
   ######################################################################################
   # class method to find an entity by omrl
-  def Entity.find_entity_by_omrl(o)
+  def Entity.find_by_omrl(o)
     OMRL.new(o).local?
   end
   
@@ -163,7 +163,7 @@ class Entity < ActiveRecord::Base
       if valid_link_to_entity_types.class != Array
         valid_link_to_entity_types = [valid_link_to_entity_types]
       end
-      e = Entity.find_entity_by_omrl(link.omrl)
+      e = Entity.find_by_omrl(link.omrl)
       if !e 
         @link_error = "unable to find omrl #{link.omrl} to link to it!"
         return false
