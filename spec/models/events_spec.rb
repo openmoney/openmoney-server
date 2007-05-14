@@ -39,8 +39,9 @@ context "Creating and enmeshing a context event" do
         :event_type => "CreateContext",
         :specification => <<-eos
 parent_context: 1
-context_specification: ---
 name: ec
+context_specification:
+  description: Ecuador
 eos
       })
     @enmesh_result = @e.enmesh
@@ -64,13 +65,13 @@ eos
   end
   
   specify "should create a context entity" do
-    e = Entity.find_by_omrl("ec")
+    e = Entity.find_by_omrl("ec.")
     e.should_not be_nil
     e.entity_type.should == "context"
   end
 
   specify "which should be available through created_entity" do
-    e = Entity.find_by_omrl("ec")
+    e = Entity.find_by_omrl("ec.")
     @e.created_entity.should == e
   end
     
@@ -85,23 +86,19 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     e.each do |event|
       evt = Event.create({:event_type => event.event_type,:specification => event.specification})
       evt.enmesh
-      if e.id == 8
-        @tx = evt.created_entity
-      end
+#      if e.event_type == "AcknowledgeFlow"
+#        @flow = evt.created_entity
+#      end
 #      puts "specification: "<<event.specification
-      if !evt.errors.empty?
+#      if !evt.errors.empty?
 #        puts "ERROR: enmeshing event #{evt.errors.full_messages.join(",")} \n" 
-        pp evt
-      end
+#        pp evt
+#      end
     end
-  end
-
-  specify "fixtures should load 8 Events" do
-    Event.should have(8).records
   end
   
   specify "canada context should exist and should be a context and be correctly linked" do
-    e = Entity.find_by_omrl("ca")
+    e = Entity.find_by_omrl("ca.")
     e.should_not be_nil
     e.entity_type.should == "context"
     links = e.links
@@ -111,11 +108,11 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
   end
 
   specify "us context should exist and should be a context and be correctly linked" do
-    e = Entity.find_by_omrl("us")
+    e = Entity.find_by_omrl("us.")
     e.should_not be_nil
     e.entity_type.should == "context"
     links = e.links
-    links.should have(2).items
+    links.should have(3).items
     links[0].link_type.should == "names"
     links[0].specification_attribute("name").should == "zippy"
     links[1].link_type.should == "names"
@@ -136,7 +133,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     links[2].link_type.should == "is_used_by"
     links[2].omrl.should == "mwl"
     links[3].link_type.should == "approves"
-    links[3].omrl.should == "zippy.8"
+    links[3].omrl.should =~ /zippy\#[0-9]+/
   end
 
   specify "ecuador context should not exist" do
@@ -149,38 +146,32 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     e.entity_type.should == "account"
     links = e.links
     links.should have(1).items
-    links[0].omrl.should == "zippy.8"
+    links[0].omrl.should =~ /zippy\#[0-9]+/
   end
 
-  specify "tx1 flow should exist and should be a flow and be linked" do
-    e = Entity.find_by_omrl("zippy.tx1")
-    e.should_not be_nil
-    Entity.get_entity_name(e.id).should == e.name
-    e.entity_type.should == "flow"
-  end
+#  specify "tx1 flow should exist and should be a flow and be linked" do
+#    e =  @flow #Entity.find_by_omrl("zippy#8")
+#    e.omrl.should =~ /zippy\#[0-9]+/
+#    e.should_not be_nil
+#    Entity.get_entity_name(e.id).should == e.name
+#    e.entity_type.should == "flow"
+#  end
     
-  specify "creating a ca context should fail validation (dup)" do
-    e = Entity.new({
-      :entity_type => "context",
-      :specification => <<-eos
-        name: ca
-        parent_context: 1
-        eos
-    })
-    e.should_not be_valid
+  specify "enmeshing a repeat CreateContext event should fail (dup)" do
+    e = Event.create({
+        :event_type => "CreateContext",
+        :specification => <<-eos
+          context_specification:
+            description: Canada
+          parent_context: 1
+          name: ca
+    eos
+        })
+    enmesh_result = e.enmesh
+    e.errors.full_messages.should == ["Specification - enmeshing error: couldn't create the link! Specification name 'ca' already exists"]
+    enmesh_result.should be_false
   end
   
-  specify "creating an ecuador context should be valid" do
-    e = Entity.new({
-      :entity_type => "context",
-      :specification => <<-eos
-        name: ec
-        parent_context: 1
-        eos
-    })
-    e.should be_valid
-  end
-
   specify "enmeshing a repeat JoinCurrency event should fail" do
     e = Event.create({
       :event_type => "JoinCurrency",

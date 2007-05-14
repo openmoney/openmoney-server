@@ -1,4 +1,4 @@
-open money REST architecture, draft march '07
+open money REST architecture, draft
 
 Low-level API to the mesh which has two types of resources, entities and links:
 

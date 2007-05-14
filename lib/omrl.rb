@@ -29,12 +29,40 @@ class OMRL
   SEPARATOR_CURRENCY = '~'
   SEPARATOR_ACCOUNT = '^'
   SEPARATOR_FLOW = '#'
+  SEPARATOR_CONTEXT = '.'
 
-  attr_reader :omrl, :flow_declarer, :flow_id, :separator, :parsed
+  attr_reader :flow_declarer, :flow_id, :separator, :parsed
+
+  def to_s
+    @omrl
+  end
+
+  def OMRL.new_flow(declarer, flow_id)
+    o = OMRL.new(declarer)
+    t = "#{o.entity}#{SEPARATOR_FLOW}#{flow_id}#{o.separator}"
+    t << o.context if !o.relative?
+    OMRL.new(t)
+  end
+
+  def OMRL.new_context(name, parent_context)
+    t = "#{name}#{SEPARATOR_CONTEXT}#{parent_context}"
+    OMRL.new(t)
+  end
+
+  def OMRL.new_account(name, parent_context)
+    t = "#{name}#{SEPARATOR_ACCOUNT}#{parent_context}"
+    OMRL.new(t)
+  end
+  
+  def OMRL.new_currency(name, parent_context)
+    t = "#{name}#{SEPARATOR_CURRENCY}#{parent_context}"
+    OMRL.new(t)
+  end
+  
 
   ######################################################################################
   def initialize(o = '')
-    @omrl = o.to_s  #since a plain number is a valid omrl we always covert all input to a string
+    @omrl = o.clone.to_s  #since a plain number is a valid omrl we always covert all input to a string
     @type = nil
     @kind = nil
     @url = nil
@@ -86,6 +114,7 @@ class OMRL
   # because entity ids are unique in this implementation, this is an easy way to find
   # the entity id of an OM_NUM omrl context
   def context_leaf(position = 0)
+    raise "Cannot report context on a relative OMRL #{@omrl}" if relative?
     c = context
     c.split(/\./)[position]
   end
@@ -117,57 +146,6 @@ class OMRL
     kind == CONTEXT
   end
   
-  ######################################################################################
-  # parses the omrl
-  def parse
-    return if @parsed != nil
-    @parsed = true
-    return if om_url?
-
-    if @omrl =~ /^(.*)([#{SEPARATOR_CURRENCY}#{SEPARATOR_ACCOUNT}])(.*)$/
-      entity = $1
-      @separator = $2
-
-      @relative = $3 == ""
-      context = $3 if !@relative
-
-      if entity =~ /(.*)#{SEPARATOR_FLOW}(.*)/
-        @flow_declarer = $1
-        @flow_id = $2
-        @kind = FLOW
-      else
-        @kind = case @separator
-        when SEPARATOR_ACCOUNT
-          ACCOUNT
-        when SEPARATOR_CURRENCY
-          CURRENCY
-        end
-      end
-    else
-      if @omrl =~ /\./
-        context = @omrl
-        @kind = CONTEXT
-        @relative = false
-      else
-        @relative = true
-        entity = @omrl
-        @kind = (@entity =~ /#{SEPARATOR_FLOW}/) ? FLOW : nil
-      end
-    end
-
-    context.gsub!(/\.$/,'') if context
-    case type
-    when OM_NAME
-      @name_entity = entity
-      @name_context = context
-    when OM_NUM
-      @num_entity = entity
-      @num_context = context
-    end
-    
-    @kind
-  end
-
   ######################################################################################
   #returns the type as one of the constants OM_NUM, OM_URL or OM_NAME
   def type
@@ -220,10 +198,11 @@ class OMRL
       end
     else
       if relative?
-        l = Link.find_naming_link(flow? ? @flow_declarer : @name_entity)
+        entity_name = flow? ? @flow_declarer : @name_entity
+        l = Link.find_naming_link(entity_name)
         if l
-          raise "Can't disambiguate relative omrl:  There is more than one entity with the name #{@name_entity}" if l.is_a?(Array)
-          entity_id = get_entity_id_from_link(l)
+          raise "Can't disambiguate relative omrl:  There is more than one entity with the name #{entity_name}" if l.is_a?(Array)
+          entity_id = @num_entity = get_entity_id_from_link(l)
         end
       else
         context_ids = Link.find_context_entity_ids(context)
@@ -298,13 +277,73 @@ class OMRL
     return @name if @name != nil #return cached value
     case type
     when OM_URL, OM_NUM
-      @name = Link.find_entity(num)
+      @name = Entity.find_by_omrl(num).omrl
     when OM_NAME
       @name = @omrl
     end
   end
 
+  ######################################################################################
+  ######################################################################################
+  # private routines that do all the work
   private
+  
+  ######################################################################################
+  # parses the omrl
+  def parse
+    return if @parsed != nil
+    @parsed = true
+    return if om_url?
+
+    if @omrl =~ /^(.*)([#{SEPARATOR_CURRENCY}#{SEPARATOR_ACCOUNT}])(.*)$/
+      entity = $1
+      @separator = $2
+
+      @relative = $3 == ""
+      context = $3 if !@relative
+
+      if entity =~ /(.*)#{SEPARATOR_FLOW}(.*)/
+        raise "currencies can't be flow declarers #{entity}" if @separator == SEPARATOR_CURRENCY
+        @flow_declarer = $1
+        @flow_id = $2
+        @kind = FLOW
+      else
+        @kind = case @separator
+        when SEPARATOR_ACCOUNT
+          ACCOUNT
+        when SEPARATOR_CURRENCY
+          CURRENCY
+        end
+      end
+    else
+      if @omrl =~ /\./
+        context = @omrl
+        @kind = CONTEXT
+        @relative = false
+      else
+        @relative = true
+        entity = @omrl
+        if entity =~ /(.*)#{SEPARATOR_FLOW}(.*)/
+          @kind = FLOW
+          @flow_declarer = $1
+          @flow_id = $2
+        end
+      end
+    end
+
+    context.gsub!(/\.$/,'') if context
+    case type
+    when OM_NAME
+      @name_entity = entity
+      @name_context = context
+    when OM_NUM
+      @num_entity = entity
+      @num_context = context
+    end
+    
+    @kind
+  end
+  
   
   ######################################################################################
   #resolves the omrl down to a url 
@@ -315,7 +354,8 @@ class OMRL
     when OM_NUM
       resolve_num_to_url
     when OM_NAME
-      resolve_num_to_url(num)
+      resolve_name_to_num
+      resolve_num_to_url
     end
   end
   
@@ -342,7 +382,7 @@ class OMRL
     end
 
     if local?
-      "#{@num_entity}#{@separator}#{@num_context}"
+      relative? ? @num_entity : "#{@num_entity}#{@separator}#{@num_context}"
     else
       raise "resolve_name_to_num not implemented for non local omrl #{@omrl} name=#{@name_entity}"
     end

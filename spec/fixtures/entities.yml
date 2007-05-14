@@ -13,6 +13,7 @@ context_ca:
   entity_type: context
   access_control: 
   specification: 
+    parent_context: 
 context_us:
   id: 3
   created_at: 2007-03-14 11:11:40
@@ -20,6 +21,7 @@ context_us:
   entity_type: context
   access_control: 
   specification: 
+    parent_context: 
 currency_bucks:
   id: 4
   created_at: 2007-03-14 11:11:40
@@ -27,6 +29,7 @@ currency_bucks:
   entity_type: currency
   access_control: 
   specification: 
+    parent_context: us.
 account_zippy:
   id: 5
   created_at: 2007-03-14 11:11:40
@@ -34,6 +37,7 @@ account_zippy:
   entity_type: account
   access_control: 
   specification:
+    parent_context: us.
 account_mwl:
   id: 6
   created_at: 2007-03-14 11:11:40
@@ -41,6 +45,7 @@ account_mwl:
   entity_type: account
   access_control: 
   specification:
+    parent_context: ca.
 flow_tx1:
   id: 7
   created_at: 2007-03-14 11:11:40
@@ -48,5 +53,17 @@ flow_tx1:
   entity_type: flow
   access_control: 
   specification: 
-    description: some stuff
+    declaring_account: zippy^us.
+    accepting_account: mwl^ca.
+    currency: bucks
+    description: goodies!
     amount: 10      
+context_ny_us:
+  id: 8
+  created_at: 2007-03-14 11:11:40
+  updated_at: 2007-03-14 11:11:40
+  entity_type: context
+  access_control: 
+  specification: 
+    description: New York 
+    parent_context: us.

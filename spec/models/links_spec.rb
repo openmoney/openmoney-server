@@ -22,6 +22,18 @@ context "naming links" do
   end
 end
 
+context "find_context_entity_ids" do
+  fixtures :entities
+  fixtures :links
+  specify "should work for top level contexts" do
+    Link.find_context_entity_ids('us').should == [entities(:context_us).id]
+  end
+  specify "should work for multi-level contexts" do
+    Link.find_context_entity_ids('ny.us').should == [entities(:context_ny_us).id,entities(:context_us).id]
+  end
+end
+
+
 context "fixture" do
   fixtures :entities
   
@@ -48,7 +60,7 @@ context "linking entities" do
   
   specify "should only link from context with: names, approves link" do
     from = :context_ca
-    { "names"=>nil,
+    { "names"=>:account_mwl,
       "approves"=> :flow_tx1
     }.each { |link_type,to_entity| lambda {create_link(from,to_entity,link_type)}.should_not raise_error}
     { "is_used_by" => :bucks,

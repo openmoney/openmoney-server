@@ -34,8 +34,8 @@ class Event < ActiveRecord::Base
   
   ######################################################################################
   # the abstract act of enmeshing is simply to validate the specification of the event
-  # and then (if it's valid) to yeild to the block which which can add further errors
-  # if it wants.
+  # and then (if it's valid) to yeild to the block which which can take enmeshment acations
+  # and add further errors if they fail.
   def _enmesh(validations,attribute_name = :specification)
     validate_specification(validations,attribute_name)
     if errors.empty? 
@@ -55,10 +55,18 @@ class Event < ActiveRecord::Base
   class CreateEvent < Event
     attr :created_entity
   
-    def _enmesh(entity_type,validations)
+    def create_enmesh(entity_type,validations,attributes_for_entity=[])
       validations ||= {'name' => :required}
-      super(validations) do |errs|
-        entity = Entity.new({:entity_type => entity_type,:specification => @specification["#{entity_type}_specification"].to_yaml})
+      _enmesh(validations) do |errs|
+        
+        # copy into the entity specification any named attributes in the specification
+        # these are strictly speaking not necessary because though we could examine the mesh for
+        # and figure out the information, it's much faster and easier to pull the data out of the 
+        # entity itself.
+        entity_specification = @specification["#{entity_type}_specification"]
+        attributes_for_entity.each{|attrib| entity_specification[attrib] = @specification[attrib]}
+        
+        entity = Entity.new({:entity_type => entity_type,:specification => entity_specification.to_yaml})
         if (!entity.save)
           errs << "Error#{(entity.errors.count>1)? 's' : ''} creating entity: #{entity.errors.full_messages.join(',')}"
         else
@@ -79,12 +87,17 @@ class Event < ActiveRecord::Base
     # to include the parent entities omrl.  It also implements the block which
     # links the new entity to the parent entity
     def enmesh_parent_omrl(entity_type,extra_links_from = nil,extra_links_to = nil)
-      specification = {'name' => :required, 'parent_context' => :required, "#{entity_type}_specification" => :required}
-      extra_links_to.each {|spec,link_type| specification[spec] = :required} if extra_links_to.is_a?(Hash)
-      extra_links_from.each {|spec,link_type| specification[spec] = :required} if extra_links_from.is_a?(Hash)
+      validations = {'name' => :required, 'parent_context' => :required, "#{entity_type}_specification" => :required}
+      extra_links_to.each {|spec,link_type| validations[spec] = :required} if extra_links_to.is_a?(Hash)
+      extra_links_from.each {|spec,link_type| validations[spec] = :required} if extra_links_from.is_a?(Hash)
+
+      # make sure parent context is the fully sepcified form by adding the period onto the end of it
+      # if it's not already there.
+      load_specification
+      @specification['parent_context'] = "#{@specification['parent_context']}." if @specification['parent_context'] !~ /\.$/
       
-      _enmesh(entity_type,specification) do |entity|
-        create_link(@specification['parent_context'],entity.omrl(OMRL::OM_NUM),'names',"name: #{@specification['name']}")
+      create_enmesh(entity_type,validations,['parent_context']) do |entity|
+        create_link(@specification['parent_context'],entity.num_omrl,'names',"name: #{@specification['name']}")
         extra_links_from.each {|spec,link_type| create_link(entity.omrl,@specification[spec],link_type)}  if extra_links_from.is_a?(Hash)
         extra_links_to.each {|spec,link_type| create_link(@specification[spec],entity.omrl,link_type)}  if extra_links_to.is_a?(Hash)
       end
@@ -128,10 +141,10 @@ class Event < ActiveRecord::Base
   ######################################################################################
   class AcknowledgeFlow < CreateEvent
     def enmesh
-      _enmesh('flow',{'flow_specification' => :required,'declaring_account' => :required,'accepting_account' => :required,'currency' => :required}) do |entity|
+      create_enmesh('flow',{'flow_specification' => :required,'declaring_account' => :required,'accepting_account' => :required,'currency' => :required},%w(declaring_account accepting_account currency)) do |entity|
         links = []
         begin
-          entity_omrl = "#{@specification['declaring_account']}\##{entity.id}"  #TODO needs fixing when when using FQOMRL
+          entity_omrl = OMRL.new_flow(@specification['declaring_account'],entity.id).to_s
           { 'declaring_account'=>'declares',
             'accepting_account'=>'accepts',
             'currency'=>'approves',

@@ -24,17 +24,45 @@ context "fixtures" do
   fixtures :entities
   fixtures :links
   
-  specify "entity omrls" do
+  specify "relative entity omrls" do
     entities(:account_zippy).omrl.should == "zippy"
     entities(:context_us).omrl.should == "us"
     entities(:context_ca).omrl.should == "ca"
     entities(:currency_bucks).omrl.should == "bucks"
-    entities(:flow_tx1).omrl.should == 'zippy#7'
+    entities(:flow_tx1).omrl.should == 'zippy#7^us'
     entities(:account_mwl).omrl.should == "mwl"
   end
-  specify "find_by_omrl should find entities by omrl" do
-    Entity.find_by_omrl("mwl").should == entities(:account_mwl)
+  
+  specify "absolute entity omrls" do
+    entities(:account_zippy).omrl(false).should == "zippy^us."
+    entities(:currency_bucks).omrl(false).should == "bucks~us."
+    entities(:flow_tx1).omrl(false).should == 'zippy#7^us'
+    entities(:account_mwl).omrl(false).should == "mwl^ca."
+    entities(:context_us).omrl(false).should == "us."
+    entities(:context_ca).omrl(false).should == "ca."
   end
+  
+  specify "find_by_omrl should find unspecified relative omrls" do
+    Entity.find_by_omrl("mwl").should == entities(:account_mwl)
+    Entity.find_by_omrl("zippy#7").should == entities(:flow_tx1)
+    Entity.find_by_omrl("bob").should be_nil
+  end
+
+  specify "find_by_omrl should find specified relative omrl" do
+    Entity.find_by_omrl("mwl^").should == entities(:account_mwl)
+    Entity.find_by_omrl("bucks~").should == entities(:currency_bucks)
+    Entity.find_by_omrl("zippy#7^").should == entities(:flow_tx1)
+    Entity.find_by_omrl("bob^").should be_nil
+  end
+
+  specify "find_by_omrl should find absolute omrls" do
+    Entity.find_by_omrl("mwl^ca").should == entities(:account_mwl)
+    Entity.find_by_omrl("bucks~us").should == entities(:currency_bucks)
+    Entity.find_by_omrl("zippy#7^us").should == entities(:flow_tx1)
+    Entity.find_by_omrl("ca.").should == entities(:context_ca)
+    Entity.find_by_omrl("zippy#7^ca").should be_nil
+  end
+
 #  specify "find_by_omrl should not find entities for bad omrl" do
 #    Entity.find_by_omrl("xxx").should == nil
 #  end

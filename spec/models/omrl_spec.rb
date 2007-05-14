@@ -1,5 +1,20 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+context "creating omrls" do
+  specify "shoul work for flow omrls" do
+    OMRL.new_flow("fish^boink.us",35).omrl.should == "fish#35^boink.us"
+  end
+  specify "shoul work for context omrls" do
+    OMRL.new_context("ca","us").omrl.should == "ca.us"
+  end
+  specify "shoul work for account omrls" do
+    OMRL.new_account("zippy","ny.us").omrl.should == "zippy^ny.us"
+  end
+  specify "shoul work for currency omrls" do
+    OMRL.new_currency('bucks','us').omrl.should == "bucks~us"
+  end
+end
+
 context "parsing an omrl" do
   specify "should report CURRENCY for currency omrls" do
     omrl = OMRL.new('bucks~us')
@@ -7,6 +22,7 @@ context "parsing an omrl" do
     omrl.should be_currency
     omrl.should_not be_account
     omrl.should_not be_flow
+    omrl.should_not be_context
   end
 
   specify "should report ACCOUNT for account omrls" do
@@ -15,22 +31,18 @@ context "parsing an omrl" do
     omrl.should be_account
     omrl.should_not be_currency
     omrl.should_not be_flow
-  end
-
-  specify "should report FLOW for absolute account omrls" do
-    omrl = OMRL.new('bucks#22~us')
-    omrl.kind.should == OMRL::FLOW
-    omrl.should be_flow
-    omrl.should_not be_currency
-    omrl.should_not be_account
+    omrl.should_not be_context
   end
     
-  specify "should report FLOW for absolute currency omrls" do
+  specify "should report FLOW for absolute account omrls" do
     omrl = OMRL.new('zippy#22^us')
     omrl.kind.should == OMRL::FLOW
     omrl.should be_flow
     omrl.should_not be_currency
     omrl.should_not be_account
+    omrl.should_not be_context
+    omrl.flow_declarer.should == "zippy"
+    omrl.flow_id.should == "22"
   end
 
   specify "should report FLOW for relative omrls" do
@@ -39,6 +51,25 @@ context "parsing an omrl" do
     omrl.should be_flow
     omrl.should_not be_currency
     omrl.should_not be_account
+    omrl.should_not be_context
+    omrl.flow_declarer.should == "zippy"
+    omrl.flow_id.should == "22"
+  end
+
+  specify "should report CONTEXT for context omrls" do
+    omrl = OMRL.new('cc.us')
+    omrl.kind.should == OMRL::CONTEXT
+    omrl.should be_context
+    omrl.should_not be_currency
+    omrl.should_not be_account
+    omrl.should_not be_flow
+    omrl.context.should == 'cc.us'
+  end
+
+  specify "should report CONTEXT for top level context omrls" do
+    omrl = OMRL.new('us.')
+    omrl.should be_context
+    omrl.context.should == 'us'
   end
 
   specify "should report relative for relative omrls" do
@@ -48,27 +79,27 @@ context "parsing an omrl" do
 
   specify "should parse entity_name for relative omrls" do
     omrl = OMRL.new('zippy')
-    omrl.entity_name.should == 'zippy'
+    omrl.entity.should == 'zippy'
   end
   
   specify "should parse entity_name for relative flow omrls" do
     omrl = OMRL.new('zippy#22')
-    omrl.entity_name.should == 'zippy#22'
+    omrl.entity.should == 'zippy#22'
   end
   
   specify "should parse entity_name for absolute flow omrls" do
     omrl = OMRL.new('zippy#22^us')
-    omrl.entity_name.should == 'zippy#22'
+    omrl.entity.should == 'zippy#22'
   end
 
   specify "should parse entity_name for absolute account omrls" do
     omrl = OMRL.new('zippy^us')
-    omrl.entity_name.should == 'zippy'
+    omrl.entity.should == 'zippy'
   end
 
   specify "should parse entity_name for absolute currency omrls" do
     omrl = OMRL.new('bucks~us')
-    omrl.entity_name.should == 'bucks'
+    omrl.entity.should == 'bucks'
   end
 
   specify "should parse context for absolute currency omrls" do
@@ -80,15 +111,66 @@ context "parsing an omrl" do
     omrl = OMRL.new('zippy^us')
     omrl.context.should == 'us'
   end
+
+  specify "should parse leaves properly" do
+    omrl = OMRL.new('fred^cc.us')
+    omrl.context_leaf.should == 'cc'
+    omrl.context_leaf(1).should == 'us'
+    omrl = OMRL.new('zippy^us')
+    omrl.context_leaf.should == 'us'
+  end
 end
 
 
-context "A local omrl" do
+context "Local omrls" do
   fixtures :entities
-  specify "should report local?" do
-    omrl = OMRL.new(1)
+  fixtures :links
+
+  specify "root should report local?" do
+    omrl = OMRL.new('1')
     omrl.should_be_local
   end
+
+  specify "relative num account omrls should report local?" do
+    omrl = OMRL.new(entities(:account_zippy).id.to_s)
+    omrl.should_be_local
+  end
+
+  specify "account relative should report local?" do
+    omrl = OMRL.new('zippy')
+    omrl.should_be_local
+  end
+
+  specify "account absolute should report local?" do
+    omrl = OMRL.new('zippy^us')
+    omrl.should_be_local
+  end
+
+  specify "flow relative should report local?" do
+    omrl = OMRL.new('zippy#' << entities(:flow_tx1).id.to_s)
+    omrl.should_be_local
+  end
+
+  specify "flow absolute should report local?" do
+    omrl = OMRL.new('zippy#' << entities(:flow_tx1).id.to_s << 'us')
+    omrl.should_be_local
+  end
+  
+  specify "currency relative should report local?" do
+    omrl = OMRL.new('bucks')
+    omrl.should_be_local
+  end
+
+  specify "account absolute should report local?" do
+    omrl = OMRL.new('bucks~us')
+    omrl.should_be_local
+  end
+
+  specify "context should report local?" do
+    omrl = OMRL.new('us.')
+    omrl.should_be_local
+  end
+
 end
 
 context "A non local omrl" do

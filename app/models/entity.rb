@@ -32,6 +32,7 @@ class Entity < ActiveRecord::Base
   # before adding a link to an entity, we have to let the entity have a crack at 
   # agreeing to the link
   def link_allowed(link)
+
     typed_entity = Entity.create({:entity_type => entity_type, :specification =>specification})
     typed_entity.id = id
     if !typed_entity.allow_link?(link) 
@@ -70,22 +71,64 @@ class Entity < ActiveRecord::Base
 #  end
   
   ######################################################################################
+  # return the context for this entity
+  # TODO this assumes there is just one context for each entity which may not be true
+  def context
+    if entity_type == "flow"
+      OMRL.new(specification_attribute('declaring_account')).context
+    else
+      specification_attribute('parent_context')
+    end
+  end
+
+
+  ######################################################################################
   # return an omrl for this entity
-  def omrl(type = OMRL::OM_NAME,relative = true)
+
+  def num_omrl(relative = true)
+    omrl(relative,OMRL::OM_NUM)
+  end
+  def omrl_name(relative = true)
+    omrl(relative,OMRL::OM_NAME)
+  end
+  
+  #TODO this allways returns a relative OMRL!
+  def omrl(relative = true,type = OMRL::OM_NAME)
     if type == OMRL::OM_NAME
       #TODO deal with the multiple omrls for the same entitiy
-      if (entity_type == "flow")
-        e = Link.find_declaring_entity(id)
-        return "#{e.omrl}\##{id}" if e  #TODO this will fail when we get to fully qualified omrls
+      if entity_type == "flow"
+        return OMRL.new_flow(specification_attribute('declaring_account'),id).to_s
       else
-        n = Link.find_entity_name(id)
+        result = Link.find_entity_name(id)
       end
-      return n if n
+      if result
+        if !relative
+          case entity_type
+          when "context"
+            result = OMRL.new_context(result,context).to_s
+          when "currency"
+            result = OMRL.new_currency(result,context).to_s
+          when "account"
+            result = OMRL.new_account(result,context).to_s
+          end
+        end
+        return result
+      end
       type = OMRL::OM_NUM
     end
     if type == OMRL::OM_NUM
-      return id.to_s
+      case entity_type
+      when "flow"
+        e = Entity.find_by_omrl(specification_attribute('declaring_account'))
+        return OMRL.new_flow(e.id,id).to_s if e  
+      when "context"
+        #TODO actually we should walk up the tree backwards and build the full fdq
+        return id.to_s << '.'
+      else
+        return id.to_s
+      end
     end
+
     "/entities/#{id}"
   end
     
@@ -115,7 +158,7 @@ class Entity < ActiveRecord::Base
   ######################################################################################
   # class method to find an entity by omrl
   def Entity.find_by_omrl(o)
-    OMRL.new(o).local?
+    OMRL.new(o).local? || nil
   end
   
   ######################################################################################

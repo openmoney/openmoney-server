@@ -14,6 +14,10 @@ class Link < ActiveRecord::Base
   validates_presence_of :omrl
   validates_presence_of :entity_id
 
+  def initialize(params)
+    super(params)
+  end
+
   ######################################################################################
   def validate_on_create
     case link_type
@@ -37,7 +41,8 @@ class Link < ActiveRecord::Base
   ######################################################################################
   # CLASS METHODS
   ######################################################################################
-  # class method to return a naming link optionally of from a given entity
+
+  # class method to return a naming link optionally from a given context
   def Link.find_naming_link(name,context=nil)
 
     if (context) 
@@ -51,24 +56,31 @@ class Link < ActiveRecord::Base
       conditions = ["link_type = 'names' and specification like ?", "%name: #{name}%"]
     end
     links = Link.find(:all, :conditions => conditions)
+    return nil if links.size == 0
     return links[0] if links.size == 1
     links
   end
 
   ######################################################################################
-  # fi
+  # given a context, return a list of the context entity ids while verifying that the
+  # links actually exist.
   def Link.find_context_entity_ids(context='')
-    contexts = [entity_id = 1] #root!
-    if context != ''
+    entity_id = 1
+    contexts = []
+    if context == ''
+      contexts.push(1)
+    else
       hierarchy = context.split(/\./).reverse
       #TODO this is brutally slow, but it should work.
       for name in hierarchy do 
-        l = Link.find(:conditions => ["link_type = 'names' and entity_id = ? and specification like ?", entity_id,"%name: #{name}%"])
+        l = Link.find(:first,:conditions => ["link_type = 'names' and entity_id = ? and specification like ?", entity_id,"%name: #{name}%"])
         raise "link not found to #{name} from #{entity_id}" if !l
         o = OMRL.new(l.omrl)
-        raise "HMMM.. A naming link omrl must be a OM_NUM omrl (was #{l.omrl})" if !o.om_num?
-        entity_id = o.context_leaf
-        contexts.push(entity_id)
+        #TODO these exceptions need to be refactored and rationalized.
+        raise "HMMM.. A naming link omrl (#{l.omrl}) must be a OM_NUM omrl (was #{o.type.to_s})" if !o.om_num?
+        raise "HMMM.. expected the the naming link omrl (#{l.omrl}) to be a context but it wasn't (was #{o.kind.to_s})" if !o.context?
+        entity_id = o.context.to_i
+        contexts.unshift(entity_id)
       end
     end
     contexts
