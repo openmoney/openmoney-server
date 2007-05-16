@@ -62,7 +62,10 @@ class OMRL
 
   ######################################################################################
   def initialize(o = '')
-    @omrl = o.clone.to_s  #since a plain number is a valid omrl we always covert all input to a string
+    # this is here because there was a side-effect that the omrl string object was being
+    # modified by some function in OMRL and it was messing things up externally.
+    omrl = o.is_a?(Fixnum) ? o.to_s : o.clone
+    @omrl = omrl
     @type = nil
     @kind = nil
     @url = nil

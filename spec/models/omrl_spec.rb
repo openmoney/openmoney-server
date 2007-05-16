@@ -2,16 +2,16 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 context "creating omrls" do
   specify "shoul work for flow omrls" do
-    OMRL.new_flow("fish^boink.us",35).omrl.should == "fish#35^boink.us"
+    OMRL.new_flow("fish^boink.us",35).to_s.should == "fish#35^boink.us"
   end
   specify "shoul work for context omrls" do
-    OMRL.new_context("ca","us").omrl.should == "ca.us"
+    OMRL.new_context("ca","us").to_s.should == "ca.us"
   end
   specify "shoul work for account omrls" do
-    OMRL.new_account("zippy","ny.us").omrl.should == "zippy^ny.us"
+    OMRL.new_account("zippy","ny.us").to_s.should == "zippy^ny.us"
   end
   specify "shoul work for currency omrls" do
-    OMRL.new_currency('bucks','us').omrl.should == "bucks~us"
+    OMRL.new_currency('bucks','us').to_s.should == "bucks~us"
   end
 end
 

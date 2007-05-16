@@ -2,9 +2,10 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :events
 
   map.resources :links
-  map.resources :entities do |entity|
-    entity.resources :links
-  end
+  map.resources :entities, :has_many => [:links]
+#  map.resources :entities do |entity|
+#    entity.resources :links
+#  end
 
   map.connect ':entity_type.:format', :controller => 'entities'
   map.connect ':entity_type', :controller => 'entities'

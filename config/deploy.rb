@@ -45,6 +45,16 @@ task :configure_mongrel do
   run "cd #{current_path} && mongrel_rails cluster::configure -e development -p 9000 -a 127.0.0.1 -P #{shared_path}/pids/mongrel.pid -c #{current_path} -N 2 --user om --group om"
 end
 
+desc "zap db"
+task :zap_db do
+  run "cd #{current_path} && rake RAILS_ENV=development  db:migrate VERSION=0 && rake RAILS_ENV=development  db:migrate"
+end
+
+desc "my_migrate"
+task :my_migrate do
+  run "cd #{current_path} && rake RAILS_ENV=development  db:migrate "
+end
+
 desc <<-DESC
   configure the mongrel cluster
 DESC

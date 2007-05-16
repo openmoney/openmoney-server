@@ -16,7 +16,7 @@
     <td><%=h entity.entity_type %></td>
     <td><%=h entity.access_control %></td>
     <td><%=h entity.specification %></td>
-	<td><%= link_to 'New Link', new_link_path(entity) %></td>
+	<td><%= link_to 'New Link', new_link_url(:entity_id => entity.id) %></td>
     <td><%= link_to 'Show', entity_path(entity) %></td>
     <td><%= link_to 'Edit', edit_entity_path(entity) %></td>
     <td><%= link_to 'Destroy', entity_path(entity), :confirm => 'Are you sure?', :method => :delete %></td>
