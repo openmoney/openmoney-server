@@ -1,8 +1,8 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-context "Creating an entity (in general)" do
+describe "Creating an entity (in general)" do
 
-  specify "should fail for an unknown entity type" do
+  it "should fail for an unknown entity type" do
     lambda {e = Entity.create({
       :entity_type => "bogus_entity_type",
       :specification => <<-eos
@@ -10,7 +10,7 @@ context "Creating an entity (in general)" do
     })}.should raise_error
   end
 
-  specify "should not fail for an known entity type" do
+  it "should not fail for an known entity type" do
     lambda {e = Entity.create({
       :entity_type => "context",
       :specification => <<-eos
@@ -20,11 +20,11 @@ context "Creating an entity (in general)" do
 
 end
 
-context "fixtures" do
+describe "fixtures" do
   fixtures :entities
   fixtures :links
   
-  specify "relative entity omrls" do
+  it "relative entity omrls" do
     entities(:account_zippy).omrl.should == "zippy"
     entities(:context_us).omrl.should == "us"
     entities(:context_ca).omrl.should == "ca"
@@ -33,7 +33,7 @@ context "fixtures" do
     entities(:account_mwl).omrl.should == "mwl"
   end
   
-  specify "absolute entity omrls" do
+  it "absolute entity omrls" do
     entities(:account_zippy).omrl(false).should == "zippy^us."
     entities(:currency_bucks).omrl(false).should == "bucks~us."
     entities(:flow_tx1).omrl(false).should == 'zippy#7^us'
@@ -42,20 +42,20 @@ context "fixtures" do
     entities(:context_ca).omrl(false).should == "ca."
   end
   
-  specify "find_by_omrl should find unspecified relative omrls" do
+  it "find_by_omrl should find unspecified relative omrls" do
     Entity.find_by_omrl("mwl").should == entities(:account_mwl)
     Entity.find_by_omrl("zippy#7").should == entities(:flow_tx1)
     Entity.find_by_omrl("bob").should be_nil
   end
 
-  specify "find_by_omrl should find specified relative omrl" do
+  it "find_by_omrl should find specified relative omrl" do
     Entity.find_by_omrl("mwl^").should == entities(:account_mwl)
     Entity.find_by_omrl("bucks~").should == entities(:currency_bucks)
     Entity.find_by_omrl("zippy#7^").should == entities(:flow_tx1)
     Entity.find_by_omrl("bob^").should be_nil
   end
 
-  specify "find_by_omrl should find absolute omrls" do
+  it "find_by_omrl should find absolute omrls" do
     Entity.find_by_omrl("mwl^ca").should == entities(:account_mwl)
     Entity.find_by_omrl("bucks~us").should == entities(:currency_bucks)
     Entity.find_by_omrl("zippy#7^us").should == entities(:flow_tx1)

@@ -7,32 +7,32 @@ module EventSpecHelper
   end
 end
 
-context "An event (in general)" do
+describe "An event (in general)" do
   include EventSpecHelper
 
-  setup do
+  before(:each) do
     @p = Event.new
   end
 
-  specify "should be invalid without an event_type" do
+  it "should be invalid without an event_type" do
     @p.attributes = valid_attributes.reject {|k,v|  k == :event_type}
-    @p.should_not_be_valid
+    @p.should_not be_valid
   end
 
-  specify "should be invalid without a specification" do
+  it "should be invalid without a specification" do
     @p.attributes = valid_attributes.reject {|k,v|  k == :specification}
-    @p.should_not_be_valid
+    @p.should_not be_valid
   end
 
-  specify "should be valid with a full set of valid attributes" do
+  it "should be valid with a full set of valid attributes" do
     @p.attributes = valid_attributes
-    @p.should_be_valid
+    @p.should be_valid
   end
 end
 
-context "Creating and enmeshing a context event" do
+describe "Creating and enmeshing a context event" do
 #  fixtures :entities
-  setup do
+  before(:each) do
     @root = create_root_context
     
     @e = Event.create({
@@ -47,40 +47,40 @@ eos
     @enmesh_result = @e.enmesh
   end
   
-  specify "(root context should be created)" do
+  it "(root context should be created)" do
     @root.id.should == 1
     @root.errors.full_messages.should == []
   end
 
-  specify "should create a CreateContext event" do
+  it "should create a CreateContext event" do
     @e.should be_an_instance_of(Event::CreateContext)
   end
 
-  specify "should succeed" do
+  it "should succeed" do
     @enmesh_result.should be_true
   end
   
-  specify "should produce no errors" do
+  it "should produce no errors" do
     @e.errors.full_messages.should == []
   end
   
-  specify "should create a context entity" do
+  it "should create a context entity" do
     e = Entity.find_by_omrl("ec.")
     e.should_not be_nil
     e.entity_type.should == "context"
   end
 
-  specify "which should be available through created_entity" do
+  it "which should be available through created_entity" do
     e = Entity.find_by_omrl("ec.")
     @e.created_entity.should == e
   end
     
 end
 
-context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks currency and tx1 flow in bucks from zippy to mwl, THEN:" do
+describe "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks currency and tx1 flow in bucks from zippy to mwl, THEN:" do
   fixtures :events
 
-  setup do
+  before(:each) do
     create_root_context
     e = Event.find(:all)
     e.each do |event|
@@ -97,7 +97,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     end
   end
   
-  specify "canada context should exist and should be a context and be correctly linked" do
+  it "canada context should exist and should be a context and be correctly linked" do
     e = Entity.find_by_omrl("ca.")
     e.should_not be_nil
     e.entity_type.should == "context"
@@ -107,7 +107,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     links[0].specification_attribute("name") == "mwl"
   end
 
-  specify "us context should exist and should be a context and be correctly linked" do
+  it "us context should exist and should be a context and be correctly linked" do
     e = Entity.find_by_omrl("us.")
     e.should_not be_nil
     e.entity_type.should == "context"
@@ -119,7 +119,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     links[1].specification_attribute("name") == "bucks"
   end
 
-  specify "bucks currency should exist and be linked to context, accounts and flow" do
+  it "bucks currency should exist and be linked to context, accounts and flow" do
     e = Entity.find_by_omrl("bucks")
     e.should_not be_nil
     e.entity_type.should == "currency"
@@ -136,11 +136,11 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     links[3].omrl.should =~ /zippy\#[0-9]+/
   end
 
-  specify "ecuador context should not exist" do
-    Entity.find_by_omrl("ec").should_be nil
+  it "ecuador context should not exist" do
+    Entity.find_by_omrl("ec").should equal nil
   end
 
-  specify "mwl account should exist and should be an account and linked to flow tx1" do
+  it "mwl account should exist and should be an account and linked to flow tx1" do
     e = Entity.find_by_omrl("mwl")
     e.should_not be_nil
     e.entity_type.should == "account"
@@ -157,7 +157,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
 #    e.entity_type.should == "flow"
 #  end
     
-  specify "enmeshing a repeat CreateContext event should fail (dup)" do
+  it "enmeshing a repeat CreateContext event should fail (dup)" do
     e = Event.create({
         :event_type => "CreateContext",
         :specification => <<-eos
@@ -172,7 +172,7 @@ context "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks 
     enmesh_result.should be_false
   end
   
-  specify "enmeshing a repeat JoinCurrency event should fail" do
+  it "enmeshing a repeat JoinCurrency event should fail" do
     e = Event.create({
       :event_type => "JoinCurrency",
       :specification => <<-eos

@@ -1,8 +1,8 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-context "naming links" do
+describe "naming links" do
   fixtures :entities
-  specify "creating a name link without a name specification should fail" do
+  it "creating a name link without a name specification should fail" do
     l = Link.new({
       :omrl => entities(:account_mwl).id.to_s,
       :link_type => 'names'
@@ -11,7 +11,7 @@ context "naming links" do
     (e.links << l).should be_false
   end
   
-  specify "creating a name link without a name specification should succeed" do
+  it "creating a name link without a name specification should succeed" do
     l = Link.new({
       :omrl => entities(:account_mwl).id.to_s,
       :link_type => 'names',
@@ -22,22 +22,22 @@ context "naming links" do
   end
 end
 
-context "find_context_entity_ids" do
+describe "find_context_entity_ids" do
   fixtures :entities
   fixtures :links
-  specify "should work for top level contexts" do
+  it "should work for top level contexts" do
     Link.find_context_entity_ids('us').should == [entities(:context_us).id]
   end
-  specify "should work for multi-level contexts" do
+  it "should work for multi-level contexts" do
     Link.find_context_entity_ids('ny.us').should == [entities(:context_ny_us).id,entities(:context_us).id]
   end
 end
 
 
-context "fixture" do
+describe "fixture" do
   fixtures :entities
   
-  specify "we should be able to add a is_used_by link between bucks and zippy" do 
+  it "we should be able to add a is_used_by link between bucks and zippy" do 
     l = Link.new({
       :omrl => entities(:account_zippy).omrl,
       :link_type => "is_used_by"
@@ -46,7 +46,7 @@ context "fixture" do
     l.errors.should be_empty
   end
 
-  specify "we should not be able to add a is_used_by link between bucks and us" do 
+  it "we should not be able to add a is_used_by link between bucks and us" do 
     l = Link.new({
       :omrl => entities(:context_us).omrl,
       :link_type => "is_used_by"
@@ -55,10 +55,10 @@ context "fixture" do
   end
 end
 
-context "linking entities" do
+describe "linking entities" do
   fixtures :entities
   
-  specify "should only link from context with: names, approves link" do
+  it "should only link from context with: names, approves link" do
     from = :context_ca
     { "names"=>:account_mwl,
       "approves"=> :flow_tx1
@@ -69,7 +69,7 @@ context "linking entities" do
     }.each { |link_type,to_entity| lambda {create_link(from,to_entity,link_type)}.should raise_error}
   end
   
-  specify "linking currency to the wrong type of entity should fail" do
+  it "linking currency to the wrong type of entity should fail" do
     from_omrl = :currency_bucks
     { "names"=>:currency_bucks,
       "names"=>:flow_tx1,
@@ -83,7 +83,7 @@ context "linking entities" do
     }.each { |link_type,to_entity| lambda {create_link(from_omrl,to_entity,link_type)}.should raise_error}
   end
 
-  specify "should only link from currency with: approves, originates_from, is_used_by link" do
+  it "should only link from currency with: approves, originates_from, is_used_by link" do
     from = :currency_bucks
     { "approves"=>:flow_tx1,
       "originates_from"=>:account_zippy,
@@ -94,7 +94,7 @@ context "linking entities" do
       "declares"=>:flow_tx1,
     }.each { |link_type,to_entity| lambda {create_link(from,to_entity,link_type)}.should raise_error}
   end
-  specify "linking currency to the wrong type of entity should fail" do
+  it "linking currency to the wrong type of entity should fail" do
     from_omrl = :currency_bucks
     { "names"=>:account_mwl,
       "names"=>:currency_bucks,
@@ -111,7 +111,7 @@ context "linking entities" do
     }.each { |link_type,to_entity| lambda {create_link(from_omrl,to_entity,link_type)}.should raise_error}
   end
 
-  specify "should only link from account with: declares, accept link" do
+  it "should only link from account with: declares, accept link" do
     from_omrl = :account_mwl
     { "declares"=>:flow_tx1,
       "accepts"=>:flow_tx1
@@ -123,7 +123,7 @@ context "linking entities" do
     }.each { |link_type,to_entity| lambda {create_link(from_omrl,to_entity,link_type)}.should raise_error}
   end
 
-  specify "linking account to the wrong type of entity should fail" do
+  it "linking account to the wrong type of entity should fail" do
     from_omrl = :account_mwl
     { "declares"=>:context_ca,
       "declares"=>:currency_bucks,
@@ -132,7 +132,7 @@ context "linking entities" do
     }.each { |link_type,to_entity| lambda {create_link(from_omrl,to_entity,link_type)}.should raise_error}
   end
 
-  specify "should always fail if linking from flow" do
+  it "should always fail if linking from flow" do
     Link::Types.each { |link_type| lambda {create_link(:flow_tx1,:context_ca,link_type)}.should raise_error  }
   end
       
