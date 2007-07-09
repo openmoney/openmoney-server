@@ -33,6 +33,8 @@ end
 describe "Creating and enmeshing a context event" do
 #  fixtures :entities
   before(:each) do
+    Link.destroy_all
+    Entity.destroy_all
     @root = create_root_context
     
     @e = Event.create({
@@ -81,6 +83,8 @@ describe "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks
   fixtures :events
 
   before(:each) do
+    Link.destroy_all
+    Entity.destroy_all
     create_root_context
     e = Event.find(:all)
     e.each do |event|
@@ -120,18 +124,18 @@ describe "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks
   end
 
   it "bucks currency should exist and be linked to context, accounts and flow" do
-    e = Entity.find_by_omrl("bucks~")
+    e = Entity.find_by_omrl("bucks~us.")
     e.should_not be_nil
     e.entity_type.should == "currency"
     links = e.links
 #    links.should == ""
     links.should have(4).items
     links[0].link_type.should == "originates_from"
-    links[0].omrl.should == "zippy"
+    links[0].omrl.should == "zippy^us."
     links[1].link_type.should == "is_used_by"
-    links[1].omrl.should == "zippy"
+    links[1].omrl.should == "zippy^us."
     links[2].link_type.should == "is_used_by"
-    links[2].omrl.should == "mwl"
+    links[2].omrl.should == "mwl^ca."
     links[3].link_type.should == "approves"
     links[3].omrl.should =~ /zippy\#[0-9]+/
   end
@@ -169,11 +173,11 @@ describe "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks
       :event_type => "JoinCurrency",
       :specification => <<-eos
         currency: bucks~us.
-        account: mwl
+        account: mwl^ca
   eos
       })
     enmesh_result = e.enmesh
-    e.errors.full_messages.should == ["Specification - enmeshing error: duplicate link attempt: bucks already is_used_by mwl"]
+    e.errors.full_messages.should == ["Specification - enmeshing error: duplicate link attempt: bucks~us. already is_used_by mwl^ca."]
     enmesh_result.should be_false
   end
 

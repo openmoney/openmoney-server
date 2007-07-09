@@ -85,3 +85,12 @@ names_context_ny_in_us:
     name: ny
   created_at: 2007-03-16 11:27:41
   updated_at: 2007-03-16 11:27:41
+names_account_zippyny_ny_us:
+  id: 11
+  entity_id: 8
+  omrl: "/entities/9"
+  link_type: names
+  specification:
+    name: zippy
+  created_at: 2007-03-16 11:27:41
+  updated_at: 2007-03-16 11:27:41

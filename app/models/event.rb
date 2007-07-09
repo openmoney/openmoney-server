@@ -74,7 +74,7 @@ class Event < ActiveRecord::Base
           begin
             yield entity
           rescue Exception => e
-            errs  << e.to_s   << e.backtrace.split(/,/).join("\n")
+            errs  << e.to_s  # << e.backtrace.split(/,/).join("\n")
             entity.destroy
           end
         end
@@ -151,7 +151,7 @@ class Event < ActiveRecord::Base
             'accepting_account'=>'accepts',
             'currency'=>'approves',
             }.each {|from_omrl,link_type| links << create_link(@specification[from_omrl],entity_omrl,link_type)}
-        rescue Exception => e
+        rescue Exception => e          
           links.each {|link| link.destroy}
           raise e
         end
@@ -174,7 +174,7 @@ protected
       end
       link
     else
-      raise "#{from_omrl} not local"
+      raise "#{from_omrl} was not found (it might not be local)"
       #TODO we need to do this with ActiveRecord instead...
       Post.new(omrl.url << '/links',link_params)
     end

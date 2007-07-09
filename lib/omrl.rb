@@ -218,8 +218,8 @@ class OMRL
       end
 
       if flow?
-        #confirm that we can find the a link that actually declares the flow
-        return nil if !Link.find_declaring_entity(to_s)
+#        #confirm that we can find the a link that actually declares the flow
+#        return nil if !Link.find_declaring_entity(to_s)
         return "/entities/#{@flow_id}"
       end
           

@@ -93,7 +93,7 @@ class Entity < ActiveRecord::Base
     end
   end
   
-  def omrl_name(relative = true)
+  def omrl_name(relative = false)
     
     #TODO deal with the multiple omrls for the same entitiy
     
@@ -121,7 +121,7 @@ class Entity < ActiveRecord::Base
   end
   
   #TODO this allways returns a relative OMRL!
-  def omrl(relative = true,type = OMRL::OM_NAME)
+  def omrl(relative = false,type = OMRL::OM_NAME)
     if type == OMRL::OM_NAME
       omrl_name(relative)
     else

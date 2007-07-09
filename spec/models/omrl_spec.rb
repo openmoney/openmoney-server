@@ -202,7 +202,7 @@ describe "An OM_URL omrl" do
   end
 
   it "should convert to a name" do
-    @omrl.name.should == "mwl^"
+    @omrl.name.should == "mwl^ca."
   end
   
   it "should convert to a url" do

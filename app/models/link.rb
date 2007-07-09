@@ -17,7 +17,13 @@ class Link < ActiveRecord::Base
   def initialize(params)
     super(params)
   end
-
+  
+  def omrl=(omrl_string)
+    o = OMRL.new(omrl_string)
+    # this makes sure that the omrl is converted to canonical form 
+    write_attribute(:omrl, o.to_s)
+  end
+    
   ######################################################################################
   def validate_on_create
     case link_type
@@ -49,13 +55,15 @@ class Link < ActiveRecord::Base
       #TODO won't work for non-local entities
       
       if context.is_a?(String)
-        entity_id = Entity.find_by_omrl(context).id
+        e = Entity.find_by_omrl(context)
+        return nil if !e
+        entity_id = e.id
       elsif context.is_a?(Entity)
-        entity_id = context.d
+        entity_id = context.id
       elsif context.is_a?(Fixnum)
         entity_id = context
       else
-        raise "context must be omrl String, and Entity, or an entity_id Fixnum"
+        raise "context parameter must be omrl String, and Entity, or an entity_id Fixnum"
       end
 
       conditions = ["link_type = 'names' and entity_id = ? and specification like ?", entity_id,"%name: #{name}%"]
