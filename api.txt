@@ -33,22 +33,21 @@ POST
 Hi level OMRL resolution API, this API does recursive searching of parent name resolution servers.
 
 GET
-	/om_nums/<om-num> => returns om_url for the om_num
-	/om_names/<om-name> => returns om_num for the om_name
+	/omrls/<omrl> => returns om_url for the omrl
 
 Low level API to configure resolution.
 
 GET
-	/omrls/<id> => returns a resolution record
+	/omrlrecs/<id> => returns a resolution record
 
 POST
-	/omrls/ {src_omrl (name/num), dest_omrl(num/url), access_control}  => create an new resolution record
+	/omrlrecs/ {src_omrl, dest_url, access_control}  => create an new resolution record
 	
 PUT
-	/omrls/ {src_omrl (name/num), dest_omrl(num/url), access_control}  => update an resolution record
+	/omrlrecs/ {src_omrl, dest_url, access_control}  => update a resolution record
 
 DELETE
-	/omrls/<id> => delete resolution record
+	/omrlrecs/<id> => delete resolution record
 
 
 

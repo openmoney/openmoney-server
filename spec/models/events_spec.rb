@@ -38,7 +38,7 @@ describe "Creating and enmeshing a context event" do
     @e = Event.create({
         :event_type => "CreateContext",
         :specification => <<-eos
-parent_context: 1
+parent_context: .
 name: ec
 context_specification:
   description: Ecuador
@@ -120,7 +120,7 @@ describe "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks
   end
 
   it "bucks currency should exist and be linked to context, accounts and flow" do
-    e = Entity.find_by_omrl("bucks")
+    e = Entity.find_by_omrl("bucks~")
     e.should_not be_nil
     e.entity_type.should == "currency"
     links = e.links
@@ -137,11 +137,11 @@ describe "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks
   end
 
   it "ecuador context should not exist" do
-    Entity.find_by_omrl("ec").should equal nil
+    Entity.find_by_omrl("ec.").should == nil
   end
 
   it "mwl account should exist and should be an account and linked to flow tx1" do
-    e = Entity.find_by_omrl("mwl")
+    e = Entity.find_by_omrl("mwl^")
     e.should_not be_nil
     e.entity_type.should == "account"
     links = e.links
@@ -149,21 +149,13 @@ describe "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks
     links[0].omrl.should =~ /zippy\#[0-9]+/
   end
 
-#  specify "tx1 flow should exist and should be a flow and be linked" do
-#    e =  @flow #Entity.find_by_omrl("zippy#8")
-#    e.omrl.should =~ /zippy\#[0-9]+/
-#    e.should_not be_nil
-#    Entity.get_entity_name(e.id).should == e.name
-#    e.entity_type.should == "flow"
-#  end
-    
-  it "enmeshing a repeat CreateContext event should fail (dup)" do
+  it "should not be possible to enmesh a repeat CreateContext event (dup)" do
     e = Event.create({
         :event_type => "CreateContext",
         :specification => <<-eos
           context_specification:
             description: Canada
-          parent_context: 1
+          parent_context: .
           name: ca
     eos
         })
@@ -176,7 +168,7 @@ describe "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks
     e = Event.create({
       :event_type => "JoinCurrency",
       :specification => <<-eos
-        currency: bucks
+        currency: bucks~us.
         account: mwl
   eos
       })

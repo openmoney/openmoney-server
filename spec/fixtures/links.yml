@@ -2,7 +2,7 @@
 names_context_ca_in_root:
   id: 1
   entity_id: 1
-  omrl: "2."
+  omrl: "/entities/2"
   link_type: names
   specification:
     name: ca
@@ -11,7 +11,7 @@ names_context_ca_in_root:
 names_context_us_in_root:
   id: 2
   entity_id: 1
-  omrl: "3."
+  omrl: "/entities/3"
   link_type: names
   specification:
     name: us
@@ -20,7 +20,7 @@ names_context_us_in_root:
 names_account_zippy_in_us:
   id: 3
   entity_id: 3
-  omrl: 5
+  omrl: "/entities/5"
   link_type: names
   specification:
     name: zippy
@@ -29,7 +29,7 @@ names_account_zippy_in_us:
 names_currency_bucks_in_us:
   id: 4
   entity_id: 3
-  omrl: 4
+  omrl: "/entities/4"
   link_type: names
   specification:
     name: bucks
@@ -38,7 +38,7 @@ names_currency_bucks_in_us:
 originates_from_currency_bucks_zippy:
   id: 5
   entity_id: 4
-  omrl: zippy
+  omrl: "zippy^us."
   link_type: originates_from
   specification:
   created_at: 2007-03-16 11:27:41
@@ -46,7 +46,7 @@ originates_from_currency_bucks_zippy:
 names_account_mwl_in_ca:
   id: 6
   entity_id: 2
-  omrl: 6
+  omrl: "/entities/6"
   link_type: names
   specification:
     name: mwl
@@ -54,8 +54,8 @@ names_account_mwl_in_ca:
   updated_at: 2007-03-16 11:27:41
 declares_flow_tx1:
   id: 7
-  entity_id: 4
-  omrl: zippy#7
+  entity_id: 5
+  omrl: "zippy#7^us."
   link_type: declares
   specification:
   created_at: 2007-03-16 11:27:41
@@ -63,7 +63,7 @@ declares_flow_tx1:
 accpets_flow_tx1:
   id: 8
   entity_id: 6
-  omrl: zippy#7
+  omrl: "zippy#7^us."
   link_type: accepts
   specification:
   created_at: 2007-03-16 11:27:41
@@ -71,7 +71,7 @@ accpets_flow_tx1:
 approves_flow_tx1:
   id: 9
   entity_id: 4
-  omrl: zippy#7
+  omrl: "zippy#7^us."
   link_type: approves
   specification:
   created_at: 2007-03-16 11:27:41
@@ -79,7 +79,7 @@ approves_flow_tx1:
 names_context_ny_in_us:
   id: 10
   entity_id: 3
-  omrl: "8."
+  omrl: "/entities/8"
   link_type: names
   specification:
     name: ny

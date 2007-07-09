@@ -11,10 +11,10 @@ class Entity < ActiveRecord::Base
   include Specification
   has_many :links, :before_add => :link_allowed
   validates_inclusion_of :entity_type, :in => Types
-
-  def link_error
-    @link_error
-  end
+  attr :link_error
+#  def link_error
+#    @link_error
+# end
 
   ######################################################################################
   # this is a factory method that creates Entities of the correct type if they have been
@@ -23,8 +23,8 @@ class Entity < ActiveRecord::Base
     class_name = "Entity::#{params[:entity_type].capitalize}"
     begin
       class_name.constantize.new(params)
-    rescue Exception => e
-      raise "Unknown entity type: #{params[:entity_type]} (#{e.to_s})"
+    rescue NameError => e
+      raise "Unknown entity type: #{params[:entity_type]}"
     end
   end
 
@@ -85,80 +85,62 @@ class Entity < ActiveRecord::Base
   ######################################################################################
   # return an omrl for this entity
 
-  def num_omrl(relative = true)
-    omrl(relative,OMRL::OM_NUM)
+  def url_omrl(relative = true)
+    if local?
+      "/entities/#{id}"
+    else
+      raise "non-local entities not yet implmented"
+    end
   end
+  
   def omrl_name(relative = true)
-    omrl(relative,OMRL::OM_NAME)
+    
+    #TODO deal with the multiple omrls for the same entitiy
+    
+    #TODO this should really be moved into the sub-classes of Entity rather than
+    # being a big switch statement, but right now when entities are pulled back out of
+    # the database they are instantiated as Entities not as Entity::<subclass> which 
+    # i still need to figure out how to do.
+    if entity_type == "flow"
+      return OMRL.new_flow(specification_attribute('declaring_account'),id).to_s
+    end
+
+    names = Link.entity_naming_chain(id)
+    return nil if !names
+
+    name = names.shift
+    context = relative ? nil : (names.join('.') << '.')
+    case entity_type
+    when "context"
+      OMRL.new_context(name,context).to_s
+    when "currency"
+      OMRL.new_currency(name,context).to_s
+    when "account"
+      OMRL.new_account(name,context).to_s
+    end
   end
   
   #TODO this allways returns a relative OMRL!
   def omrl(relative = true,type = OMRL::OM_NAME)
     if type == OMRL::OM_NAME
-      #TODO deal with the multiple omrls for the same entitiy
-      if entity_type == "flow"
-        return OMRL.new_flow(specification_attribute('declaring_account'),id).to_s
-      else
-        result = Link.find_entity_name(id)
-      end
-      if result
-        if !relative
-          case entity_type
-          when "context"
-            result = OMRL.new_context(result,context).to_s
-          when "currency"
-            result = OMRL.new_currency(result,context).to_s
-          when "account"
-            result = OMRL.new_account(result,context).to_s
-          end
-        end
-        return result
-      end
-      type = OMRL::OM_NUM
+      omrl_name(relative)
+    else
+      url_omrl(relative)
     end
-    if type == OMRL::OM_NUM
-      case entity_type
-      when "flow"
-        e = Entity.find_by_omrl(specification_attribute('declaring_account'))
-        return OMRL.new_flow(e.id,id).to_s if e  
-      when "context"
-        #TODO actually we should walk up the tree backwards and build the full fdq
-        return id.to_s << '.'
-      else
-        return id.to_s
-      end
-    end
-
-    "/entities/#{id}"
   end
     
   ######################################################################################
   # CLASS METHODS
   ######################################################################################
-  # class method to return a named entity optionally of a given type
-  # NOTE: This may change because the
-  # name may be moved to being a column of entity rather than part of the yaml spec block.
-#  def Entity.find_named_entity(name,entity_type=nil)
-#    if (entity_type) 
-#      conditions = ["entity_type = ? and specification like ?", entity_type,"%name: #{name}%"]
-#    else
-#      conditions = ["specification like ?", "%name: #{name}%"]
-#    end
-#    Entity.find(:first, :conditions => conditions)
-#  end
-  
-  ######################################################################################
-  # class method to return a the name of a know entity.  NOTE:This may change because the
-  # name may be moved to being a column of entity rather than part of the yaml spec block.
-  def Entity.get_entity_name(id)
-    e = Entity.find(id)
-    e.name
-  end
 
   ######################################################################################
   # class method to find an entity by omrl
   def Entity.find_by_omrl(o)
-    OMRL.new(o).local? || nil
+    #TODO make this work with non-local omrls
+    url = OMRL.new(o).url
+    url =~ /([0-9]+)$/
+    entity_id = $1
+    Entity.exists?(entity_id) ? Entity.find(entity_id) : nil
   end
   
   ######################################################################################
@@ -196,7 +178,15 @@ class Entity < ActiveRecord::Base
   end
 
   ######################################################################################
+  ######################################################################################
   protected
+  
+  ######################################################################################
+  def local?
+    return true
+  end
+  
+  ######################################################################################
   def link_type_err_check(valid_type_map,link)
     if not valid_type_map.include?(link.link_type)
       @link_error = "improper link type (#{link.link_type}) for #{entity_type}"

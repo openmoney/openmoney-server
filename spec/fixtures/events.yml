@@ -5,7 +5,7 @@ create_canada_context:
   event_type: "CreateContext"
   specification:
     name: ca
-    parent_context: 1
+    parent_context: .
     context_specification:
       description: Canada
   state:
@@ -15,7 +15,7 @@ create_us_context:
   event_type: "CreateContext"
   specification:
     name: us
-    parent_context: 1
+    parent_context: .
     context_specification: 
       description: The USA
   state:

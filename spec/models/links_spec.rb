@@ -4,16 +4,16 @@ describe "naming links" do
   fixtures :entities
   it "creating a name link without a name specification should fail" do
     l = Link.new({
-      :omrl => entities(:account_mwl).id.to_s,
+      :omrl => "/entities/" << entities(:account_mwl).id.to_s,
       :link_type => 'names'
     })
     e = entities(:context_ca)
     (e.links << l).should be_false
   end
   
-  it "creating a name link without a name specification should succeed" do
+  it "creating a name link with a name specification should succeed" do
     l = Link.new({
-      :omrl => entities(:account_mwl).id.to_s,
+      :omrl => "/entities/" << entities(:account_mwl).id.to_s,
       :link_type => 'names',
       :specification => 'name: mwl'
     })
@@ -22,19 +22,8 @@ describe "naming links" do
   end
 end
 
-describe "find_context_entity_ids" do
-  fixtures :entities
-  fixtures :links
-  it "should work for top level contexts" do
-    Link.find_context_entity_ids('us').should == [entities(:context_us).id]
-  end
-  it "should work for multi-level contexts" do
-    Link.find_context_entity_ids('ny.us').should == [entities(:context_ny_us).id,entities(:context_us).id]
-  end
-end
 
-
-describe "fixture" do
+describe "fixtures " do
   fixtures :entities
   
   it "we should be able to add a is_used_by link between bucks and zippy" do 
@@ -146,3 +135,35 @@ def create_link(from,to,link_type)
   })
   e.links << l
 end
+
+
+describe "searching for naming chain of entites linked by 'names'" do
+  fixtures :entities
+  fixtures :links
+
+  it "should find root context" do
+    Link.entity_naming_chain(entities(:context_root).id).should == []
+  end
+
+  it "should find names of context entities" do
+    Link.entity_naming_chain(entities(:context_ca).id).should == ["ca"]
+  end
+  
+  it "should find contexts of account entities" do
+    Link.entity_naming_chain(entities(:account_zippy).id).should == ["zippy","us"]
+  end
+end
+
+describe "searching for entities linked by 'declares'" do
+  fixtures :entities
+  fixtures :links
+  it "should find flows that exist" do
+    Link.find_declaring_entity(entities(:flow_tx1).omrl).should == entities(:account_zippy)
+  end
+  
+  it "should not find flows that dont exist" do
+    fake_flow_omrl = OMRL.new(entities(:flow_tx1).omrl).entity << ".ca"
+    Link.find_declaring_entity(fake_flow_omrl).should == nil
+  end
+end
+

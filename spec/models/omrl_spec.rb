@@ -2,16 +2,16 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe "creating omrls" do
   it "should work for flow omrls" do
-    OMRL.new_flow("fish^boink.us",35).to_s.should == "fish#35^boink.us"
+    OMRL.new_flow("fish^boink.us",35).to_s.should == "fish#35^boink.us."
   end
   it "should work for context omrls" do
-    OMRL.new_context("ca","us").to_s.should == "ca.us"
+    OMRL.new_context("ca","us").to_s.should == "ca.us."
   end
   it "should work for account omrls" do
-    OMRL.new_account("zippy","ny.us").to_s.should == "zippy^ny.us"
+    OMRL.new_account("zippy","ny.us").to_s.should == "zippy^ny.us."
   end
   it "should work for currency omrls" do
-    OMRL.new_currency('bucks','us').to_s.should == "bucks~us"
+    OMRL.new_currency('bucks','us').to_s.should == "bucks~us."
   end
 end
 
@@ -63,13 +63,13 @@ describe "parsing an omrl" do
     omrl.should_not be_currency
     omrl.should_not be_account
     omrl.should_not be_flow
-    omrl.context.should == 'cc.us'
+    omrl.context.should == 'cc.us.'
   end
 
   it "should report CONTEXT for top level context omrls" do
     omrl = OMRL.new('us.')
     omrl.should be_context
-    omrl.context.should == 'us'
+    omrl.context.should == 'us.'
   end
 
   it "should report relative for relative omrls" do
@@ -77,9 +77,18 @@ describe "parsing an omrl" do
     omrl.should be_relative
   end
 
-  it "should parse entity_name for relative omrls" do
-    omrl = OMRL.new('zippy')
+  it "should parse entity_name for relative account omrls" do
+    omrl = OMRL.new('zippy^')
     omrl.entity.should == 'zippy'
+  end
+
+  it "should parse entity_name for relative currency omrls" do
+    omrl = OMRL.new('bucks~')
+    omrl.entity.should == 'bucks'
+  end
+
+  it "should fail to parse an insufficiently sepecified omrl" do
+    OMRL.new('bucks').should raise_error
   end
   
   it "should parse entity_name for relative flow omrls" do
@@ -104,12 +113,12 @@ describe "parsing an omrl" do
 
   it "should parse context for absolute currency omrls" do
     omrl = OMRL.new('bucks~us')
-    omrl.context.should == 'us'
+    omrl.context.should == 'us.'
   end
 
   it "should parse context for absolute account omrls" do
     omrl = OMRL.new('zippy^us')
-    omrl.context.should == 'us'
+    omrl.context.should == 'us.'
   end
 
   it "should parse leaves properly" do
@@ -122,99 +131,63 @@ describe "parsing an omrl" do
 end
 
 
-describe "Local omrls" do
+describe "omrls resolution" do
   fixtures :entities
   fixtures :links
 
-  it "root should report local?" do
-    omrl = OMRL.new('1')
-    omrl.should be_local
+  it "should resolve the root omrl" do
+    omrl = OMRL.new('.')
+    omrl.url.should == "/entities/1"
   end
 
-  it "relative num account omrls should report local?" do
-    omrl = OMRL.new(entities(:account_zippy).id.to_s)
-    omrl.should be_local
+  it "should resolve context omrls" do
+    omrl = OMRL.new('us.')
+    omrl.url.should == "/entities/" << entities(:context_us).id.to_s
   end
 
-  it "account relative should report local?" do
-    omrl = OMRL.new('zippy')
-    omrl.should be_local
+  it "should resolve account relative omrls" do
+    omrl = OMRL.new('zippy^')
+    omrl.url.should == "/entities/"  << entities(:account_zippy).id.to_s
   end
 
-  it "account absolute should report local?" do
+  it "should resolve account absolute omrls" do
     omrl = OMRL.new('zippy^us')
-    omrl.should be_local
+    omrl.url.should == "/entities/" << entities(:account_zippy).id.to_s
   end
 
-  it "flow relative should report local?" do
+  it "should resolve flow relative omrls" do
     omrl = OMRL.new('zippy#' << entities(:flow_tx1).id.to_s)
-    omrl.should be_local
+    omrl.url.should == "/entities/" << entities(:flow_tx1).id.to_s
   end
 
-  it "flow absolute should report local?" do
-    omrl = OMRL.new('zippy#' << entities(:flow_tx1).id.to_s << 'us')
-    omrl.should be_local
+  it "should resolve flow absolute omrls" do
+    omrl = OMRL.new('zippy#' << entities(:flow_tx1).id.to_s << '^us')
+    omrl.url.should == "/entities/" << entities(:flow_tx1).id.to_s
+  end
+
+  it "should resolve currency relative omrls" do
+    omrl = OMRL.new('bucks~')
+    omrl.url.should == "/entities/"  << entities(:currency_bucks).id.to_s
+  end
+
+  it "should resolve currency absolute omrls" do
+    omrl = OMRL.new('bucks~')
+    omrl.url.should == "/entities/" << entities(:currency_bucks).id.to_s
   end
   
-  it "currency relative should report local?" do
-    omrl = OMRL.new('bucks')
-    omrl.should be_local
-  end
-
-  it "account absolute should report local?" do
-    omrl = OMRL.new('bucks~us')
-    omrl.should be_local
-  end
-
-  it "context should report local?" do
-    omrl = OMRL.new('us.')
-    omrl.should be_local
-  end
-
-end
-
-describe "A non local omrl" do
-  fixtures :entities
-  it "should fail to report local?" do
-    omrl = OMRL.new(66)
-    omrl.should_not be_local
-  end
 end
 
 describe "An OM_NAME omrl" do
   fixtures :entities
   fixtures :links
   before(:each) do
-    @omrl = OMRL.new("zippy")
+    @omrl = OMRL.new("zippy^")
   end
   it "should be of type OM_NAME" do
     @omrl.type.should == OMRL::OM_NAME
   end
-  it "should convert to a num" do
-    @omrl.num.should == entities(:account_zippy).id.to_s
-  end
   it "should convert to a url" do
     @omrl.url.should == "/entities/" << entities(:account_zippy).id.to_s
-  end
-end
-
-describe "An OM_NUM omrl" do
-  fixtures :entities
-  fixtures :links
-  before(:each) do
-    @omrl = OMRL.new(5)
-  end
-  it "should be of type OM_NUM" do
-    @omrl.type.should == OMRL::OM_NUM
-  end
-  it "should convert to a num" do
-    @omrl.num.should == "5"
-  end
-  it "should convert to a name" do
-    @omrl.name.should == "zippy"
-  end
-  it "should convert to a url" do
-    @omrl.url.should == "/entities/5"
   end
 end
 
@@ -227,12 +200,11 @@ describe "An OM_URL omrl" do
   it "should be of type OM_URL" do
     @omrl.type.should == OMRL::OM_URL
   end
-  it "should convert to a num" do
-    @omrl.num.should == "6"
-  end
+
   it "should convert to a name" do
-    @omrl.name.should == "mwl"
+    @omrl.name.should == "mwl^"
   end
+  
   it "should convert to a url" do
     @omrl.url.should == "/entities/6"
   end

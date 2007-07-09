@@ -27,14 +27,14 @@ class Event < ActiveRecord::Base
     class_name = "Event::#{params[:event_type]}"
     begin
       class_name.constantize.new(params)
-    rescue
+    rescue NameError
       raise "Unknown event type: #{params[:event_type]}"
     end
   end
   
   ######################################################################################
   # the abstract act of enmeshing is simply to validate the specification of the event
-  # and then (if it's valid) to yeild to the block which which can take enmeshment acations
+  # and then (if it's valid) to yeild to the block which which can take enmeshment actions
   # and add further errors if they fail.
   def _enmesh(validations,attribute_name = :specification)
     validate_specification(validations,attribute_name)
@@ -74,7 +74,7 @@ class Event < ActiveRecord::Base
           begin
             yield entity
           rescue Exception => e
-            errs  << e.to_s # << e.backtrace
+            errs  << e.to_s   << e.backtrace.split(/,/).join("\n")
             entity.destroy
           end
         end
@@ -96,8 +96,10 @@ class Event < ActiveRecord::Base
       load_specification
       @specification['parent_context'] = "#{@specification['parent_context']}." if @specification['parent_context'] !~ /\.$/
       
+      #TODO if there is a failure in creating the extra links we should unwind the creation of the other links
+      # and then re-raise an error so that the entity can be deleted
       create_enmesh(entity_type,validations,['parent_context']) do |entity|
-        create_link(@specification['parent_context'],entity.num_omrl,'names',"name: #{@specification['name']}")
+        create_link(@specification['parent_context'],entity.url_omrl,'names',"name: #{@specification['name']}")
         extra_links_from.each {|spec,link_type| create_link(entity.omrl,@specification[spec],link_type)}  if extra_links_from.is_a?(Hash)
         extra_links_to.each {|spec,link_type| create_link(@specification[spec],entity.omrl,link_type)}  if extra_links_to.is_a?(Hash)
       end
@@ -164,8 +166,7 @@ protected
   def create_link(from_omrl,to_omrl,link_type,link_specification = nil)
     link_params = {:link_type => link_type,:omrl => to_omrl}
     link_params[:specification] = link_specification if link_specification
-    omrl = OMRL.new(from_omrl)
-    from_entity = omrl.local?
+    from_entity = Entity.find_by_omrl(from_omrl)
     if (from_entity) 
       link = Link.new(link_params)
       unless from_entity.links << link
@@ -173,7 +174,8 @@ protected
       end
       link
     else
-      raise "#{omrl.url} not local"
+      raise "#{from_omrl} not local"
+      #TODO we need to do this with ActiveRecord instead...
       Post.new(omrl.url << '/links',link_params)
     end
   end

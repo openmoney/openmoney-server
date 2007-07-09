@@ -5,27 +5,27 @@
 ActiveRecord::Schema.define(:version => 4) do
 
   create_table "entities", :force => true do |t|
-    t.column "created_at",     :datetime
-    t.column "updated_at",     :datetime
-    t.column "entity_type",    :string
-    t.column "access_control", :text
-    t.column "specification",  :text
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "entity_type"
+    t.text     "access_control"
+    t.text     "specification"
   end
 
   create_table "events", :force => true do |t|
-    t.column "created_at",    :datetime
-    t.column "event_type",    :string
-    t.column "specification", :text
-    t.column "state",         :string
+    t.datetime "created_at"
+    t.string   "event_type"
+    t.text     "specification"
+    t.string   "state"
   end
 
   create_table "links", :force => true do |t|
-    t.column "entity_id",     :integer
-    t.column "omrl",          :string
-    t.column "link_type",     :string
-    t.column "specification", :text
-    t.column "created_at",    :datetime
-    t.column "updated_at",    :datetime
+    t.integer  "entity_id"
+    t.string   "omrl"
+    t.string   "link_type"
+    t.text     "specification"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
 end

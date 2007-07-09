@@ -5,6 +5,7 @@
 ######################################################################################
 
 class EntitiesController < ApplicationController
+
   before_filter :check_for_entity_type
   # GET /entities
   # GET /entities.xml
