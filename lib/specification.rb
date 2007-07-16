@@ -42,15 +42,28 @@ module Specification
     unless @specification
       #TODO: we need magic here to use the value of attribute_name instead of
       # assuming that the attribute is called "specification"
-      @specification = YAML.load(specification) 
+      @specification = specification ? YAML.load(specification) : {}
     end
   end
+  
+  def save_specification()
+    self.specification = @specification.to_yaml
+  end
+  
   
   ######################################################################################
   # returns the an attribute of the specification by name, loading it if necessary  
   def specification_attribute(attribute)
     load_specification
     @specification[attribute]
+  end  
+
+  ######################################################################################
+  # sets an attribute of the specification  
+  def set_specification_attribute(attribute,value)
+    load_specification
+    @specification[attribute] = value
+    save_specification
   end  
   
 end

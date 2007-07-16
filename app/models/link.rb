@@ -44,6 +44,10 @@ class Link < ActiveRecord::Base
     o.url
   end
   
+  def add_signature
+    set_specification_attribute('signature',"localhost:" << Time.now.to_i.to_s)
+  end
+    
   ######################################################################################
   # CLASS METHODS
   ######################################################################################

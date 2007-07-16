@@ -74,7 +74,7 @@ class Event < ActiveRecord::Base
           begin
             yield entity
           rescue Exception => e
-            errs  << e.to_s  # << e.backtrace.split(/,/).join("\n")
+            errs  << e.to_s   << e.backtrace.split(/,/).join("\n")
             entity.destroy
           end
         end
@@ -145,13 +145,17 @@ class Event < ActiveRecord::Base
     def enmesh
       create_enmesh('flow',{'flow_specification' => :required,'declaring_account' => :required,'accepting_account' => :required,'currency' => :required},%w(declaring_account accepting_account currency)) do |entity|
         links = []
+        
+        #TODO, we need to figure out a way to make this all transactional accross the net
         begin
+          
           entity_omrl = OMRL.new_flow(@specification['declaring_account'],entity.id).to_s
-          { 'declaring_account'=>'declares',
-            'accepting_account'=>'accepts',
-            'currency'=>'approves',
-            }.each {|from_omrl,link_type| links << create_link(@specification[from_omrl],entity_omrl,link_type)}
-        rescue Exception => e          
+          flow_spec_yaml = {"flow" => @specification['flow_specification']}.to_yaml
+          l = create_link(@specification['currency'],entity_omrl,'approves',flow_spec_yaml)
+          links << l
+          links << create_link(@specification['declaring_account'],entity_omrl,'declares')
+          links << create_link(@specification['accepting_account'],entity_omrl,'accepts')
+        rescue Exception => e
           links.each {|link| link.destroy}
           raise e
         end

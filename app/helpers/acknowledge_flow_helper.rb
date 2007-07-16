@@ -1,8 +1,13 @@
 module AcknowledgeFlowHelper
   def input_form(currency,language = "en")
     spec = YAML.load(@currency.specification)
-    field_spec = {"submit" => "submit"}
-    field_spec = field_spec.merge(spec["fields"]) if spec["fields"]
+    base_field_spec = {"submit" => "submit"}
+    if spec["fields"]
+      field_spec = spec["fields"]
+    else
+      field_spec = {"amount" => "float", "description" => "text"}
+    end
+    field_spec = base_field_spec.merge(field_spec)
 #    return spec.inspect
     form = spec["input_form"][language] if spec["input_form"]
     form = ":declaring_account acknowledges :accepting_account for :description in the amount of :amount :submit" if !form

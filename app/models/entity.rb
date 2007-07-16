@@ -35,11 +35,15 @@ class Entity < ActiveRecord::Base
 
     typed_entity = Entity.create({:entity_type => entity_type, :specification =>specification})
     typed_entity.id = id
-    if !typed_entity.allow_link?(link) 
+    
+    result = typed_entity.allow_link?(link) 
+    if !result
       err = "link not allowed: #{typed_entity.link_error}"
       errors.add_to_base(err)
       raise err
     end
+
+    link.add_signature()
 
     #TODO: what if the omrl is not the same type?  Then this will fail.
     if links.find(:first, :conditions => ["omrl = ? and link_type = ?",link.omrl,link.link_type] )
@@ -47,7 +51,10 @@ class Entity < ActiveRecord::Base
       errors.add_to_base(err)
       raise err
     end
-
+    if result && result != true
+      self.specification = result
+      save
+    end
     true
   end
   
@@ -165,6 +172,18 @@ class Entity < ActiveRecord::Base
   class Currency < Entity
     def allow_link?(link)
       return false if not link_type_err_check({"approves"=>"flow", "is_used_by"=>"account","originates_from"=>"account"},link)
+      
+      if link.link_type == "approves"
+#        raise link.specification_attribute('flow').inspect
+        flow = link.specification_attribute('flow')
+        s = specification_attribute('summaries')
+        s ||= {}
+        s[flow['declaring_account']] = s[flow['declaring_account']].to_i + flow['amount'].to_i
+        s[flow['accepting_account']] = s[flow['accepting_account']].to_i - flow['amount'].to_i
+        set_specification_attribute('summaries',s)
+        return specification
+      end
+      
       true
     end
   end

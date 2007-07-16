@@ -38,11 +38,23 @@ task :restart, :roles => :app do
   sudo "/usr/local/apache/bin/apachectl graceful"
 end
 
+desc "Stop the mongrel cluster"
+task :stop_mongrel, :roles => :app do
+  sudo "echo 'fish'" #bogus command to make sudo work in the run command
+  run "cd #{current_path} && sudo mongrel_rails cluster::stop"
+end
+
+desc "Stop the mongrel cluster"
+task :start_mongrel, :roles => :app do
+  sudo "echo 'fish'" #bogus command to make sudo work in the run command
+  run "cd #{current_path} && sudo mongrel_rails cluster::start"
+end
+
 desc <<-DESC
   configure the mongrel cluster
 DESC
 task :configure_mongrel do
-  run "cd #{current_path} && mongrel_rails cluster::configure -e development -p 9000 -a 127.0.0.1 -P #{shared_path}/pids/mongrel.pid -c #{current_path} -N 2 --user om --group om"
+  run "cd #{current_path} && mongrel_rails cluster::configure -e development -p 9000 -a 127.0.0.1 -P #{shared_path}/log/mongrel.pid -c #{current_path} -N 2 --user om --group om"
 end
 
 desc "zap db"
