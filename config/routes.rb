@@ -1,16 +1,21 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :events
-
-  map.resources :links
+  
+#  map.resources :links
   map.resources :entities, :has_many => [:links]
 #  map.resources :entities do |entity|
 #    entity.resources :links
 #  end
 
+
+  map.connect 'acknowledge_flow/:currency', :controller => 'acknowledge_flow', :action => 'show',:conditions => {:method => :get}
+  map.connect 'acknowledge_flow/:currency', :controller => 'acknowledge_flow', :action => 'ack', :conditions => {:method => :post}
+
   map.connect ':entity_type.:format', :controller => 'entities'
   map.connect ':entity_type', :controller => 'entities'
   map.connect ':entity_type/:id.:format', :controller => 'entities', :action => 'show'
   map.connect ':entity_type/:id', :controller => 'entities', :action => 'show'
+
   
 #  map.resources :accounts, :controller => "entities"
   

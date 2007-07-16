@@ -10,8 +10,10 @@
 </head>
 <body>
 <div id="navs">
-	<%= link_to "entities", :controller => 'entities' %>
-	<%= link_to "events", :controller => 'events' %>
+	<%= link_to "entities", :controller => 'entities' %> [ <%= link_to "currencies", '/currencies' %> <%= link_to "accounts", '/accounts' %> <%= link_to "flows", '/flows' %> ]
+	<%= link_to "events", :controller => 'events' %> (<%= link_to "new event", 'events/new' %>)
+	<br />
+	<%= Entity.find(:all, :conditions => "entity_type = 'currency' ").collect{|e| o = e.omrl.chop; link_to o,'/acknowledge_flow/' << o  }.join(" ")%>
 </div>
 
 <p style="color: green"><%= flash[:notice] %></p>

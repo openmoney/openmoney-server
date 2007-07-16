@@ -25,17 +25,17 @@
 
 <p><strong>Links From:</strong><br />
 <% for link in @entity.links %>
-to: <a href="<%=h link.omrl_url %>"><%=h link.omrl %></a>, type: <%=h link.link_type %> <%= link_to 'Details', link_path(@entity,link) %><br />
+to: <a href="<%=h link.omrl_url %>"><%=h link.omrl %></a>, type: <%=h link.link_type %> <%= link_to 'Details', entity_link_url(@entity,link) %><br />
 <% end %>
 </p>
 
 <p><strong>Local Links To:</strong><br />
 <% for link in Link.find(:all, :conditions => ["omrl = ?",@entity.omrl]) %>
 	<% @e = Entity.find(link.entity_id) %>
-from: <a href="<%=h @e.omrl(OMRL::OM_URL)%>"><%=h @e.omrl %></a>, type: <%=h link.link_type %> <%= link_to 'Details', link_path(@e,link) %><br />
+from: <a href="<%=h @e.omrl(OMRL::OM_URL)%>"><%=h @e.omrl %></a>, type: <%=h link.link_type %> <%= link_to 'Details', entity_link_url(@e,link) %><br />
 <% end %>
 </p>
 
-<%= link_to 'New Link', new_link_path(@entity) %> |
+<%= link_to 'New Link',  new_entity_link_url(@entity) %> |
 <%= link_to 'Edit', edit_entity_path(@entity) %> |
 <%= link_to 'Back', entities_path %>
