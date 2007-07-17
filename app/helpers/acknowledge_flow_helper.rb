@@ -20,17 +20,17 @@ module AcknowledgeFlowHelper
     html_field_name = "flow_spec[#{field_name}]"
     case 
     when field_type.is_a?(Array)
-      select_tag(html_field_name,options_for_select(field_type))      
+      select_tag(html_field_name,options_for_select(field_type),@params[field_name])
     when field_type == "boolean"
-      select_tag(html_field_name,options_for_select([["Yes", "Y"], ["No", "N"]]))
+      select_tag(html_field_name,options_for_select([["Yes", "Y"], ["No", "N"]]),@params[field_name])
     when field_type == "submit"
       submit_tag(field_name.gsub(/_/,' '))
     when field_type == "text"
-      text_field_tag (html_field_name)
+      text_field_tag (html_field_name,@params[field_name])
     when field_type == "float"
-      text_field_tag (html_field_name)
+      text_field_tag (html_field_name,@params[field_name])
     else
-      text_field_tag (field_name)
+      text_field_tag (field_name,@params[field_name])
     end
   end
 end	

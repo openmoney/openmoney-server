@@ -172,20 +172,62 @@ class Entity < ActiveRecord::Base
   class Currency < Entity
     def allow_link?(link)
       return false if not link_type_err_check({"approves"=>"flow", "is_used_by"=>"account","originates_from"=>"account"},link)
-      
+
       if link.link_type == "approves"
-#        raise link.specification_attribute('flow').inspect
         flow = link.specification_attribute('flow')
         s = specification_attribute('summaries')
         s ||= {}
-        s[flow['declaring_account']] = s[flow['declaring_account']].to_i + flow['amount'].to_i
-        s[flow['accepting_account']] = s[flow['accepting_account']].to_i - flow['amount'].to_i
+        if specification_attribute('summary_type') =~ /^(.+)\((.+)\)$/
+          summary_type,summary_field = $1,$2
+        else
+          summary_type,summary_field = 'balance','amount'
+        end
+        
+        sf = flow[summary_field]
+        
+        raise "field to summarize (#{summary_field}) not found!" if !sf
+
+        s['_count'] =  s['_count'].to_i + 1
+
+        case summary_type 
+        when "balance"
+          s[flow['declaring_account']] = update_balance(s[flow['declaring_account']],sf.to_i)
+          s[flow['accepting_account']] = update_balance(s[flow['accepting_account']],-sf.to_i)
+        when "mean"
+          s[flow['declaring_account']] = update_mean(s[flow['declaring_account']],sf.to_i,'declared')
+          s[flow['accepting_account']] = update_mean(s[flow['accepting_account']],sf.to_i,'accepted')
+        else
+          raise "unknown summary type: #{summary_type}"
+        end
         set_specification_attribute('summaries',s)
         return specification
       end
       
       true
     end
+    
+    private 
+    def update_ballance(summary,amount)
+      summary ||= {}
+      summary['count'] ||= 0
+      summary['balance'] ||= 0
+      summary['balance'] = summary['balance'] + amount
+      summary['count'] = summary['count'] + 1
+      summary
+    end
+    def update_mean(summary,amount,direction)
+      summary ||= {}
+      count = "count_#{direction}"
+      summary[count] ||= 0
+      mean = "mean_#{direction}"
+      summary[mean] ||= 0
+      old_count = summary[count]
+      new_count = old_count + 1
+      summary[mean] = (summary[mean] * old_count  + amount)/new_count
+      summary[count] = new_count
+      summary
+    end
+      
   end
 
   ######################################################################################

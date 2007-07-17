@@ -74,7 +74,7 @@ class Event < ActiveRecord::Base
           begin
             yield entity
           rescue Exception => e
-            errs  << e.to_s   << e.backtrace.split(/,/).join("\n")
+            errs  << e.to_s #  << e.backtrace.split(/,/).join("\n")
             entity.destroy
           end
         end
@@ -150,11 +150,11 @@ class Event < ActiveRecord::Base
         begin
           
           entity_omrl = OMRL.new_flow(@specification['declaring_account'],entity.id).to_s
+          links << create_link(@specification['declaring_account'],entity_omrl,'declares')
+          links << create_link(@specification['accepting_account'],entity_omrl,'accepts')
           flow_spec_yaml = {"flow" => @specification['flow_specification']}.to_yaml
           l = create_link(@specification['currency'],entity_omrl,'approves',flow_spec_yaml)
           links << l
-          links << create_link(@specification['declaring_account'],entity_omrl,'declares')
-          links << create_link(@specification['accepting_account'],entity_omrl,'accepts')
         rescue Exception => e
           links.each {|link| link.destroy}
           raise e

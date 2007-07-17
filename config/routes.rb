@@ -8,8 +8,14 @@ ActionController::Routing::Routes.draw do |map|
 #  end
 
 
-  map.connect 'acknowledge_flow/:currency', :controller => 'acknowledge_flow', :action => 'show',:conditions => {:method => :get}
+  map.connect 'acknowledge_flow/:currency/:declaring_account/:accepting_account', :controller => 'acknowledge_flow', :action => 'show',:conditions => {:method => :get}, :defaults => { :declaring_account => '', :accepting_account => '' }
   map.connect 'acknowledge_flow/:currency', :controller => 'acknowledge_flow', :action => 'ack', :conditions => {:method => :post}
+
+  map.connect 'contexts/new', :controller => 'contexts', :action => 'new',:conditions => {:method => :get}
+  map.connect 'contexts', :controller => 'contexts', :action => 'create', :conditions => {:method => :post}
+
+  map.connect 'accounts/new', :controller => 'accounts', :action => 'new',:conditions => {:method => :get}
+  map.connect 'accounts', :controller => 'accounts', :action => 'create', :conditions => {:method => :post}
 
   map.connect ':entity_type.:format', :controller => 'entities'
   map.connect ':entity_type', :controller => 'entities'

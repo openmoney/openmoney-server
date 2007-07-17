@@ -1,0 +1,11 @@
+<%= error_messages_for :event %>
+
+<form action="/accounts" method="post">
+	Account name: <%= text_field_tag (:name,params[:name]) %> in <%= contexts_select(:parent_context,params[:parent_context]) %>
+	<br />
+	Description: <%= text_field_tag (:description,params[:description],:size => 50) %>
+	<br />
+	<%= submit_tag("Create Account") %>
+    
+</form>
+

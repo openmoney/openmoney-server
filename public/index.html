@@ -30,7 +30,7 @@
       
       #page {
         background-color: #f0f0f0;
-        width: 750px;
+        width: 800px;
         margin: 0;
         margin-left: auto;
         margin-right: auto;
@@ -42,7 +42,7 @@
         border: 3px solid #aaa;
         border-top: none;
         padding: 25px;
-        width: 500px;
+        width: 550px;
       }
       
       #sidebar {
@@ -56,7 +56,7 @@
       
 
       #header, #about, #getting-started {
-        padding-left: 75px;
+        padding-left: 55px;
         padding-right: 30px;
       }
 
@@ -65,7 +65,7 @@
 /*        background-image: url("images/rails.png");*/
         background-repeat: no-repeat;
         background-position: top left;
-        height: 64px;
+        height: 55px;
       }
       #header h1, #header h2 {margin: 0}
       #header h2 {
@@ -131,19 +131,19 @@
         padding-left: 0;
       }
       #getting-started li {
-        font-size: 18px;
+        font-size: 16px;
         color: #888;
-        margin-bottom: 25px;
+        margin-bottom: 15px;
       }
       #getting-started li h2 {
         margin: 0;
         font-weight: normal;
-        font-size: 18px;
+        font-size: 14px;
         color: #333;
       }
       #getting-started li p {
         color: #555;
-        font-size: 13px;
+        font-size: 11px;
       }
       
       
@@ -211,11 +211,14 @@
           </li>
         
           <li>
-            <h3>CRUD</h3>
+            <h3>Low Level CRUD</h3>
             <ul class="links">
-              <li><a href="/events">events</a></li>
-              <li><a href="/entities">entities</a></li>
-              <li><a href="/links">links</a></li>
+              <li><a href="/events">events</a> <a href="/events/new">[new]</a></li>
+              <li></li>
+              <li><a href="/entities">entities</a>
+              <li>&nbsp;&nbsp;<a href="/currencies">currencies</a></li>
+              <li>&nbsp;&nbsp;<a href="/accounts">accounts</a></li>
+              <li>&nbsp;&nbsp;<a href="/flows">flows</a></li>
             </ul>
           </li>
           
@@ -243,18 +246,31 @@
           
           <ol>
             <li>
-              <h2>The first step</h2>
-              <p>blah </p>
+              <h2><a href="/contexts/new">Create contexts</a></h2>
+              <p>
+Contexts are the spaces populated by accounts and currencies.  They represent communities of identity, e.g. geographical communities (nyc.ny.us), communities of practice (dentist.ny.us), communities of interest (vegetarian.ny.us), etc.
+<br>
+	 		  </p>
             </li>
           
             <li>
-              <h2>The second step</h2>
-              <p>blah blah</p>
+              <h2><a href="/accounts/new">Create accounts</a></h2>
+              <p>
+Accounts are the fundamental units of action in open money.  Accounts can originate currencies, and can declare and accept wealth acknowledgment flows.
+              </p>
             </li>
             
             <li>
-              <h2>The third step</h2>
-              <p>blah blah blah</p>
+              <h2><a href="/currencies/new">Create currencies</a></h2>
+              <p>
+Currencies define patterns of wealth acknowledgment between accounts.  Familiar currencies are those used to acknowledge wealth flows in commercial exchange.  Open money allows you to create currencies that can measure and acknowledge wealth that is not tradable.
+			  </p>
+            </li>
+            <li>
+              <h2><a href="/acknowledge_flow/">Acknowledge flows</a></h2>
+              <p>
+Once you have set up contexts, accounts and currencies, you can start acknowledge your wealth flows!
+			  </p>
             </li>
           </ol>
         </div>

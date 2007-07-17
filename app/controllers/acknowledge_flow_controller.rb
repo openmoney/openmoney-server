@@ -14,7 +14,6 @@ class AcknowledgeFlowController < ApplicationController
   # POST /acknowledge_flow/<currency>
   def ack
     spec = YAML.load(@currency.specification)
-#    raise params.inspect
         
     @event = Event.create(
      {:event_type => "AcknowledgeFlow",
@@ -27,9 +26,9 @@ class AcknowledgeFlowController < ApplicationController
      }
     )
     if @event.enmesh && @event.save
-      flash[:notice] = 'Acked!'
+      flash[:notice] = 'Your flow was acknowledged!'
     else
-      flash[:notice] = "Didn't Ack!"
+      render :action => "show"
     end
   end
   
@@ -37,6 +36,8 @@ class AcknowledgeFlowController < ApplicationController
   def setup_currency
     @currency_omrl = params[:currency]
     @currency = Entity.find_by_omrl(@currency_omrl)
+    @params = {"declaring_account" => params[:declaring_account],"accepting_account" => params[:accepting_account]};
+    @params.merge!(params[:flow_spec]) if params[:flow_spec]
   end
   
 end
