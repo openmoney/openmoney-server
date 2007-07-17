@@ -1,0 +1,81 @@
+<%= error_messages_for :event %>
+
+<form action="/currencies" method="post">
+	Currency name: <%= text_field_tag (:name,params[:name]) %> in <%= contexts_select(:parent_context,params[:parent_context]) %>
+	<br />
+	Originating Account: <%= text_field_tag (:originating_account,params[:originating_account],:size => 20) %>
+	<br />
+	Description: <%= text_field_tag (:description,params[:description],:size => 50) %>
+	<br />
+
+
+
+	<fieldset style="display: inline">
+		<legend>
+			Currency Parameters
+
+			(<input id="use_advanced" type="checkbox" name="use_advanced" value="1" onClick="if($F('use_advanced')) {$('simple').hide();$('advanced').show()} else {$('simple').show();$('advanced').hide()}"> Use Advanced Interface)
+
+			</legend>
+	<div id="simple">
+	Type: <select id="type" name="type" onChange="if ($F('type')=='mutual_credit'){$('reputation').hide();$('mutual_credit').show()} else {$('reputation').show();$('mutual_credit').hide()}">
+		<option value="mutual_credit">Mutual Credit</option>
+		<option value="reputation">Reputation</option>
+		</select>
+	<div id='mutual_credit'>
+		Unit of Measure: <select name="unit">
+		<option value="USD">US Dollar ($)</option>
+		<option value="EUR">Euro (&euro;)</option>
+		<option value="CAD">Canadian Dollar ($)</option>
+		<option value="AUD">Australian Dollar ($)</option>
+		<option value="NZD">New Zeland Dollar ($)</option>
+		<option value="S">Sterling Pound (&pound;)</option>
+		<option value="MXP">Mexican Peso (p)</option>
+		<option value="YEN">Yen (&yen;)</option>
+		<option value="CHY">Yuan</option>
+		<option value="T-h">Time:hours (h)</option>
+		<option value="T-m">Time:minutes (h)</option>
+		<option value="kwh">Kilowatt Hours (kwh)</option>
+		<option value="other">other--see description (&curren;)</option>
+		</select>
+		<br />
+		<input id="use_advanced" type="checkbox" name="taxable" value="1" > Show "taxable" question?
+	</div>
+	<div id='reputation'  style="display:none;">
+		Rating Type: <select name="rating_type">
+		<option value="2qual">Good/Bad</option>
+		<option value="2yesno">Yes/No</option>
+		<option value="3qual">Good/Average/Bad</option>
+		<option value="4qual">Excellent/Good/Average/Bad</option>
+		<option value="3stars">3 Stars</option>
+		<option value="4stars">4 Stars</option>
+		<option value="5stars">5 Stars</option>
+		<option value="3">1 - 3</option>
+		<option value="4">1 - 4</option>
+		<option value="5">1 - 5</option>
+		<option value="10">1 - 10</option>
+		</select>
+	</div>
+	</div>	
+	<div id="advanced" style="display:none;">
+	<label>YAML Specification: <br /><textarea name="currency_spec" rows="10" cols="60">
+fields:
+	amount: float
+	taxable: boolean
+	description: text
+	acknowledge_flow: submit
+input_form: 
+	en: ":declaring_account acknowledges :accepting_account for :description in the amount of  :amount (taxable :taxable) :acknowledge_flow"
+summary_type: balance(amount)
+unit: USD
+	</textarea></label>
+	</div>
+	</fieldset>
+
+
+	<br />
+	<%= submit_tag("Create Currency") %>
+	</fieldset>
+    
+</form>
+

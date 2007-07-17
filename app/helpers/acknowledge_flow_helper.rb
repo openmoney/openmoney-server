@@ -20,9 +20,9 @@ module AcknowledgeFlowHelper
     html_field_name = "flow_spec[#{field_name}]"
     case 
     when field_type.is_a?(Array)
-      select_tag(html_field_name,options_for_select(field_type),@params[field_name])
+      select_tag(html_field_name,options_for_select(field_type,@params[field_name]))
     when field_type == "boolean"
-      select_tag(html_field_name,options_for_select([["Yes", "Y"], ["No", "N"]]),@params[field_name])
+      select_tag(html_field_name,options_for_select([["Yes", "Y"], ["No", "N"]],@params[field_name]))
     when field_type == "submit"
       submit_tag(field_name.gsub(/_/,' '))
     when field_type == "text"
