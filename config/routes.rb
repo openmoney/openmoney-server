@@ -7,7 +7,7 @@ ActionController::Routing::Routes.draw do |map|
 #    entity.resources :links
 #  end
 
-
+  map.connect 'acknowledge_flows', :controller => 'acknowledge_flow', :action => 'list',:conditions => {:method => :get}
   map.connect 'acknowledge_flow/:currency/:declaring_account/:accepting_account', :controller => 'acknowledge_flow', :action => 'show',:conditions => {:method => :get}, :defaults => { :declaring_account => '', :accepting_account => '' }
   map.connect 'acknowledge_flow/:currency', :controller => 'acknowledge_flow', :action => 'ack', :conditions => {:method => :post}
 

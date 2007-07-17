@@ -5,7 +5,11 @@
 ######################################################################################
 
 class AcknowledgeFlowController < ApplicationController
-  before_filter :setup_currency
+  before_filter :setup_currency, :except => :list
+
+  # GET /acknowledge_flows
+  def list
+  end
   
   # GET /acknowledge_flow/<currency>
   def show
