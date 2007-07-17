@@ -1,0 +1,10 @@
+<%= error_messages_for :event %>
+
+<form action="/currencies/join" method="post">
+	Currency: <%= currency_select (:currency,params[:currency]) %> 
+	<br />
+	Account: <%= text_field_tag (:account,params[:account]) %>
+	<br />
+	<%= submit_tag("Join Currency") %>
+</form>
+

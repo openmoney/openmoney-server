@@ -16,6 +16,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'accounts/new', :controller => 'accounts', :action => 'new',:conditions => {:method => :get}
   map.connect 'accounts', :controller => 'accounts', :action => 'create', :conditions => {:method => :post}
   map.connect 'currencies/new', :controller => 'currencies', :action => 'new',:conditions => {:method => :get}
+  map.connect 'currencies/join', :controller => 'currencies', :action => 'join',:conditions => {:method => :get}
+  map.connect 'currencies/join', :controller => 'currencies', :action => 'join_request',:conditions => {:method => :post}
   map.connect 'currencies', :controller => 'currencies', :action => 'create', :conditions => {:method => :post}
 
   map.connect ':entity_type.:format', :controller => 'entities'

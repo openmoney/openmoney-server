@@ -3,6 +3,27 @@ class CurrenciesController < ApplicationController
   # GET /currencies/new
   def new
   end
+
+  # GET /currencies/join
+  def join
+  end
+
+  # POST /currencies/join
+  def join_request
+    @event = Event.create(
+     {:event_type => "JoinCurrency",
+      :specification => {
+        "currency" => params[:currency],
+        "account" => params[:account],
+       }.to_yaml
+     }
+    )
+    if @event.enmesh && @event.save
+      flash[:notice] = "#{params[:account]} has joined #{params[:currency]}"
+      params[:account] = ''
+    end
+    render :action => "join"
+  end
   
   # POST /currencies/
   def create
@@ -17,12 +38,13 @@ class CurrenciesController < ApplicationController
         currency_spec['fields'] = {
           'amount' => 'float',
         	'description' => 'text',
-        	'acknowledge_flow' => 'submit'
+        	'acknowledge_flow' => 'submit',
+        	'unit' => params[:unit]
         }
         currency_spec['fields']['taxable'] = 'boolean' if params[:taxable]
       	currency_spec['summary_type'] = 'balance(amount)'
       	currency_spec['input_form'] = {
-      	  'en' => ":declaring_account acknowledges :accepting_account for :description in the amount of  :amount #{params[:taxable] ? '(taxable :taxable) ' : ''}:acknowledge_flow"
+      	  'en' => ":declaring_account acknowledges :accepting_account for :description in the amount of  :unit:amount #{params[:taxable] ? '(taxable :taxable) ' : ''}:acknowledge_flow"
       	  }
       when "reputation"
         r = {

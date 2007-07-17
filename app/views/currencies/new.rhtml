@@ -23,21 +23,7 @@
 		<option value="reputation">Reputation</option>
 		</select>
 	<div id='mutual_credit'>
-		Unit of Measure: <select name="unit">
-		<option value="USD">US Dollar ($)</option>
-		<option value="EUR">Euro (&euro;)</option>
-		<option value="CAD">Canadian Dollar ($)</option>
-		<option value="AUD">Australian Dollar ($)</option>
-		<option value="NZD">New Zeland Dollar ($)</option>
-		<option value="S">Sterling Pound (&pound;)</option>
-		<option value="MXP">Mexican Peso (p)</option>
-		<option value="YEN">Yen (&yen;)</option>
-		<option value="CHY">Yuan</option>
-		<option value="T-h">Time:hours (h)</option>
-		<option value="T-m">Time:minutes (h)</option>
-		<option value="kwh">Kilowatt Hours (kwh)</option>
-		<option value="other">other--see description (&curren;)</option>
-		</select>
+		Unit of Measure: <%=unit_of_measure_select('unit')%>
 		<br />
 		<input id="use_advanced" type="checkbox" name="taxable" value="1" > Show "taxable" question?
 	</div>
@@ -58,16 +44,16 @@
 	</div>
 	</div>	
 	<div id="advanced" style="display:none;">
-	<label>YAML Specification: <br /><textarea name="currency_spec" rows="10" cols="60">
+	<label>YAML Specification: <br /><textarea name="currency_spec" rows="15" cols="60">
 fields:
 	amount: float
 	taxable: boolean
 	description: text
 	acknowledge_flow: submit
+	USD: unit
 input_form: 
-	en: ":declaring_account acknowledges :accepting_account for :description in the amount of  :amount (taxable :taxable) :acknowledge_flow"
+	en: ":declaring_account acknowledges :accepting_account for :description in the amount of :USD:amount (taxable :taxable) :acknowledge_flow"
 summary_type: balance(amount)
-unit: USD
 	</textarea></label>
 	</div>
 	</fieldset>

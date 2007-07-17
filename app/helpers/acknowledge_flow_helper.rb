@@ -1,7 +1,7 @@
 module AcknowledgeFlowHelper
   def input_form(currency,language = "en")
     spec = YAML.load(@currency.specification)
-    base_field_spec = {"submit" => "submit"}
+    base_field_spec = {"submit" => "submit","USD" => 'unit'}
     if spec["fields"]
       field_spec = spec["fields"]
     else
@@ -10,7 +10,7 @@ module AcknowledgeFlowHelper
     field_spec = base_field_spec.merge(field_spec)
 #    return spec.inspect
     form = spec["input_form"][language] if spec["input_form"]
-    form = ":declaring_account acknowledges :accepting_account for :description in the amount of :amount :submit" if !form
+    form = ":declaring_account acknowledges :accepting_account for :description in the amount of :USD:amount :submit" if !form
     form.gsub(/:([a-zA-Z-0-9_]+)/) {|m| render_field($1,field_spec)}
   end
   
@@ -29,8 +29,25 @@ module AcknowledgeFlowHelper
       text_field_tag (html_field_name,@params[field_name])
     when field_type == "float"
       text_field_tag (html_field_name,@params[field_name])
+    when field_type == "unit"
+      {
+        'USD'=>'$',
+        'EUR'=>'&euro;',
+        'CAD'=>'$',
+        'AUD'=>'$',
+        'NZD'=>'$',
+        'S'=>'&pound;',
+        'MXP'=>'p',
+        'YEN'=>'&yen;',
+        "CHY"=>'Yuan',
+        'T-h'=>'h',
+        'T-m'=>'h',
+        'kwh'=>'kwh',
+        'other'=>'&curren;'
+      }[field_name]
     else
       text_field_tag (field_name,@params[field_name])
     end
   end
 end	
+
