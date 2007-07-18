@@ -39,12 +39,12 @@ class CurrenciesController < ApplicationController
           'amount' => 'float',
         	'description' => 'text',
         	'acknowledge_flow' => 'submit',
-        	'unit' => params[:unit]
+        	params[:unit] => 'unit'
         }
         currency_spec['fields']['taxable'] = 'boolean' if params[:taxable]
       	currency_spec['summary_type'] = 'balance(amount)'
       	currency_spec['input_form'] = {
-      	  'en' => ":declaring_account acknowledges :accepting_account for :description in the amount of  :unit:amount #{params[:taxable] ? '(taxable :taxable) ' : ''}:acknowledge_flow"
+      	  'en' => ":declaring_account acknowledges :accepting_account for :description in the amount of  :#{params[:unit]}:amount #{params[:taxable] ? '(taxable :taxable) ' : ''}:acknowledge_flow"
       	  }
       when "reputation"
         r = {
