@@ -9,7 +9,7 @@ class ContextsController < ApplicationController
      {:event_type => "CreateContext",
       :specification => {
         "parent_context" => params[:parent_context],
-        "name" => params[:cname],
+        "name" => params[:name],
         "context_specification" => {
           "description" => params[:description]
         }
