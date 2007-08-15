@@ -22,6 +22,7 @@ class AcknowledgeFlowController < ApplicationController
     @event = Event.create(
      {:event_type => "AcknowledgeFlow",
       :specification => {
+        "ack_password" => params[:password],
         "flow_specification" => params["flow_spec"],
         "declaring_account" => params["declaring_account"],
         "accepting_account" => params["accepting_account"],
@@ -31,16 +32,15 @@ class AcknowledgeFlowController < ApplicationController
     )
     if @event.enmesh && @event.save
       flash[:notice] = 'Your flow was acknowledged!'
-    else
-      render :action => "show"
     end
+    render :action => "show"
   end
   
   private 
   def setup_currency
     @currency_omrl = params[:currency]
     @currency = Entity.find_by_omrl(@currency_omrl)
-    @params = {"declaring_account" => params[:declaring_account],"accepting_account" => params[:accepting_account]};
+    @params = {"declaring_account" => params[:declaring_account],"accepting_account" => params[:accepting_account]}
     @params.merge!(params[:flow_spec]) if params[:flow_spec]
   end
   

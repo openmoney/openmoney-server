@@ -164,7 +164,20 @@ class Entity < ActiveRecord::Base
   class Account < Entity
     def allow_link?(link)
       return false if not link_type_err_check({"declares"=>"flow","accepts"=>"flow"},link)
+      if link.link_type == "declares"
+        ack_password = link.specification_attribute('ack_password')
+        raise "incorrect acknowledgment password" if !correct_password(ack_password)
+        link.delete_specification_attribute('ack_password')
+      end
       true
+    end
+    
+    private
+    def correct_password(pass)
+      declareer_pass = specification_attribute('ack_password')
+      return true if !declareer_pass
+      return true if pass == declareer_pass
+      return false
     end
   end
 
@@ -207,7 +220,7 @@ class Entity < ActiveRecord::Base
     end
     
     private 
-    def update_ballance(summary,amount)
+    def update_balance(summary,amount)
       summary ||= {}
       summary['count'] ||= 0
       summary['balance'] ||= 0

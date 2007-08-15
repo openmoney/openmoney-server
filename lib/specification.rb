@@ -65,5 +65,13 @@ module Specification
     @specification[attribute] = value
     save_specification
   end  
+
+  ######################################################################################
+  # sets an attribute of the specification  
+  def delete_specification_attribute(attribute)
+    load_specification
+    @specification.delete(attribute)
+    save_specification
+  end  
   
 end

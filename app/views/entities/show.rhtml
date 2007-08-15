@@ -25,7 +25,7 @@
 
 <p><strong>Links From:</strong><br />
 <% for link in @entity.links %>
-to: <a href="<%=h link.omrl_url %>"><%=h link.omrl %></a>, type: <%=h link.link_type %> <%= link_to 'Details', entity_link_url(@entity,link) %><br />
+<%=h link.link_type %> <a href="<%=h link.omrl_url %>"><%=h link.omrl %></a> <%= link_to 'Details', entity_link_url(@entity,link) %><br />
 <% end %>
 </p>
 

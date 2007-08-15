@@ -3,6 +3,7 @@
 <%= error_messages_for :event %>
 
 <form action="/acknowledge_flow/<%= @currency_omrl %>" method="post">
+	Password: <%= password_field_tag %><br />
 	<%= input_form(@currency) %>
 </form>
 
