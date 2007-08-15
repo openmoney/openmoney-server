@@ -1,0 +1,15 @@
+<% @header="Client: #{@client}" %>
+
+<div class="tabs">  
+  <ul >
+	 <% for a in @accounts  %>
+		<li <%= (@account == a) ? 'id="current"' : '' %>> <%= link_to("<span>#{a}</span>","/clients/#{@client}/#{a}") %> </li>
+	<% end %>
+  </ul>
+</div>
+<div id="form">
+	<form action="/clients/<%= @client %>/<%= @account %>" method="post">
+		Currency: <%= currency_select("currency",@currency_omrl) %> <br />
+		<%= input_form(@currency,@account) %>
+	</form>
+</div>
