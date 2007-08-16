@@ -1,6 +1,6 @@
 <% @header='Acknowledge Flows' %>
 
   <ul class="links"><li>
-	<%= Entity.find(:all, :conditions => "entity_type = 'currency' ").collect{|e| o = e.omrl.chop; link_to o,'/acknowledge_flow/' << o.gsub(/\./,'%2E')  }.join("</li><li>")%>
+	<%= Entity.find(:all, :conditions => "entity_type = 'currency' ").collect{|e| o = e.omrl.chop; link_to o,'/acknowledge_flow/' << o  }.join("</li><li>")%>
 		</li>
   </ul>

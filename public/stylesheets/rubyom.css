@@ -175,11 +175,18 @@
       }
 
 			.specification {
-        font-size: 9pt;
-        font-family: Courier, 'Courier New', sans-serif;
+			  font-family: 'Lucida Console', 'Bitstream Vera Sans Mono', 'Courier New', Monaco, Courier, monospace;
+			  white-space: pre;
+			  width: 39.5em;
+			  line-height: 1.4em;
+			  margin: 1em 0;
+			  border: 1px dashed #aaa8a8;
+			  padding: 0.5em 0 0.3em 0.5em;
+			  font-size: 80%;
+			  color: #000;
+			  overflow: auto;
 				background-color: #eee;
 			}
 			#listing td {
 				border-bottom: 2px solid #ccc;
-      }  
-			}
+      } 

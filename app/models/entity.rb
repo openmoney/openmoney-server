@@ -33,7 +33,7 @@ class Entity < ActiveRecord::Base
   # agreeing to the link
   def link_allowed(link)
 
-    typed_entity = Entity.create({:entity_type => entity_type, :specification =>specification})
+    typed_entity = Entity.create({:entity_type => entity_type, :specification =>specification, :access_control => access_control})
     typed_entity.id = id
     
     result = typed_entity.allow_link?(link) 
@@ -174,7 +174,7 @@ class Entity < ActiveRecord::Base
     
     private
     def correct_password(pass)
-      declareer_pass = specification_attribute('ack_password')
+      declareer_pass = access_control ? YAML.load(access_control)['ack_password'] : nil
       return true if !declareer_pass
       return true if pass == declareer_pass
       return false

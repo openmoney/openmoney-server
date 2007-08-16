@@ -6,7 +6,7 @@
   <tr>
     <td>
 	<strong><%=h entity.entity_type %>: <%= entity.omrl	%> </strong>
-	<p class="specification"> <%= h(entity.specification).gsub(/\n/,'<br />') %></p>
+	<p class="specification"> <%= h(entity.specification) %></p>
 	 created: <%=h entity.created_at %> modified: <%=h entity.updated_at %>
 	</td>
 	<!-- <td> link_to 'New Link', new_entity_link_url(:entity_id => entity.id) %></td> -->
