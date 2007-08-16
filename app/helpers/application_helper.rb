@@ -96,7 +96,9 @@ module ApplicationHelper
     flows = links.collect {|l| e = Entity.find_by_omrl(l.omrl); (e && OMRL.new(e.specification_attribute('currency')).to_s == currency_omrl) ? e : nil }.reject {|e| e == nil}
     fields = currency.specification_attribute('fields')
     fields ||= DefaultCurrencyFields
-    [flows,fields]
+    f = {}
+    fields.each{|name,type| f[name] = type if type != 'submit'  && type != 'unit'}
+    [flows,f]
   end
   
 end
