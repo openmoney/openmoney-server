@@ -1,6 +1,8 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
 
+  DefaultCurrencyFields = {"amount" => "float", "description" => "text"}
+  
   def currency_select(html_field_name,selected,account = nil)
     c = Entity.find(:all, :conditions => "entity_type = 'currency' ").collect{|e| e.omrl.chop}
     select_tag(html_field_name,options_for_select(c,selected))
@@ -36,13 +38,13 @@ module ApplicationHelper
     if spec["fields"]
       field_spec = spec["fields"]
     else
-      field_spec = {"amount" => "float", "description" => "text"}
+      field_spec = DefaultCurrencyFields
     end
     field_spec = base_field_spec.merge(field_spec)
 #    return spec.inspect
     form = spec["input_form"][language] if spec["input_form"]
     form = ":declaring_account acknowledges :accepting_account for :description in the amount of :USD:amount :submit" if !form
-    form.gsub(/:([a-zA-Z-0-9_]+)/) {|m| 
+    form.gsub(/:([a-zA-Z0-9_-]+)/) {|m| 
       if $1 == 'declaring_account' && declaring_account
         declaring_account
       else
@@ -63,9 +65,9 @@ module ApplicationHelper
     when field_type == "submit"
       submit_tag(field_name.gsub(/_/,' '))
     when field_type == "text"
-      text_field_tag (html_field_name,@params[field_name])
+      text_field_tag(html_field_name,@params[field_name])
     when field_type == "float"
-      text_field_tag (html_field_name,@params[field_name])
+      text_field_tag(html_field_name,@params[field_name])
     when field_type == "unit"
       {
         'USD'=>'$',
@@ -83,7 +85,18 @@ module ApplicationHelper
         'other'=>'&curren;'
       }[field_name]
     else
-      text_field_tag (field_name,@params[field_name])
+      text_field_tag(field_name,@params[field_name])
     end
-  end  
+  end
+  
+  def history(account, currency=nil,language = "en")
+    currency_omrl = currency.omrl
+    a = OMRL.new(account)
+    links = Link.find(:all,{:conditions => "link_type in ('accepts','declares') && omrl regexp '^#{a.entity}#[0-9]+\\\\^#{a.context}'"})
+    flows = links.collect {|l| e = Entity.find_by_omrl(l.omrl); (e && OMRL.new(e.specification_attribute('currency')).to_s == currency_omrl) ? e : nil }.reject {|e| e == nil}
+    fields = currency.specification_attribute('fields')
+    fields ||= DefaultCurrencyFields
+    [flows,fields]
+  end
+  
 end

@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title>rubycc: <%= @client %></title>
+  <%= stylesheet_link_tag 'scaffold' %>
+  <%= stylesheet_link_tag 'rubyom' %>
+  <%= stylesheet_link_tag 'client' %>
+  <%= javascript_include_tag :defaults %>
+</head>
+<body>
+
+    <div id="page">
+      <div id="sidebar">
+        <ul id="sidebar-items">
+
+          <li>
+            <ul class="links">
+              <li><a href="/">home</a></li>
+            </ul>
+          </li>
+
+          <li>
+            <h3>Open money info</h3>
+            <ul class="links">
+              <li><a href="http://openmoney.info/sophia">general theory</a></li>
+              <li><a href="http://openmoney.info/techne">tech info</a></li>
+              <li><a href="http://openmoney.info/phronesis">practice</a></li>
+              <li><a href="http://openmoney.info/play">participation</a></li>
+            </ul>
+          </li>
+          
+        </ul>
+      </div>
+
+      <div id="content">
+        <div id="header">
+          <h1><%= @header ? @header : 'rubycc' %></h>
+        </div>
+
+		<p style="color: green"><%= flash[:notice] %></p>
+
+        <div id="action">
+		<%= yield  %>
+		</div>
+        
+      </div>
+      
+      <div id="footer">&nbsp;</div>
+    </div>
+
+
+
+
+</body>
+</html>

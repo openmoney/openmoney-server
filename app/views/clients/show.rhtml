@@ -9,7 +9,25 @@
 </div>
 <div id="form">
 	<form action="/clients/<%= @client %>/<%= @account %>" method="post">
-		Currency: <%= currency_select("currency",@currency_omrl) %> <br />
-		<%= input_form(@currency,@account) %>
+		Currency: <%= select_tag('currency',options_for_select(@currencies,@currency_omrl)) %> <br />
+	  	<%= render(:partial => 'input_form') %>
 	</form>
 </div>
+<%= render(:partial => 'history') %>
+
+<%= observe_field :currency,
+	:frequency => 0.5,
+	:update => 'inputForm',
+	:before => "$('input_form_spinner').show();$('history_spinner').show();$('history_table').hide();",
+	:complete=>"$('input_form_spinner').hide();",
+	:url => {:action => :input_form, :account=>@account, :client=>@client, :only_path=>true},
+	:with => "'currency=' +encodeURIComponent(value)",
+	:success => remote_function(
+		:update=>'history',
+		:before=> "$('history_spinner').show();",
+		:url=> {:action=>:history, :account=>@account, :client=>@client, :only_path=>true},
+		:with => "'currency=' +encodeURIComponent(value)",
+		:complete=>"$('history_spinner').hide();$('history_table').show();"
+		)
+	
+%>

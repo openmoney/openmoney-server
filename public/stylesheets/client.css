@@ -5,10 +5,17 @@
 	clear: both;
 }
 
+#history h3
+{
+	background: #84B0C7;
+	margin: 0;
+}
+
 DIV.tabs
 {
    width            : 100%;
-   background       : #FFFFFF url(/images/tabsBorder.gif) repeat-x bottom;
+/*   background       : #FFFFFF url(/images/tabsBorder.gif) repeat-x bottom;*/
+	background       : #FFFFFF;
 }
 
 DIV.tabs UL

@@ -46,6 +46,11 @@ module Specification
     end
   end
   
+  def get_specification
+    load_specification
+    @specification
+  end
+  
   def save_specification()
     self.specification = @specification.to_yaml
   end

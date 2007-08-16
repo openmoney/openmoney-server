@@ -1,0 +1,30 @@
+<div id="history">
+<%= image_tag 'loading.gif', :id=>'history_spinner', :style=>"display:none; float:right;"%>
+<h3>History</h3>
+<% (@flows,@fields) = history(@account,@currency) %>
+
+<% if @flows %>
+  <table id ="history_table">
+	<tr>
+	<th> declarer </th>
+	<th> accepter </th>
+	<%for f in @fields.keys %>
+	<th> <%= h f %> </th>
+	<% end %>
+	</tr>
+
+	<% for flow in @flows %>
+	<tr>
+		<td><%= h flow.specification_attribute('declaring_account')%> </td>
+		<td><%= h flow.specification_attribute('accepting_account') %> </td>
+		<%for f in @fields.keys %>
+		<td> <%= h flow.specification_attribute(f)  %> </td>
+		<% end %>
+	<tr>
+	<% end %>
+  </table>
+<% else %>
+	No History
+<% end %>
+
+</div>
