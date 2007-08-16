@@ -30,9 +30,11 @@
 </p>
 
 <p><strong>Local Links To:</strong><br />
-<% for link in Link.find(:all, :conditions => ["omrl = ?",@entity.omrl]) %>
+<% for link in Link.find(:all, :conditions => ["omrl = ? || omrl = '/entities/#{@entity.id}'",@entity.omrl]) %>
 	<% @e = Entity.find(link.entity_id) %>
-from: <a href="<%=h @e.omrl(OMRL::OM_URL)%>"><%=h @e.omrl %></a>, type: <%=h link.link_type %> <%= link_to 'Details', entity_link_url(@e,link) %><br />
+from: <a href="<%=h @e.omrl(OMRL::OM_URL)%>"><%=h @e.omrl %></a>, type: <%=h link.link_type %> 
+ <%= (link.link_type == 'names') ? " as #{link.specification_attribute('name')}" : ''%>
+<%= link_to 'Details', entity_link_url(@e,link) %><br />
 <% end %>
 </p>
 

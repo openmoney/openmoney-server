@@ -173,3 +173,13 @@
       #sidebar ul.links li {
         margin-bottom: 5px;
       }
+
+			.specification {
+        font-size: 9pt;
+        font-family: Courier, 'Courier New', sans-serif;
+				background-color: #eee;
+			}
+			#listing td {
+				border-bottom: 2px solid #ccc;
+      }  
+			}

@@ -1,21 +1,14 @@
 <h1>Listing entities</h1>
 
+<div id="listing">
 <table>
-  <tr>
-    <th>Created at</th>
-    <th>Updated at</th>
-    <th>Type</th>
-    <th>Access control</th>
-    <th>Specification</th>
-  </tr>
-  
 <% for entity in @entities %>
   <tr>
-    <td><%=h entity.created_at %></td>
-    <td><%=h entity.updated_at %></td>
-    <td><%=h entity.entity_type %></td>
-    <td><%=h entity.access_control %></td>
-    <td><%=h entity.specification %></td>
+    <td>
+	<strong><%=h entity.entity_type %>: <%= entity.omrl	%> </strong>
+	<p class="specification"> <%= h(entity.specification).gsub(/\n/,'<br />') %></p>
+	 created: <%=h entity.created_at %> modified: <%=h entity.updated_at %>
+	</td>
 	<!-- <td> link_to 'New Link', new_entity_link_url(:entity_id => entity.id) %></td> -->
     <td><%= link_to 'Show', entity_path(entity) %></td>
     <td><%= link_to 'Edit', edit_entity_path(entity) %></td>
@@ -23,7 +16,7 @@
   </tr>
 <% end %>
 </table>
-
+</div>
 <br />
 
 <%= link_to 'New entity', new_entity_path %>
