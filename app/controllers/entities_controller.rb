@@ -4,6 +4,10 @@
 # http://openmoney.info/licenses/rubyom
 ######################################################################################
 
+
+# TODO the implementation of the filtering parameters here is totally non-scalable
+# gotta figure out how to fix that.
+
 class EntitiesController < ApplicationController
 
   before_filter :check_for_entity_type
@@ -12,20 +16,45 @@ class EntitiesController < ApplicationController
   def index
     @entities = Entity.find(:all,@conditions)
 
+    if params[:entity_type] == "currencies"
+      if params[:used_by]
+        account_omrl = OMRL.new(params[:used_by]).to_s
+        @entities = @entities.collect {|e| e.links.any?{|l| l.link_type == 'is_used_by' && l.omrl == account_omrl} ? e : nil }.reject {|e| e == nil}
+      end
+    end
+
+    if params[:entity_type] == "flows"
+      if params[:in_currency]
+        currency_omrl = OMRL.new(params[:in_currency]).to_s
+        @entities = @entities.collect {|e| c = OMRL.new(e.specification_attribute('currency')).to_s ; (c == currency_omrl) ? e : nil }.reject {|e| e == nil}
+      end
+      if params[:with]
+        account_omrl = OMRL.new(params[:with]).to_s
+        
+        @entities = @entities.collect {|e| a = OMRL.new(e.specification_attribute('accepting_account')).to_s ; d = OMRL.new(e.specification_attribute('declaring_account')).to_s ; ((a == account_omrl) || (d == account_omrl)) ? e : nil }.reject {|e| e == nil}
+      end
+    end
+
     respond_to do |format|
       format.html # index.rhtml
-      format.xml  { render :xml => @entities.to_xml }
+      format.xml  { render :xml => @entities.to_xml(:methods => [:omrl]) }
     end
   end
+  
+
 
   # GET /entities/1
   # GET /entities/1.xml
   def show
-    @entity = Entity.find(params[:id],@conditions)
+    if params[:id].to_i == 0
+      @entity = Entity.find_by_omrl(params[:id])
+    else
+      @entity = Entity.find(params[:id],@conditions)
+    end
 
     respond_to do |format|
       format.html # show.rhtml
-      format.xml  { render :xml => @entity.to_xml }
+      format.xml  { render :xml => @entity.to_xml(:methods => [:omrl]) }
     end
   end
 

@@ -17,9 +17,9 @@ DELETE
 High-level read-only API to the mesh for the various types of entities and for flows:
 
 GET
-	/<entity-type>/<id> => return info on the named entity type (accounts/currencies/contexts)
-	/account|currency/<id>/flows/<id>|<filter-spec> => return flow record(s) for the entity (as specified by the filter spec)
-	/account|currency/<id>/summary/<filter-spec> => return summaries of the flows to/from the entity (as specified by the filter
+	/<entity-type>/<id>|<filter-spec> => return info on the named entity type (accounts/currencies/contexts)
+	/accounts|currencies/<id>/flows/<id>|<filter-spec> => return flow record(s) for the entity (as specified by the filter spec)
+	/accounts|currencies/<id>/summary/<filter-spec> => return summaries of the flows to/from the entity (as specified by the filter
 
 High-level API to the churn (used to create the the mesh):
 
