@@ -24,6 +24,9 @@ class Entity < ActiveRecord::Base
     begin
       class_name.constantize.new(params)
     rescue NameError => e
+#      ent = Entity.new
+#      ent.errors.add(:entity_type, e.to_s)
+#      ent
       raise "Unknown entity type: #{params[:entity_type]}"
     end
   end

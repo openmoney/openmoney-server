@@ -27,8 +27,10 @@ class Event < ActiveRecord::Base
     class_name = "Event::#{params[:event_type]}"
     begin
       class_name.constantize.new(params)
-    rescue NameError
-      raise "Unknown event type: #{params[:event_type]}"
+    rescue NameError => e
+      evt = Event.new
+      evt.errors.add(:event_type, e.to_s)
+      evt
     end
   end
   
