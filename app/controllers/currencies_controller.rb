@@ -41,17 +41,7 @@ class CurrenciesController < ApplicationController
     else
       case params[:type]
       when "mutual_credit"
-        currency_spec['fields'] = {
-          'amount' => 'float',
-        	'description' => 'text',
-        	'acknowledge_flow' => 'submit',
-        	params[:unit] => 'unit'
-        }
-        currency_spec['fields']['taxable'] = 'boolean' if params[:taxable]
-      	currency_spec['summary_type'] = 'balance(amount)'
-      	currency_spec['input_form'] = {
-      	  'en' => ":declaring_account acknowledges :accepting_account for :description in the amount of  :#{params[:unit]}:amount #{params[:taxable] ? '(taxable :taxable) ' : ''}:acknowledge_flow"
-      	  }
+        currency_spec = default_mutual_credit_currency(params[:taxable],params[:unit])
       when "reputation"
         r = {
       		"2qual" => [['Good',2],['Bad',1]],

@@ -80,7 +80,7 @@ module ApplicationHelper
         'YEN'=>'&yen;',
         "CHY"=>'Yuan',
         'T-h'=>'h',
-        'T-m'=>'h',
+        'T-m'=>'m',
         'kwh'=>'kwh',
         'other'=>'&curren;'
       }[field_name]

@@ -47,15 +47,7 @@
 	</div>	
 	<div id="advanced" style="display:none;">
 	<label>YAML Specification: <br /><textarea name="currency_spec" rows="15" cols="60">
-fields:
-	amount: float
-	taxable: boolean
-	description: text
-	acknowledge_flow: submit
-	USD: unit
-input_form: 
-	en: ":declaring_account acknowledges :accepting_account for :description in the amount of :USD:amount (taxable :taxable) :acknowledge_flow"
-summary_type: balance(amount)
+<%= default_mutual_credit_currency.to_yaml %>
 	</textarea></label>
 	</div>
 	</fieldset>
