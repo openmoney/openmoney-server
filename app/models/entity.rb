@@ -3,7 +3,6 @@
 # This software is distributed according to the license at 
 # http://openmoney.info/licenses/rubyom
 ######################################################################################
-
 class Entity < ActiveRecord::Base
 
   Types = %w(context account currency flow)
@@ -286,4 +285,3 @@ class Entity < ActiveRecord::Base
     return true
   end
 end
-

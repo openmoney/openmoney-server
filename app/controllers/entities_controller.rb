@@ -24,15 +24,7 @@ class EntitiesController < ApplicationController
     end
 
     if params[:entity_type] == "flows"
-      if params[:in_currency]
-        currency_omrl = OMRL.new(params[:in_currency]).to_s
-        @entities = @entities.collect {|e| c = OMRL.new(e.specification_attribute('currency')).to_s ; (c == currency_omrl) ? e : nil }.reject {|e| e == nil}
-      end
-      if params[:with]
-        account_omrl = OMRL.new(params[:with]).to_s
-        
-        @entities = @entities.collect {|e| a = OMRL.new(e.specification_attribute('accepting_account')).to_s ; d = OMRL.new(e.specification_attribute('declaring_account')).to_s ; ((a == account_omrl) || (d == account_omrl)) ? e : nil }.reject {|e| e == nil}
-      end
+      @entities = Flow.filter(@entities,params)
     end
 
     respond_to do |format|
