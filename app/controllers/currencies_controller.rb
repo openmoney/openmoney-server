@@ -5,6 +5,7 @@
 ######################################################################################
 
 class CurrenciesController < ApplicationController
+  include OpenMoneyHelper
 
   # GET /currencies/new
   def new
