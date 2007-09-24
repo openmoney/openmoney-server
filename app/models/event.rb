@@ -42,10 +42,10 @@ class Event < ActiveRecord::Base
     validate_specification(validations,attribute_name)
     if errors.empty? 
       errs = []
-      yield errs
+      result = yield errs
       errors.add(attribute_name, "- enmeshing error: " << errs.join(",")) if !errs.empty?
     end
-    errors.empty?
+    errors.empty? ? result : false
   end
 
   ######################################################################################
@@ -157,6 +157,7 @@ class Event < ActiveRecord::Base
           flow_spec_yaml = {"flow" => @specification['flow_specification']}.to_yaml
           l = create_link(@specification['currency'],entity_omrl,'approves',flow_spec_yaml)
           links << l
+          l.specification_attribute('result')
         rescue Exception => e
           links.each {|link| link.destroy}
           raise e

@@ -43,6 +43,10 @@ class Entity < ActiveRecord::Base
       err = "link not allowed: #{typed_entity.link_error}"
       errors.add_to_base(err)
       raise err
+    elsif result && result != true
+      #if there is a result other than true, then the entity is giving us
+      # some information to be stored in the link
+      link.add_result(result)
     end
 
     link.add_signature()
@@ -54,17 +58,34 @@ class Entity < ActiveRecord::Base
       raise err
     end
     if result && result != true
-      self.specification = result
-      save
+      # allow for the allow_link? call to have a side-effect on the specification.
+      # and if it has changed, updated it.  For now this is how we are implementing
+      # saving of the summary during a flow acknowledgement.  Not great but it works.
+      if self.specification != typed_entity.specification
+        self.specification = typed_entity.specification
+        save
+      end
     end
     true
   end
   
   ######################################################################################
   # access control should never be visible when converting to xml
+  # nor should the summaries if this is a currency.  
+  # TODO: This is probably an indicator that summaries need to be moved out of the specification
+  # and either into their own table, or into their own entity type.
   def to_xml(options = {})
      options[:except] ||= []
      options[:except].push(:access_control) 
+     if entity_type == "currencyS"  #this causes weird stuff at the other end of ActiveResource disabled for now
+       options[:except].push(:specification)
+       options[:procs] ||= []
+       options[:procs].push Proc.new { |o|
+         spec = get_specification.clone
+         spec.delete('summaries')         
+         o[:builder].tag!('specification', spec.to_yaml,:type => :string)
+       }
+     end
      super(options)
   end
   
@@ -202,20 +223,22 @@ class Entity < ActiveRecord::Base
         
         raise "field to summarize (#{summary_field}) not found!" if !sf
 
-        s['_count'] =  s['_count'].to_i + 1
+        s['count'] =  s['count'].to_i + 1
 
+        declarer_omrl = flow['declaring_account']
+        accepter_omrl = flow['accepting_account']
         case summary_type 
         when "balance"
-          s[flow['declaring_account']] = update_balance(s[flow['declaring_account']],sf.to_i)
-          s[flow['accepting_account']] = update_balance(s[flow['accepting_account']],-sf.to_i)
+          s[declarer_omrl] = update_balance(s[declarer_omrl],-sf.to_i)
+          s[accepter_omrl] = update_balance(s[accepter_omrl],sf.to_i)
         when "mean"
-          s[flow['declaring_account']] = update_mean(s[flow['declaring_account']],sf.to_i,'declared')
-          s[flow['accepting_account']] = update_mean(s[flow['accepting_account']],sf.to_i,'accepted')
+          s[declarer_omrl] = update_mean(s[declarer_omrl],sf.to_i,'declared')
+          s[accepter_omrl] = update_mean(s[accepter_omrl],sf.to_i,'accepted')
         else
           raise "unknown summary type: #{summary_type}"
         end
         set_specification_attribute('summaries',s)
-        return specification
+        return {declarer_omrl => s[declarer_omrl], accepter_omrl => s[accepter_omrl]}
       end
       
       true

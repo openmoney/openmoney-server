@@ -44,13 +44,16 @@ class EventsController < ApplicationController
     respond_to do |format|
       # TODO: need to add something here to make enmeshment unwind if the event.save fails.
       # perhaps even merging the two
-      if @event.errors.empty? && @event.enmesh && @event.save
-        flash[:notice] = 'Event caused some churn.'
-        format.html { redirect_to event_url(@event) }
-        format.xml  { head :created, :location => event_url(@event) }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @event.errors.to_xml }
+      if @event.errors.empty? && (result = @event.enmesh)
+        @event.result = result
+        if @event.save
+          flash[:notice] = 'Event caused some churn.'
+          format.html { redirect_to event_url(@event) }
+          format.xml  { render :xml => {'result' => result.to_yaml}.to_xml,:status => :created, :location => event_url(@event) }
+        else
+          format.html { render :action => "new" }
+          format.xml  { render :xml => @event.errors.to_xml }
+        end
       end
     end
   end

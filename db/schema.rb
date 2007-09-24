@@ -2,7 +2,7 @@
 # migrations feature of ActiveRecord to incrementally modify your database, and
 # then regenerate this schema definition.
 
-ActiveRecord::Schema.define(:version => 4) do
+ActiveRecord::Schema.define(:version => 5) do
 
   create_table "entities", :force => true do |t|
     t.datetime "created_at"
@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(:version => 4) do
     t.string   "event_type"
     t.text     "specification"
     t.string   "state"
+    t.text     "result"
   end
 
   create_table "links", :force => true do |t|

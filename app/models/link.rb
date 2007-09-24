@@ -44,8 +44,13 @@ class Link < ActiveRecord::Base
     o.url
   end
   
+  #TODO make this a real PGP signature
   def add_signature
     set_specification_attribute('signature',"localhost:" << Time.now.to_i.to_s)
+  end
+
+  def add_result(result)
+    set_specification_attribute('result',result)
   end
     
   ######################################################################################

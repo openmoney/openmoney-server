@@ -5,6 +5,8 @@
 ######################################################################################
 
 class AcknowledgeFlowController < ApplicationController
+  include OpenMoneyHelper
+
   before_filter :setup_currency, :except => :list
 
   # GET /acknowledge_flows
@@ -30,8 +32,12 @@ class AcknowledgeFlowController < ApplicationController
        }.to_yaml
      }
     )
-    if @event.enmesh && @event.save
-      flash[:notice] = 'Your flow was acknowledged!'
+    if (result = @event.enmesh)
+      @event.result = result.to_yaml
+      if @event.save
+        currency = Entity.find_by_omrl(@currency_omrl)
+        flash[:notice] = "Flow acknowledged: #{params["declaring_account"]} " << render_summary(currency.get_specification,params["declaring_account"])
+      end
     end
     render :action => "show"
   end
