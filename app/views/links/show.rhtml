@@ -15,7 +15,7 @@
 
 <p>
   <b>Specification:</b>
-  <%=h @link.specification %>
+  <p  class="specification"><%=h @link.specification %></p>
 </p>
 
 <p>
@@ -29,5 +29,5 @@
 </p>
 
 
-<%= link_to 'Edit', edit_link_path(@entity,@link) %> |
-<%= link_to 'Back', links_path %>
+<%= link_to 'Edit', edit_entity_link_url(@entity,@link) %> |
+<%= link_to 'Back', entity_links_url %>

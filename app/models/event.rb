@@ -149,6 +149,8 @@ class Event < ActiveRecord::Base
         links = []
         
         #TODO, we need to figure out a way to make this all transactional accross the net
+        # most likely simply by having the links go through a state process where they go through
+        # various states that depend on timeouts.
         begin
           
           entity_omrl = OMRL.new_flow(@specification['declaring_account'],entity.id).to_s

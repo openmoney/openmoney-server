@@ -10,7 +10,7 @@ class LinksController < ApplicationController
   # GET /links
   # GET /links.xml
   def index
-    @links = Link.find(:all)
+    @links = Link.find(:all,:conditions => ["entity_id = ?",@entity_id])
 
     respond_to do |format|
       format.html # index.rhtml

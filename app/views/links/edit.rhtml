@@ -2,7 +2,7 @@
 
 <%= error_messages_for :link %>
 
-<% form_for(:link, :url => link_path(@entity,@link), :html => { :method => :put }) do |f| %>
+<% form_for(:link, :url => entity_link_path(@entity,@link), :html => { :method => :put }) do |f| %>
 
 	<%= render(:partial => 'form', :object => f) %>
  <p>
@@ -10,5 +10,5 @@
   </p>
 <% end %>
 
-<%= link_to 'Show', link_path(@entity,@link) %> |
-<%= link_to 'Back', links_path %>
+<%= link_to 'Show', entity_link_path(@entity,@link) %> |
+<%= link_to 'Back', entity_links_path(@entity) %>

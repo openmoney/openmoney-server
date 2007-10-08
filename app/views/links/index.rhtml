@@ -1,30 +1,17 @@
-<h1>Listing links for entity <%=h @entity_id %></h1>
+<h1>Links from <%=h @entity.omrl %></h1>
 
-<table>
-  <tr>
-    <th>Entity</th>
-    <th>Omrl</th>
-    <th>Link type</th>
-    <th>Specification</th>
-    <th>Created at</th>
-    <th>Updated at</th>
-  </tr>
+<%= link_to 'New link', new_entity_link_path(@entity) %>
+
   
 <% for link in @links %>
-  <tr>
-    <td><%=h link.entity_id %></td>
-    <td><%=h link.omrl %></td>
-    <td><%=h link.link_type %></td>
-    <td><%=h link.specification %></td>
-    <td><%=h link.created_at %></td>
-    <td><%=h link.updated_at %></td>
-    <td><%= link_to 'Show', link_path(@entity,link) %></td>
-    <td><%= link_to 'Edit', edit_link_path(@entity,link) %></td>
-    <td><%= link_to 'Destroy', link_path(@entity,link), :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
+
+<div class="link"><%=h link.link_type %> <%=h link.omrl %> (<%=h link.created_at %>)
+<%= link_to 'Show', entity_link_path(@entity,link) %> |
+<%= link_to 'Edit', edit_entity_link_path(@entity,link) %> |
+<%= link_to 'Destroy', entity_link_path(@entity,link), :confirm => 'Are you sure?', :method => :delete %>
+ <br/>
+<% if link.specification %><p class="specification"><%=h link.specification %></p><%end%>
+</div>
 <% end %>
-</table>
 
-<br />
 
-<%= link_to 'New link', new_link_path %>

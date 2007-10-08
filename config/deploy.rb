@@ -60,7 +60,7 @@ set :apache_server_name, domain
  set :apache_conf, "/usr/local/apache2/conf/apps/#{application}.conf"
  set :apache_ctl, "/etc/init.d/httpd"
  set :apache_proxy_port, 8000
- set :apache_proxy_servers, 4
+ set :apache_proxy_servers, 2
  set :apache_proxy_address, "127.0.0.1"
 # set :apache_ssl_enabled, false
 # set :apache_ssl_ip, "127.0.0.1"

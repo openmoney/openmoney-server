@@ -77,7 +77,7 @@ class Entity < ActiveRecord::Base
   def to_xml(options = {})
      options[:except] ||= []
      options[:except].push(:access_control) 
-     if entity_type == "currencyS"  #this causes weird stuff at the other end of ActiveResource disabled for now
+     if entity_type == "currency"  #this causes weird stuff at the other end of an ActiveResource find so disabled for now
        options[:except].push(:specification)
        options[:procs] ||= []
        options[:procs].push Proc.new { |o|
@@ -220,25 +220,27 @@ class Entity < ActiveRecord::Base
         end
         
         sf = flow[summary_field]
-        
+        flow_amount = sf.to_i
         raise "field to summarize (#{summary_field}) not found!" if !sf
 
         s['count'] =  s['count'].to_i + 1
+        s['volume'] =  s['volume'].to_i + flow_amount.abs
 
         declarer_omrl = flow['declaring_account']
         accepter_omrl = flow['accepting_account']
         case summary_type 
         when "balance"
-          s[declarer_omrl] = update_balance(s[declarer_omrl],-sf.to_i)
-          s[accepter_omrl] = update_balance(s[accepter_omrl],sf.to_i)
+          s[declarer_omrl] = update_balance(s[declarer_omrl],-flow_amount)
+          s[accepter_omrl] = update_balance(s[accepter_omrl],flow_amount)
         when "mean"
-          s[declarer_omrl] = update_mean(s[declarer_omrl],sf.to_i,'declared')
-          s[accepter_omrl] = update_mean(s[accepter_omrl],sf.to_i,'accepted')
+          s[declarer_omrl] = update_mean(s[declarer_omrl],flow_amount,'declared')
+          s[accepter_omrl] = update_mean(s[accepter_omrl],flow_amount,'accepted')
         else
           raise "unknown summary type: #{summary_type}"
         end
+#        link.set_specification_attribute('summary',s)
         set_specification_attribute('summaries',s)
-        return {declarer_omrl => s[declarer_omrl], accepter_omrl => s[accepter_omrl]}
+        return {'summary' => {declarer_omrl => s[declarer_omrl], accepter_omrl => s[accepter_omrl]}}
       end
       
       true
@@ -248,8 +250,10 @@ class Entity < ActiveRecord::Base
     def update_balance(summary,amount)
       summary ||= {}
       summary['count'] ||= 0
+      summary['volume'] ||= 0
       summary['balance'] ||= 0
       summary['balance'] = summary['balance'] + amount
+      summary['volume'] = summary['volume'] + amount.abs
       summary['count'] = summary['count'] + 1
       summary
     end
