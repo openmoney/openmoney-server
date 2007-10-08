@@ -4,6 +4,6 @@
 
 <form action="/acknowledge_flow/<%= @currency_omrl %>" method="post">
 	Password: <%= password_field_tag %><br />
-	<%= input_form(@currency.get_specification) %>
+	<%= input_form(@currency.get_specification,:language => params[:lang]) %>
 </form>
 
