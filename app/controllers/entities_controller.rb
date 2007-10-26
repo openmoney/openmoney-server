@@ -46,7 +46,7 @@ class EntitiesController < ApplicationController
 
     respond_to do |format|
       format.html # show.rhtml
-      format.xml  { render :xml => @entity.to_xml(:methods => [:omrl]) }
+      format.xml  { render :xml => @entity.to_xml(:methods => [:omrl],:summaries => ['count','volume','mwl^ca']) }
     end
   end
 

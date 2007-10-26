@@ -82,7 +82,12 @@ class Entity < ActiveRecord::Base
        options[:procs] ||= []
        options[:procs].push Proc.new { |o|
          spec = get_specification.clone
-         spec.delete('summaries')         
+         if options[:summaries]
+           s = spec['summaries']
+           s.keys.each { |a| s.delete(a) unless options[:summaries].include?(a)}
+         else
+           spec.delete('summaries')
+         end
          o[:builder].tag!('specification', spec.to_yaml,:type => :string)
        }
      end
