@@ -15,12 +15,14 @@ class EntitiesController < ApplicationController
   # GET /entities.xml
   def index
     @entities = Entity.find(:all,@conditions)
-
+    options = {:methods => [:omrl]}
     if params[:entity_type] == "currencies"
       if params[:used_by]
         account_omrl = OMRL.new(params[:used_by]).to_s
         @entities = @entities.collect {|e| e.links.any?{|l| l.link_type == 'is_used_by' && l.omrl == account_omrl} ? e : nil }.reject {|e| e == nil}
       end
+      summary_list = check_for_account_summaries
+      options[:summaries] = summary_list
     end
 
     if params[:entity_type] == "flows"
@@ -29,7 +31,7 @@ class EntitiesController < ApplicationController
 
     respond_to do |format|
       format.html # index.rhtml
-      format.xml  { render :xml => @entities.to_xml(:methods => [:omrl]) }
+      format.xml  { render :xml => @entities.to_xml(options) }
     end
   end
   
@@ -46,13 +48,14 @@ class EntitiesController < ApplicationController
 
     if @entity
       respond_to do |format|
-        summary_list = []
-        if @entity.valid_credentials(:password => params[:password])
-          summary_list << 'count' << 'volume'
+        options = {:methods => [:omrl]}
+        if @entity.entity_type == 'currency'
+          summary_list = check_for_currency_summaries(@entity)
+          summary_list.concat(check_for_account_summaries)
+          options[:summaries] = summary_list
         end
-        params.each { |key,value| summary_list << $1 if key =~/^account_(.*)/ && Entity.find_by_omrl($1).valid_credentials(:password => value) }
         format.html # show.rhtml
-        format.xml  { render :xml => @entity.to_xml(:methods => [:omrl],:summaries => summary_list) }
+        format.xml  { render :xml => @entity.to_xml(options) }
       end
     else
       render_404
@@ -125,4 +128,16 @@ class EntitiesController < ApplicationController
 #    render_text @conditions
   end
   
+  def check_for_account_summaries
+    summary_list = []
+    params.each { |key,value| summary_list << $1 if key =~/^account_(.*)/ && Entity.find_by_omrl($1).valid_credentials(:password => value) }
+    summary_list
+  end
+
+  def check_for_currency_summaries(entity)
+    summary_list = []
+    if entity.valid_credentials(:password => params[:password])
+      summary_list << 'count' << 'volume'
+    end
+  end
 end

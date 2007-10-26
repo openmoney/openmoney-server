@@ -77,22 +77,22 @@ class Entity < ActiveRecord::Base
   # nor should the summaries if this is a currency.  
   # TODO: This is probably an indicator that summaries need to be moved out of the specification
   # and either into their own table, or into their own entity type.
+  # TODO: this wipes out any procs you add in!
   def to_xml(options = {})
      options[:except] ||= []
      options[:except].push(:access_control) 
-     if entity_type == "currency"  #this causes weird stuff at the other end of an ActiveResource find so disabled for now
-       options[:except].push(:specification)
-       options[:procs] ||= []
-       options[:procs].push Proc.new { |o|
+     if entity_type == "currency"
+       options[:except].push(:specification) if !options[:except].include?(:specification)
+       options[:procs] = [Proc.new { |o|
          spec = get_specification.clone
          if options[:summaries]
            s = spec['summaries']
-           s.keys.each { |a| s.delete(a) unless options[:summaries].include?(a)}
+           s.keys.each { |a| s.delete(a) unless options[:summaries].include?(a)} if s
          else
            spec.delete('summaries')
          end
          o[:builder].tag!('specification', spec.to_yaml,:type => :string)
-       }
+       }]
      end
      super(options)
   end
