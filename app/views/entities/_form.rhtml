@@ -9,7 +9,11 @@
 </p>
 
 <p>
-  <b>Access control</b><br />
-  <%= form.text_area :access_control, :rows=>4 %>
+  <b>Access control</b>
+  <p class="specification"><%=h @entity.access_control %></p>
+</p>
+
+<p>
+  <b>Set password</b> <%= text_field_tag(:password)%><br />
 </p>
 

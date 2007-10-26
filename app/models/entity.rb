@@ -10,6 +10,8 @@ class Entity < ActiveRecord::Base
   include Specification
   has_many :links, :before_add => :link_allowed
   validates_inclusion_of :entity_type, :in => Types
+  attr_protected :access_control
+
   attr :link_error
 #  def link_error
 #    @link_error
@@ -35,9 +37,10 @@ class Entity < ActiveRecord::Base
   # agreeing to the link
   def link_allowed(link)
 
-    typed_entity = Entity.create({:entity_type => entity_type, :specification =>specification, :access_control => access_control})
+    typed_entity = Entity.create({:entity_type => entity_type, :specification =>specification})
+    typed_entity.access_control = access_control
     typed_entity.id = id
-    
+
     result = typed_entity.allow_link?(link) 
     if !result
       err = "link not allowed: #{typed_entity.link_error}"
@@ -163,6 +166,23 @@ class Entity < ActiveRecord::Base
       url_omrl(relative)
     end
   end
+  
+  #confirm access to this entity via the access control configuration
+  def valid_credentials(credentials)
+    pass = credentials[:password]
+    return true if access_control.nil?
+    if ac = YAML.load(access_control)
+      mkpasswd(pass,ac['salt']) == ac['password_hash']
+    else
+      true
+    end
+  end
+  
+  def set_password(password)
+    salt = mksalt
+    ac = {'salt' => salt,'password_hash'=>mkpasswd(password,salt)}
+    self.access_control = ac.to_yaml
+  end
     
   ######################################################################################
   # CLASS METHODS
@@ -194,19 +214,12 @@ class Entity < ActiveRecord::Base
       return false if not link_type_err_check({"declares"=>"flow","accepts"=>"flow"},link)
       if link.link_type == "declares"
         ack_password = link.specification_attribute('ack_password')
-        raise "incorrect acknowledgment password" if !correct_password(ack_password)
+        raise "incorrect acknowledgment password" if !valid_credentials(:password=>ack_password)
         link.delete_specification_attribute('ack_password')
       end
       true
     end
     
-    private
-    def correct_password(pass)
-      declareer_pass = access_control ? YAML.load(access_control)['ack_password'] : nil
-      return true if !declareer_pass
-      return true if pass == declareer_pass
-      return false
-    end
   end
 
   ######################################################################################
@@ -288,7 +301,7 @@ class Entity < ActiveRecord::Base
   ######################################################################################
   ######################################################################################
   protected
-  
+    
   ######################################################################################
   def local?
     return true
@@ -316,4 +329,24 @@ class Entity < ActiveRecord::Base
     end
     return true
   end
+
+  ################################################################################
+  ################################################################################
+
+  private
+  require 'digest/sha2'
+  
+  ################################################################################
+  # Make a SHA256 and salt encoded password
+  def mkpasswd (plain, salt)
+    plain = '' if !plain
+    Digest::SHA256.hexdigest(plain + salt)
+  end
+
+  ################################################################################
+  # Create a salt string
+  def mksalt
+    [Array.new(6) {rand(256).chr}.join].pack('m').chomp
+  end
+
 end

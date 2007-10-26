@@ -44,9 +44,18 @@ class EntitiesController < ApplicationController
       @entity = Entity.find(params[:id],@conditions)
     end
 
-    respond_to do |format|
-      format.html # show.rhtml
-      format.xml  { render :xml => @entity.to_xml(:methods => [:omrl],:summaries => ['count','volume','mwl^ca']) }
+    if @entity
+      respond_to do |format|
+        summary_list = []
+        if @entity.valid_credentials(:password => params[:password])
+          summary_list << 'count' << 'volume'
+        end
+        params.each { |key,value| summary_list << $1 if key =~/^account_(.*)/ && Entity.find_by_omrl($1).valid_credentials(:password => value) }
+        format.html # show.rhtml
+        format.xml  { render :xml => @entity.to_xml(:methods => [:omrl],:summaries => summary_list) }
+      end
+    else
+      render_404
     end
   end
 
@@ -82,9 +91,11 @@ class EntitiesController < ApplicationController
   # PUT /entities/1.xml
   def update
     @entity = Entity.find(params[:id])
-
+    
+    @entity.set_password(params[:password]) if params[:password]
+    @entity.attributes = params[:entity]
     respond_to do |format|
-      if @entity.update_attributes(params[:entity])
+      if @entity.save
         flash[:notice] = 'Entity was successfully updated.'
         format.html { redirect_to entity_url(@entity) }
         format.xml  { head :ok }

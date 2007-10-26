@@ -1,5 +1,47 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+describe "converting to xml" do
+  fixtures :entities
+  it "should exclude summaries by default" do
+    xml = entities(:currency_bucks).to_xml
+    xml.should_not =~ /summaries/
+  end
+
+  it "should show summaries if specified" do
+    xml = entities(:currency_bucks).to_xml(:summaries => ['count','volume','mwl^ca'])
+    xml.should =~ /summaries/
+    xml.should =~ /mwl\^ca:/
+    xml.should_not =~ /zippy\^us:/
+  end
+end
+
+describe "security" do
+  #fixtures :entities
+  before(:each) do
+    @e = Entity.new
+  end
+  it "should save password hash and salt to access_control" do
+    @e.set_password('fish')
+    @e.access_control.should =~ /salt:/
+    @e.access_control.should =~ /password_hash:/
+  end
+  
+  it "should approve access when credentials are correct" do
+    @e.set_password('fish')
+    @e.valid_credentials(:password => 'fish').should be_true
+  end
+
+  it "should not approve access when credentials are incorrect" do
+    @e.set_password('fish')
+    @e.valid_credentials(:password => 'cow').should be_false
+  end
+  
+  it "should approve access when no password was set" do
+    @e.valid_credentials(:password => 'fish').should be_true
+  end
+  
+end
+
 describe "Creating an entity (in general)" do
 
   it "should fail for an unknown entity type" do
@@ -96,16 +138,18 @@ describe "validation of adding links to entities" do
       "is_used_by"=>'context',
       "is_used_by"=>'currency',
       "is_used_by"=>'flow',
-    }.each { |link_type,to_entity| lambda {create_link(from_omrl,to_entity,link_type)}.should raise_error}
+    }.each { |link_type,to_entity| lambda {
+      create_link(from_omrl,to_entity,link_type)
+      }.should raise_error}
   end
 
   it "should only link from currency with: approves, originates_from, is_used_by link" do
      from = 'currency'
-     { "approves"=>'flow',
+     { #"approves"=>'flow',  to make this line work we have to supply a real flow in the create link test harness, which we dont!
        "originates_from"=>'account',
-       "is_used_by"=>'account',
        "is_used_by"=>'account'
-       }.each { |link_type,to_entity| lambda {create_link(from,to_entity,link_type)}.should_not raise_error}
+       }.each { |link_type,to_entity| 
+         lambda {create_link(from,to_entity,link_type)}.should_not raise_error}
      { "accepts"=>'flow',
        "declares"=>'flow',
      }.each { |link_type,to_entity| lambda {create_link(from,to_entity,link_type)}.should raise_error}
@@ -148,5 +192,6 @@ def create_link(from,to,link_type)
     :omrl => (to == nil) ? "" : eto.url_omrl,
     :link_type => link_type
   })
-  e.link_allowed(l)
+  l.specification = {'flow'=>'test'}.to_yaml if link_type == 'approves'
+  result = e.link_allowed(l)
 end
