@@ -14,6 +14,16 @@
 </p>
 
 <p>
-  <b>Set password</b> <%= text_field_tag(:password)%><br />
+  <b>Set credential</b> <br />
+	&nbsp;&nbsp; Tag: <%= text_field_tag(:tag)%><br />
+	&nbsp;&nbsp; Password: <%= password_field_tag(:password)%><br />
+	&nbsp;&nbsp; Authorities: <%= text_field_tag(:authorities)%><br />
+</p>
+<p>
+  <b>Default authorities</b> <%= text_field_tag(:default_auths)%><br />
+</p>
+
+<p>
+  <b>Remove credential</b> <%= text_field_tag(:remove_tags)%><br />
 </p>
 

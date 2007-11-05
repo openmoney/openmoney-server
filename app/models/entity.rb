@@ -72,6 +72,17 @@ class Entity < ActiveRecord::Base
     true
   end
   
+  def allow_link?(link)
+    credentials = link.specification_attribute('credentials')
+    credential = credentials[self.omrl.chop] if credentials  #TODO this chop sucks
+    if !valid_credentials(credential,link.link_type)
+      @link_error = "invalid credential"
+      return false
+    end 
+    link.delete_specification_attribute('credentials')
+    true
+  end
+  
   ######################################################################################
   # access control should never be visible when converting to xml
   # nor should the summaries if this is a currency.  
@@ -168,20 +179,47 @@ class Entity < ActiveRecord::Base
   end
   
   #confirm access to this entity via the access control configuration
-  def valid_credentials(credentials)
-    pass = credentials[:password]
+  def valid_credentials(credential,authority)
     return true if access_control.nil?
+    return true if default_authorities.include?(authority)
     if ac = YAML.load(access_control)
-      mkpasswd(pass,ac['salt']) == ac['password_hash']
+      return false if credential == nil
+      ac = ac[credential[:tag]]
+      return false if ac.nil?
+      pass = credential[:password]
+      mkpasswd(pass,ac[:salt]) == ac[:password_hash] && ac[:authorities].include?(authority)
     else
       true
     end
   end
   
-  def set_password(password)
+  def set_credential(tag,password,authorities)
     salt = mksalt
-    ac = {'salt' => salt,'password_hash'=>mkpasswd(password,salt)}
+    ac = YAML.load(access_control) if access_control
+    ac ||= {}
+    ac.update({tag => {:salt => salt,:password_hash=>mkpasswd(password,salt),:authorities => authorities}})
     self.access_control = ac.to_yaml
+  end
+  
+  def set_default_authorities(*authorities)
+    set_credential('','',authorities)
+  end
+  
+  def default_authorities
+    auths = []
+    if access_control && ac = YAML.load(access_control)
+      ac = ac['']
+      auths.concat(ac[:authorities]) if ac
+    end
+    auths
+  end
+  
+  def remove_credential(tag)
+    if access_control
+      ac = YAML.load(access_control)
+      ac.delete(tag)
+      self.access_control = ac.to_yaml
+    end
   end
     
   ######################################################################################
@@ -204,7 +242,7 @@ class Entity < ActiveRecord::Base
   class Context < Entity
     def allow_link?(link)
       return false if not link_type_err_check({"approves"=>"flow", "names"=>["account","context","currency"]},link)
-      true
+      return super
     end
   end
   
@@ -212,12 +250,7 @@ class Entity < ActiveRecord::Base
   class Account < Entity
     def allow_link?(link)
       return false if not link_type_err_check({"declares"=>"flow","accepts"=>"flow"},link)
-      if link.link_type == "declares"
-        ack_password = link.specification_attribute('ack_password')
-        raise "incorrect acknowledgment password" if !valid_credentials(:password=>ack_password)
-        link.delete_specification_attribute('ack_password')
-      end
-      true
+      return super
     end
     
   end
@@ -226,7 +259,7 @@ class Entity < ActiveRecord::Base
   class Currency < Entity
     def allow_link?(link)
       return false if not link_type_err_check({"approves"=>"flow", "is_used_by"=>"account","originates_from"=>"account"},link)
-
+      return false if !super
       if link.link_type == "approves"
         flow = link.specification_attribute('flow')
         s = specification_attribute('summaries')

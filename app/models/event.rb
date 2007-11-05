@@ -154,7 +154,7 @@ class Event < ActiveRecord::Base
         begin
           
           entity_omrl = OMRL.new_flow(@specification['declaring_account'],entity.id).to_s
-          links << create_link(@specification['declaring_account'],entity_omrl,'declares',{'ack_password' => @specification['ack_password']}.to_yaml)
+          links << create_link(@specification['declaring_account'],entity_omrl,'declares',{'credentials' => @specification['credentials']}.to_yaml)
           links << create_link(@specification['accepting_account'],entity_omrl,'accepts')
           flow_spec_yaml = {"flow" => @specification['flow_specification']}.to_yaml
           l = create_link(@specification['currency'],entity_omrl,'approves',flow_spec_yaml)

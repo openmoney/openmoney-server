@@ -95,7 +95,13 @@ class EntitiesController < ApplicationController
   def update
     @entity = Entity.find(params[:id])
     
-    @entity.set_password(params[:password]) if params[:password]
+    if params[:password]  && params[:password] != ''
+      @entity.set_credential(params[:tag],params[:password],params[:authorities].split(','))
+    end
+    if params[:remove_tags] && params[:remove_tags] != ''
+      params[:remove_tags].split(',').each { |tag| @entity.remove_credential(tag) }
+    end
+    @entity.set_default_authorities(*params[:default_auths].split(','))
     @entity.attributes = params[:entity]
     respond_to do |format|
       if @entity.save
@@ -130,7 +136,13 @@ class EntitiesController < ApplicationController
   
   def check_for_account_summaries
     summary_list = []
-    params.each { |key,value| summary_list << $1 if key =~/^account_(.*)/ && Entity.find_by_omrl($1).valid_credentials(:password => value) }
+    params.each do |key,value|
+      if key =~/^account_(.*)/
+        omrl = $1
+        e = Entity.find_by_omrl($1)
+        summary_list << omrl if e && e.valid_credentials(:password => value)
+      end
+    end
     summary_list
   end
 

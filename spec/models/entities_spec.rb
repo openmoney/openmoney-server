@@ -20,24 +20,56 @@ describe "security" do
   before(:each) do
     @e = Entity.new
   end
-  it "should save password hash and salt to access_control" do
-    @e.set_password('fish')
-    @e.access_control.should =~ /salt:/
-    @e.access_control.should =~ /password_hash:/
+  it "should save a credential record with password hash and salt to access_control" do
+    @e.set_credential('eric','fish',['declares'])
+    ac = YAML.load(@e.access_control) 
+    ac.has_key?('eric').should be_true
+    ac['eric'].has_key?(:salt).should be_true
+    ac['eric'].has_key?(:password_hash).should be_true
+    ac['eric'].has_key?(:authorities).should be_true
   end
   
   it "should approve access when credentials are correct" do
-    @e.set_password('fish')
-    @e.valid_credentials(:password => 'fish').should be_true
+    @e.set_credential('eric','fish',['declares'])
+    @e.valid_credentials({:tag=>'eric',:password => 'fish'},'declares').should be_true
   end
 
   it "should not approve access when credentials are incorrect" do
-    @e.set_password('fish')
-    @e.valid_credentials(:password => 'cow').should be_false
+    @e.set_credential('eric','fish',['declares'])
+    @e.valid_credentials({:tag=>'eric',:password => 'cow'},'declares').should be_false
+    @e.valid_credentials({:tag=>'joe',:password => 'fish'},'declares').should be_false
+    @e.valid_credentials({:tag=>'joe',:password => 'fish'},'approves').should be_false
   end
   
-  it "should approve access when no password was set" do
-    @e.valid_credentials(:password => 'fish').should be_true
+  it "should approve access when no credentials were set" do
+    @e.valid_credentials({:tag=>'eric',:password => 'cow'},'declares').should be_true
+    @e.valid_credentials(nil,'declares').should be_true
+  end
+
+  it "should set default authorities" do
+    @e.default_authorities.should == []
+    @e.set_default_authorities('accepts')
+    @e.default_authorities.should == ['accepts']
+  end
+  
+  it "should approve access when default authorities were set" do
+    @e.set_default_authorities('accepts')
+    @e.valid_credentials({:tag=>'eric',:password => 'cow'},'accepts').should be_true
+    @e.valid_credentials(nil,'accepts').should be_true
+    @e.valid_credentials({:tag=>'eric',:password => 'cow'},'declares').should be_false
+    @e.valid_credentials(nil,'declares').should be_false
+  end
+  
+  it "should be able to clear a credential" do
+    @e.set_credential('eric','fish',['declares'])
+    @e.set_credential('joe','cow',['approves'])
+    ac = YAML.load(@e.access_control) 
+    ac.has_key?('joe').should be_true
+    ac.has_key?('eric').should be_true
+    @e.remove_credential('joe')
+    ac = YAML.load(@e.access_control) 
+    ac.has_key?('joe').should be_false
+    ac.has_key?('eric').should be_true
   end
   
 end

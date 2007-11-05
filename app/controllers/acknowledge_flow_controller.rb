@@ -24,7 +24,7 @@ class AcknowledgeFlowController < ApplicationController
     @event = Event.create(
      {:event_type => "AcknowledgeFlow",
       :specification => {
-        "ack_password" => params[:password],
+        "credentials" => {params["declaring_account"] => {:tag => params[:tag], :password=>params[:password]}},
         "flow_specification" => params["flow_spec"],
         "declaring_account" => params["declaring_account"],
         "accepting_account" => params["accepting_account"],
@@ -36,7 +36,7 @@ class AcknowledgeFlowController < ApplicationController
       @event.result = result.to_yaml
       if @event.save
         currency = Entity.find_by_omrl(@currency_omrl)
-        flash[:notice] = "Flow acknowledged: #{params["declaring_account"]} " << render_summary(currency.get_specification,params["declaring_account"])
+        flash[:notice] = "Flow acknowledged: #{params["declaring_account"]} " << render_summary(currency.get_specification['summary_form'],params["declaring_account"])
       end
     end
     render :action => "show"
