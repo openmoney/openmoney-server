@@ -36,7 +36,7 @@ class AcknowledgeFlowController < ApplicationController
       @event.result = result.to_yaml
       if @event.save
         currency = Entity.find_by_omrl(@currency_omrl)
-        flash[:notice] = "Flow acknowledged: #{params["declaring_account"]} " << render_summary(currency.get_specification['summary_form'],params["declaring_account"])
+        flash[:notice] = "Flow acknowledged: #{params["declaring_account"]} " << render_summary(currency.get_specification['summary_form'],result['summary'][params["declaring_account"]])
       end
     end
     render :action => "show"

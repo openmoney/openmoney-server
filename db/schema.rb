@@ -2,7 +2,21 @@
 # migrations feature of ActiveRecord to incrementally modify your database, and
 # then regenerate this schema definition.
 
-ActiveRecord::Schema.define(:version => 5) do
+ActiveRecord::Schema.define(:version => 6) do
+
+  create_table "averages", :force => true do |t|
+    t.float   "average_declared"
+    t.float   "average_accepted"
+    t.float   "volume"
+    t.integer "count_declared"
+    t.integer "count_accepted"
+  end
+
+  create_table "balances", :force => true do |t|
+    t.float   "balance"
+    t.float   "volume"
+    t.integer "count"
+  end
 
   create_table "entities", :force => true do |t|
     t.datetime "created_at"
@@ -26,6 +40,14 @@ ActiveRecord::Schema.define(:version => 5) do
     t.string   "link_type"
     t.text     "specification"
     t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "summary_entries", :force => true do |t|
+    t.string   "currency_omrl"
+    t.string   "entity_omrl"
+    t.integer  "summary_id"
+    t.string   "summary_type"
     t.datetime "updated_at"
   end
 

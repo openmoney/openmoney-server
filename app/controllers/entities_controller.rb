@@ -11,6 +11,7 @@
 class EntitiesController < ApplicationController
 
   before_filter :check_for_entity_type
+  before_filter :check_for_credentials
   # GET /entities
   # GET /entities.xml
   def index
@@ -21,8 +22,8 @@ class EntitiesController < ApplicationController
         account_omrl = OMRL.new(params[:used_by]).to_s
         @entities = @entities.collect {|e| e.links.any?{|l| l.link_type == 'is_used_by' && l.omrl == account_omrl} ? e : nil }.reject {|e| e == nil}
       end
-      summary_list = check_for_account_summaries
-      options[:summaries] = summary_list
+#      summary_list = check_for_account_summaries
+#      options[:summaries] = summary_list
     end
 
     if params[:entity_type] == "flows"
@@ -47,15 +48,31 @@ class EntitiesController < ApplicationController
     end
 
     if @entity
-      respond_to do |format|
-        options = {:methods => [:omrl]}
-        if @entity.entity_type == 'currency'
-          summary_list = check_for_currency_summaries(@entity)
-          summary_list.concat(check_for_account_summaries)
-          options[:summaries] = summary_list
+      if params[:extra] == 'summary'
+#        @entity.valid_credentials(@credentials,'view')
+        c = @entity.omrl.chop
+        e = params[:entity_omrl]
+        e ||= c
+        s = SummaryEntry.find(:first,:conditions => ['entity_omrl = ? and currency_omrl = ?',e,c])
+        if s
+          @summary = s.summary
+          respond_to do |format|
+            options = {:methods => [:updated_at]}
+            format.html { render :template => 'entities/summary' }
+            format.xml  { render :xml => @summary.to_xml(options) }
+          end
+        else
+          render_404            
         end
-        format.html # show.rhtml
-        format.xml  { render :xml => @entity.to_xml(options) }
+#          summary_list = check_for_currency_summaries(@entity)
+#         summary_list.concat(check_for_account_summaries)
+#          options[:summaries] = summary_list
+      else
+        respond_to do |format|
+          options = {:methods => [:omrl]}
+          format.html # show.rhtml
+          format.xml  { render :xml => @entity.to_xml(options) }
+        end
       end
     else
       render_404
@@ -128,6 +145,13 @@ class EntitiesController < ApplicationController
   end
   
   private
+
+  def check_for_credentials
+    if params[:credentials]
+      params[:credentials] =~ /(.*?)\./(.*)/
+      @credentials = {:tag => $1, :password => $2}
+    end
+  end
  
   def check_for_entity_type
     @conditions =  (params[:entity_type]) ? {:conditions => ["entity_type = ? ", params[:entity_type].singularize]} : {}

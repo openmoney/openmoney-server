@@ -29,6 +29,8 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect ':entity_type.:format', :controller => 'entities'
   map.connect ':entity_type', :controller => 'entities'
+  map.connect ':entity_type/:id/:extra.:format', :controller => 'entities', :action => 'show'
+  map.connect ':entity_type/:id/:extra', :controller => 'entities', :action => 'show'
   map.connect ':entity_type/:id.:format', :controller => 'entities', :action => 'show'
   map.connect ':entity_type/:id', :controller => 'entities', :action => 'show'
 

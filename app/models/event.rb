@@ -76,7 +76,7 @@ class Event < ActiveRecord::Base
           begin
             yield entity
           rescue Exception => e
-            errs  << e.to_s   #<< e.backtrace.split(/,/).join("\n")
+            errs  << e.to_s   << e.backtrace.split(/,/).join("\n")
             entity.destroy
           end
         end
@@ -152,10 +152,10 @@ class Event < ActiveRecord::Base
         # most likely simply by having the links go through a state process where they go through
         # various states that depend on timeouts.
         begin
-          
+          credentials = {'credentials' => @specification['credentials']}.to_yaml
           entity_omrl = OMRL.new_flow(@specification['declaring_account'],entity.id).to_s
-          links << create_link(@specification['declaring_account'],entity_omrl,'declares',{'credentials' => @specification['credentials']}.to_yaml)
-          links << create_link(@specification['accepting_account'],entity_omrl,'accepts')
+          links << create_link(@specification['declaring_account'],entity_omrl,'declares',credentials)
+          links << create_link(@specification['accepting_account'],entity_omrl,'accepts',credentials)
           flow_spec_yaml = {"flow" => @specification['flow_specification']}.to_yaml
           l = create_link(@specification['currency'],entity_omrl,'approves',flow_spec_yaml)
           links << l

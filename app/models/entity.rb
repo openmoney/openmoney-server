@@ -43,7 +43,7 @@ class Entity < ActiveRecord::Base
 
     result = typed_entity.allow_link?(link) 
     if !result
-      err = "link not allowed: #{typed_entity.link_error}"
+      err = "#{link.link_type} link not allowed: #{typed_entity.link_error}"
       errors.add_to_base(err)
       raise err
     elsif result && result != true
@@ -256,58 +256,32 @@ class Entity < ActiveRecord::Base
   end
 
   ######################################################################################
+  require 'app/models/summary_entry'
   class Currency < Entity
     def allow_link?(link)
       return false if not link_type_err_check({"approves"=>"flow", "is_used_by"=>"account","originates_from"=>"account"},link)
       return false if !super
       if link.link_type == "approves"
         flow = link.specification_attribute('flow')
-        s = specification_attribute('summaries')
-        s ||= {}
         if specification_attribute('summary_type') =~ /^(.+)\((.+)\)$/
           summary_type,summary_field = $1,$2
         else
           summary_type,summary_field = 'balance','amount'
         end
-        
-        sf = flow[summary_field]
-        flow_amount = sf.to_i
-        raise "field to summarize (#{summary_field}) not found!" if !sf
 
-        s['count'] =  s['count'].to_i + 1
-        s['volume'] =  s['volume'].to_i + flow_amount.abs
-
-        declarer_omrl = flow['declaring_account']
-        accepter_omrl = flow['accepting_account']
         case summary_type 
         when "balance"
-          s[declarer_omrl] = update_balance(s[declarer_omrl],-flow_amount)
-          s[accepter_omrl] = update_balance(s[accepter_omrl],flow_amount)
+          b = Balance.update_summaries(summary_field,flow)
+          return {'summary' => b}
         when "mean"
-          s[declarer_omrl] = update_mean(s[declarer_omrl],flow_amount,'declared')
-          s[accepter_omrl] = update_mean(s[accepter_omrl],flow_amount,'accepted')
-        else
-          raise "unknown summary type: #{summary_type}"
+          raise "not implemented"
         end
-#        link.set_specification_attribute('summary',s)
-        set_specification_attribute('summaries',s)
-        return {'summary' => {declarer_omrl => s[declarer_omrl], accepter_omrl => s[accepter_omrl]}}
       end
       
       true
     end
     
     private 
-    def update_balance(summary,amount)
-      summary ||= {}
-      summary['count'] ||= 0
-      summary['volume'] ||= 0
-      summary['balance'] ||= 0
-      summary['balance'] = summary['balance'] + amount
-      summary['volume'] = summary['volume'] + amount.abs
-      summary['count'] = summary['count'] + 1
-      summary
-    end
     def update_mean(summary,amount,direction)
       summary ||= {}
       count = "count_#{direction}"
