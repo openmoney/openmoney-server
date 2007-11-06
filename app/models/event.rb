@@ -77,6 +77,7 @@ class Event < ActiveRecord::Base
             yield entity
           rescue Exception => e
             errs  << e.to_s   << e.backtrace.split(/,/).join("\n")
+            logger.info "ENMESH ERROR" << e.to_s unless logger.nil?
             entity.destroy
           end
         end
@@ -100,11 +101,17 @@ class Event < ActiveRecord::Base
       
       #TODO if there is a failure in creating the extra links we should unwind the creation of the other links
       # and then re-raise an error so that the entity can be deleted
+      credentials = {'credentials' => @specification['credentials']}
       create_enmesh(entity_type,validations,['parent_context']) do |entity|
-        create_link(@specification['parent_context'],entity.url_omrl,'names',"name: #{@specification['name']}")
+        create_link(@specification['parent_context'],entity.url_omrl,'names',{'name' => @specification['name']}.update(credentials).to_yaml)
+
+        #TODO we haven't added credentials into this part yet.
         extra_links_from.each {|spec,link_type| create_link(entity.omrl,@specification[spec],link_type)}  if extra_links_from.is_a?(Hash)
         extra_links_to.each {|spec,link_type| create_link(@specification[spec],entity.omrl,link_type)}  if extra_links_to.is_a?(Hash)
       end
+      
+      #TODO error checking and results value need to be added if appropriate
+      true
     end
   end
 
@@ -118,7 +125,7 @@ class Event < ActiveRecord::Base
   ######################################################################################
   class CreateCurrency < CreateEvent
     def enmesh
-      enmesh_parent_omrl('currency',{'originating_account' => 'originates_from'})
+      enmesh_parent_omrl('currency')
     end
   end
 
@@ -134,7 +141,8 @@ class Event < ActiveRecord::Base
     def enmesh
       _enmesh({'currency' => :required, 'account' => :required}) do |errs|
         begin
-          create_link(@specification['currency'],@specification['account'],'is_used_by')
+          credentials = {'credentials' => @specification['credentials']}.to_yaml
+          create_link(@specification['currency'],@specification['account'],'is_used_by',credentials)
         rescue Exception => e
           errs  << e.to_s
         end

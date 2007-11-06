@@ -7,7 +7,7 @@
 class Link < ActiveRecord::Base
   include Specification
 
-  Types = %w(names approves originates_from accepts declares is_used_by)
+  Types = %w(names approves accepts declares is_used_by)
 
   belongs_to :entity
   validates_inclusion_of :link_type, :in => Types

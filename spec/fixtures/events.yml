@@ -48,7 +48,6 @@ create_bucks_currency:
     parent_context: us.
     currency_specification:
       description: "Eric's cool currency"
-    originating_account: zippy^us
   state:
 join_bucks_zippy:
   id: 6

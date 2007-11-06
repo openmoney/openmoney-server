@@ -49,10 +49,18 @@ class EntitiesController < ApplicationController
 
     if @entity
       if params[:extra] == 'summary'
-#        @entity.valid_credentials(@credentials,'view')
         c = @entity.omrl.chop
         e = params[:entity_omrl]
         e ||= c
+#        authority = case OMRL.new(e).kind
+#        when ACCOUNT
+#        when CONTEXT
+#          'view_context_summaries'
+#        when CURRENCY
+#          'view_curency_summary'
+#        end
+#        @entity.valid_credentials(@credentials,authority)
+        
         s = SummaryEntry.find(:first,:conditions => ['entity_omrl = ? and currency_omrl = ?',e,c])
         if s
           @summary = s.summary
@@ -62,7 +70,7 @@ class EntitiesController < ApplicationController
             format.xml  { render :xml => @summary.to_xml(options) }
           end
         else
-          render_404            
+          render_status 404            
         end
 #          summary_list = check_for_currency_summaries(@entity)
 #         summary_list.concat(check_for_account_summaries)
@@ -75,7 +83,7 @@ class EntitiesController < ApplicationController
         end
       end
     else
-      render_404
+      render_status 404            
     end
   end
 
@@ -148,7 +156,7 @@ class EntitiesController < ApplicationController
 
   def check_for_credentials
     if params[:credentials]
-      params[:credentials] =~ /(.*?)\./(.*)/
+      params[:credentials] =~ /(.*?)\.(.*)/
       @credentials = {:tag => $1, :password => $2}
     end
   end

@@ -2,10 +2,10 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  def render_404 
+  def render_status(code)
     respond_to do |format| 
-      format.html { render :file => "#{RAILS_ROOT}/public/404.html", :status => '404 Not Found' } 
-      format.xml  { render :nothing => true, :status => '404 Not Found' } 
+      format.html { render :file => "#{RAILS_ROOT}/public/#{code}.html", :status => code } 
+      format.xml  { render :nothing => true, :status => code } 
     end 
     true 
   end

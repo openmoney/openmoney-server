@@ -129,15 +129,13 @@ describe "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks
     e.entity_type.should == "currency"
     links = e.links
 #    links.should == ""
-    links.should have(4).items
-    links[0].link_type.should == "originates_from"
+    links.should have(3).items
+    links[0].link_type.should == "is_used_by"
     links[0].omrl.should == "zippy^us."
     links[1].link_type.should == "is_used_by"
-    links[1].omrl.should == "zippy^us."
-    links[2].link_type.should == "is_used_by"
-    links[2].omrl.should == "mwl^ca."
-    links[3].link_type.should == "approves"
-    links[3].omrl.should =~ /zippy\#[0-9]+/
+    links[1].omrl.should == "mwl^ca."
+    links[2].link_type.should == "approves"
+    links[2].omrl.should =~ /zippy\#[0-9]+/
   end
 
   it "ecuador context should not exist" do

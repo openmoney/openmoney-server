@@ -76,6 +76,7 @@ class Entity < ActiveRecord::Base
     credentials = link.specification_attribute('credentials')
     credential = credentials[self.omrl.chop] if credentials  #TODO this chop sucks
     if !valid_credentials(credential,link.link_type)
+      logger.info "IVALID CREDENTIAL" << credential.inspect << " for " << link.link_type
       @link_error = "invalid credential"
       return false
     end 
@@ -259,7 +260,7 @@ class Entity < ActiveRecord::Base
   require 'app/models/summary_entry'
   class Currency < Entity
     def allow_link?(link)
-      return false if not link_type_err_check({"approves"=>"flow", "is_used_by"=>"account","originates_from"=>"account"},link)
+      return false if not link_type_err_check({"approves"=>"flow", "is_used_by"=>"account"},link)
       return false if !super
       if link.link_type == "approves"
         flow = link.specification_attribute('flow')

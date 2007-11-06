@@ -35,16 +35,8 @@ names_currency_bucks_in_us:
     name: bucks
   created_at: 2007-03-16 11:27:41
   updated_at: 2007-03-16 11:27:41
-originates_from_currency_bucks_zippy:
-  id: 5
-  entity_id: 4
-  omrl: "zippy^us."
-  link_type: originates_from
-  specification:
-  created_at: 2007-03-16 11:27:41
-  updated_at: 2007-03-16 11:27:41
 names_account_mwl_in_ca:
-  id: 6
+  id: 5
   entity_id: 2
   omrl: "/entities/6"
   link_type: names
@@ -53,7 +45,7 @@ names_account_mwl_in_ca:
   created_at: 2007-03-16 11:27:41
   updated_at: 2007-03-16 11:27:41
 declares_flow_tx1:
-  id: 7
+  id: 6
   entity_id: 5
   omrl: "zippy#7^us."
   link_type: declares
@@ -61,7 +53,7 @@ declares_flow_tx1:
   created_at: 2007-03-16 11:27:41
   updated_at: 2007-03-16 11:27:41
 accpets_flow_tx1:
-  id: 8
+  id: 7
   entity_id: 6
   omrl: "zippy#7^us."
   link_type: accepts
@@ -69,7 +61,7 @@ accpets_flow_tx1:
   created_at: 2007-03-16 11:27:41
   updated_at: 2007-03-16 11:27:41
 approves_flow_tx1:
-  id: 9
+  id: 8
   entity_id: 4
   omrl: "zippy#7^us."
   link_type: approves
@@ -77,7 +69,7 @@ approves_flow_tx1:
   created_at: 2007-03-16 11:27:41
   updated_at: 2007-03-16 11:27:41
 names_context_ny_in_us:
-  id: 10
+  id: 9
   entity_id: 3
   omrl: "/entities/8"
   link_type: names
@@ -86,7 +78,7 @@ names_context_ny_in_us:
   created_at: 2007-03-16 11:27:41
   updated_at: 2007-03-16 11:27:41
 names_account_zippyny_ny_us:
-  id: 11
+  id: 10
   entity_id: 8
   omrl: "/entities/9"
   link_type: names

@@ -3,9 +3,8 @@
 <%= error_messages_for :event %>
 
 <form action="/currencies" method="post">
+	Context Credentials: Tag <%= text_field_tag(:tag) %> Password <%= password_field_tag %><br />
 	Currency name: <%= text_field_tag(:name,params[:name]) %> in <%= contexts_select(:parent_context,params[:parent_context]) %>
-	<br />
-	Originating Account: <%= text_field_tag(:originating_account,params[:originating_account],:size => 20) %>
 	<br />
 	Description: <%= text_field_tag(:description,params[:description],:size => 50) %>
 	<br />

@@ -104,9 +104,9 @@ class CurrenciesController < ApplicationController
     @event = Event.create(
      {:event_type => "CreateCurrency",
       :specification => {
+        "credentials" => {params[:parent_context] => {:tag => params[:tag], :password=>params[:password]}},
         "parent_context" => params[:parent_context],
         "name" => params[:name],
-        "originating_account" => params[:originating_account],
         "currency_specification" => currency_spec
        }.to_yaml
      }

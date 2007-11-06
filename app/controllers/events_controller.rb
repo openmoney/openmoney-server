@@ -46,7 +46,7 @@ class EventsController < ApplicationController
       # perhaps even merging the two
       if @event.errors.empty? && (result = @event.enmesh)
         @event.result = result
-        if @event.save
+        if true #TODO this is failing on a join currency post from rubycc @event.save
           flash[:notice] = 'Event caused some churn.'
           format.html { redirect_to event_url(@event) }
           format.xml  { render :xml => {'result' => result.to_yaml}.to_xml,:status => :created, :location => event_url(@event) }
@@ -54,6 +54,8 @@ class EventsController < ApplicationController
           format.html { render :action => "new" }
           format.xml  { render :xml => @event.errors.to_xml }
         end
+      else
+        logger.info "RESULT" << @event.errors.full_messages.inspect
       end
     end
   end

@@ -164,9 +164,6 @@ describe "validation of adding links to entities" do
       "approves"=>'context',
       "approves"=>'currency',
       "approves"=>'account',
-      "originates_from"=>'context',
-      "originates_from"=>'currency',
-      "originates_from"=>'flow',
       "is_used_by"=>'context',
       "is_used_by"=>'currency',
       "is_used_by"=>'flow',
@@ -175,10 +172,9 @@ describe "validation of adding links to entities" do
       }.should raise_error}
   end
 
-  it "should only link from currency with: approves, originates_from, is_used_by link" do
+  it "should only link from currency with: approves, and is_used_by link" do
      from = 'currency'
      { #"approves"=>'flow',  to make this line work we have to supply a real flow in the create link test harness, which we dont!
-       "originates_from"=>'account',
        "is_used_by"=>'account'
        }.each { |link_type,to_entity| 
          lambda {create_link(from,to_entity,link_type)}.should_not raise_error}
@@ -194,7 +190,6 @@ describe "validation of adding links to entities" do
     }.each { |link_type,to_entity| lambda {create_link(from_omrl,to_entity,link_type)}.should_not raise_error}
     { "names"=>'context',
       "approves"=>'flow',
-      "originates_from"=>'account',
       "is_used_by"=>'account'
     }.each { |link_type,to_entity| lambda {create_link(from_omrl,to_entity,link_type)}.should raise_error}
   end
