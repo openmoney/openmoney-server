@@ -14,6 +14,7 @@ class ContextsController < ApplicationController
     @event = Event.create(
      {:event_type => "CreateContext",
       :specification => {
+        "credentials" => {params[:parent_context] => {:tag => params[:tag], :password=>params[:password]}},
         "parent_context" => params[:parent_context],
         "name" => params[:name],
         "context_specification" => {

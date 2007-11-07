@@ -15,6 +15,7 @@ class AccountsController < ApplicationController
     @event = Event.create(
      {:event_type => "CreateAccount",
       :specification => {
+        "credentials" => {params[:parent_context] => {:tag => params[:tag], :password=>params[:password]}},
         "parent_context" => params[:parent_context],
         "name" => params[:name],
         "account_specification" => {

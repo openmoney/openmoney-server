@@ -62,8 +62,7 @@ class EntitiesController < ApplicationController
 #        @entity.valid_credentials(@credentials,authority)
         
         s = SummaryEntry.find(:first,:conditions => ['entity_omrl = ? and currency_omrl = ?',e,c])
-        if s
-          @summary = s.summary
+        if s && @summary =  s.summary
           respond_to do |format|
             options = {:methods => [:updated_at]}
             format.html { render :template => 'entities/summary' }
