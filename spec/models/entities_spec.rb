@@ -32,6 +32,13 @@ describe "security" do
   it "should approve access when credentials are correct" do
     @e.set_credential('eric','fish',['declares'])
     @e.valid_credentials({:tag=>'eric',:password => 'fish'},'declares').should be_true
+    @e.valid_credentials({:tag=>'eric',:password => 'fish'},'approves').should be_false
+  end
+
+  it "should approve access when for wildcard authority credentials" do
+    @e.set_credential('eric','fish','*')
+    @e.valid_credentials({:tag=>'eric',:password => 'fish'},'declares').should be_true
+    @e.valid_credentials({:tag=>'eric',:password => 'fish'},'approves').should be_true
   end
 
   it "should not approve access when credentials are incorrect" do

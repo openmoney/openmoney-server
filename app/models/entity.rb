@@ -188,13 +188,14 @@ class Entity < ActiveRecord::Base
       ac = ac[credential[:tag]]
       return false if ac.nil?
       pass = credential[:password]
-      mkpasswd(pass,ac[:salt]) == ac[:password_hash] && ac[:authorities].include?(authority)
+      auths = ac[:authorities]
+      mkpasswd(pass,ac[:salt]) == ac[:password_hash] && (auths == '*' || auths.include?(authority))
     else
       true
     end
   end
   
-  def set_credential(tag,password,authorities)
+  def set_credential(tag,password,authorities = '*')  # default authority is the wildcard authortiy
     salt = mksalt
     ac = YAML.load(access_control) if access_control
     ac ||= {}
@@ -203,7 +204,7 @@ class Entity < ActiveRecord::Base
   end
   
   def set_default_authorities(*authorities)
-    set_credential('','',authorities)
+    set_credential('','',authorities.flatten)
   end
   
   def default_authorities

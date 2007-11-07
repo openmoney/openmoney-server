@@ -69,6 +69,14 @@ class Event < ActiveRecord::Base
         attributes_for_entity.each{|attrib| entity_specification[attrib] = @specification[attrib]}
         
         entity = Entity.new({:entity_type => entity_type,:specification => entity_specification.to_yaml})
+        
+        # if we have an access control block then set it, including the defaults
+        if ac = @specification["access_control"]
+          entity.set_credential(ac[:tag],ac[:password],ac[:authorities])
+          if ac.has_key?(:defaults)
+            entity.set_default_authorities(ac[:defaults])
+          end
+        end
         if (!entity.save)
           errs << "Error#{(entity.errors.count>1)? 's' : ''} creating entity: #{entity.errors.full_messages.join(',')}"
         else
