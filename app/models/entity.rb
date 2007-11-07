@@ -199,6 +199,7 @@ class Entity < ActiveRecord::Base
     salt = mksalt
     ac = YAML.load(access_control) if access_control
     ac ||= {}
+    authorities = '*' if authorities.class == Array && authorities.include?('*')
     ac.update({tag => {:salt => salt,:password_hash=>mkpasswd(password,salt),:authorities => authorities}})
     self.access_control = ac.to_yaml
   end

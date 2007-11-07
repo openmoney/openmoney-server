@@ -4,7 +4,7 @@ class CreateLinks < ActiveRecord::Migration
       t.column :entity_id, :integer
       t.column :omrl, :string
       t.column :link_type, :string
-      t.column :signature, :text
+      t.column :specification, :text
       t.column :created_at, :datetime
       t.column :updated_at, :datetime
     end

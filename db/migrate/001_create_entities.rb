@@ -7,6 +7,9 @@ class CreateEntities < ActiveRecord::Migration
       t.column :access_control, :text
       t.column :specification, :text
     end
+    root = Entity.new(:entity_type => 'context')
+    root.set_credential('steward','password')
+    root.save
   end
 
   def self.down

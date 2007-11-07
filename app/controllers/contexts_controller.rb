@@ -15,6 +15,7 @@ class ContextsController < ApplicationController
      {:event_type => "CreateContext",
       :specification => {
         "credentials" => {params[:parent_context] => {:tag => params[:tag], :password=>params[:password]}},
+        "access_control" => {:tag => params[:steward_tag], :password => params[:steward_password], :authorities => '*'},
         "parent_context" => params[:parent_context],
         "name" => params[:name],
         "context_specification" => {
@@ -25,8 +26,7 @@ class ContextsController < ApplicationController
     )
     if @event.enmesh && @event.save
       flash[:notice] = 'The context was created!'
-      params[:name] = ''
-      params[:description] = ''
+      params.clear
     end
     render :action => "new"
   end

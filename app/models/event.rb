@@ -60,7 +60,6 @@ class Event < ActiveRecord::Base
     def create_enmesh(entity_type,validations,attributes_for_entity=[])
       validations ||= {'name' => :required}
       _enmesh(validations) do |errs|
-        
         # copy into the entity specification any named attributes in the specification
         # these are strictly speaking not necessary because though we could examine the mesh for
         # and figure out the information, it's much faster and easier to pull the data out of the 
@@ -82,13 +81,15 @@ class Event < ActiveRecord::Base
         else
           @created_entity = entity
           begin
-            yield entity
+            result = yield entity
           rescue Exception => e
-            errs  << e.to_s   << e.backtrace.split(/,/).join("\n")
+            errs  << e.to_s#   << e.backtrace.split(/,/).join("\n")
             logger.info "ENMESH ERROR" << e.to_s unless logger.nil?
             entity.destroy
+            result = false
           end
         end
+        result
       end
     end
     
@@ -116,10 +117,8 @@ class Event < ActiveRecord::Base
         #TODO we haven't added credentials into this part yet.
         extra_links_from.each {|spec,link_type| create_link(entity.omrl,@specification[spec],link_type)}  if extra_links_from.is_a?(Hash)
         extra_links_to.each {|spec,link_type| create_link(@specification[spec],entity.omrl,link_type)}  if extra_links_to.is_a?(Hash)
+        true
       end
-      
-      #TODO error checking and results value need to be added if appropriate
-      true
     end
   end
 
@@ -151,8 +150,10 @@ class Event < ActiveRecord::Base
         begin
           credentials = {'credentials' => @specification['credentials']}.to_yaml
           create_link(@specification['currency'],@specification['account'],'is_used_by',credentials)
+          true
         rescue Exception => e
           errs  << e.to_s
+          false
         end
       end
     end
@@ -203,6 +204,10 @@ protected
       #TODO we need to do this with ActiveRecord instead...
       Post.new(omrl.url << '/links',link_params)
     end
+  end
+
+  def before_save
+    delete_specification_attribute('credentials')
   end
 
 end

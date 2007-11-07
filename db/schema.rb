@@ -2,7 +2,7 @@
 # migrations feature of ActiveRecord to incrementally modify your database, and
 # then regenerate this schema definition.
 
-ActiveRecord::Schema.define(:version => 6) do
+ActiveRecord::Schema.define(:version => 4) do
 
   create_table "averages", :force => true do |t|
     t.float   "average_declared"
@@ -30,8 +30,8 @@ ActiveRecord::Schema.define(:version => 6) do
     t.datetime "created_at"
     t.string   "event_type"
     t.text     "specification"
-    t.string   "state"
     t.text     "result"
+    t.string   "state"
   end
 
   create_table "links", :force => true do |t|

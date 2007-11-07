@@ -4,6 +4,7 @@ class CreateEvents < ActiveRecord::Migration
       t.column :created_at, :datetime
       t.column :event_type, :string
       t.column :specification, :text
+      t.column :result, :text
       t.column :state, :string
     end
   end

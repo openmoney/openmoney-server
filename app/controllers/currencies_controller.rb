@@ -105,6 +105,7 @@ class CurrenciesController < ApplicationController
      {:event_type => "CreateCurrency",
       :specification => {
         "credentials" => {params[:parent_context] => {:tag => params[:tag], :password=>params[:password]}},
+        "access_control" => {:tag => params[:steward_tag], :password => params[:steward_password], :authorities => '*', :defaults=>['approves','is_used_by']},
         "parent_context" => params[:parent_context],
         "name" => params[:name],
         "currency_specification" => currency_spec

@@ -125,7 +125,9 @@ class EntitiesController < ApplicationController
     if params[:remove_tags] && params[:remove_tags] != ''
       params[:remove_tags].split(',').each { |tag| @entity.remove_credential(tag) }
     end
-    @entity.set_default_authorities(*params[:default_auths].split(','))
+    if params[:default_auths] && params[:default_auths] != ''
+      @entity.set_default_authorities(*params[:default_auths].split(','))
+    end
     @entity.attributes = params[:entity]
     respond_to do |format|
       if @entity.save

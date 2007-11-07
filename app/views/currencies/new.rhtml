@@ -3,7 +3,13 @@
 <%= error_messages_for :event %>
 
 <form action="/currencies" method="post">
-	Context Credentials: Tag <%= text_field_tag(:tag) %> Password <%= password_field_tag %><br />
+	Please provide a credential to give to the parent context:<br /> Tag <%= text_field_tag(:tag,'steward') %> Password <%= password_field_tag %><br />
+  <hr>
+  <p>
+    <b>Accounts Access Credential</b><br />
+ 	Tag <%= text_field_tag(:steward_tag,'steward') %>
+    Password: <%= password_field_tag :steward_password %>
+  </p>
 	Currency name: <%= text_field_tag(:name,params[:name]) %> in <%= contexts_select(:parent_context,params[:parent_context]) %>
 	<br />
 	Description: <%= text_field_tag(:description,params[:description],:size => 50) %>
