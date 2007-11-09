@@ -64,7 +64,7 @@ class EntitiesController < ApplicationController
         s = SummaryEntry.find(:first,:conditions => ['entity_omrl = ? and currency_omrl = ?',e,c])
         if s && @summary =  s.summary
           respond_to do |format|
-            options = {:methods => [:updated_at]}
+            options = {:methods => [:updated_at],:except => [:id]}
             format.html { render :template => 'entities/summary' }
             format.xml  { render :xml => @summary.to_xml(options) }
           end

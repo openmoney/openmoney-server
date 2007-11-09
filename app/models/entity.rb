@@ -274,30 +274,15 @@ class Entity < ActiveRecord::Base
 
         case summary_type 
         when "balance"
-          b = Balance.update_summaries(summary_field,flow)
-          return {'summary' => b}
-        when "mean"
-          raise "not implemented"
+          return {'summary' => Summary.update_summaries('Balance',summary_field,flow)}
+        when "average"
+          return {'summary' => Summary.update_summaries('Average',summary_field,flow)}
         end
       end
       
       true
     end
-    
-    private 
-    def update_mean(summary,amount,direction)
-      summary ||= {}
-      count = "count_#{direction}"
-      summary[count] ||= 0
-      mean = "mean_#{direction}"
-      summary[mean] ||= 0
-      old_count = summary[count]
-      new_count = old_count + 1
-      summary[mean] = (summary[mean] * old_count  + amount)/new_count
-      summary[count] = new_count
-      summary
-    end
-      
+          
   end
 
   ######################################################################################

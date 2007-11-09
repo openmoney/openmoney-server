@@ -6,7 +6,7 @@
 	Please provide a credential to give to the parent context:<br /> Tag <%= text_field_tag(:tag,'steward') %> Password <%= password_field_tag %><br />
   <hr>
   <p>
-    <b>Accounts Access Credential</b><br />
+    <b>Currency Steward Access Credential</b><br />
  	Tag <%= text_field_tag(:steward_tag,'steward') %>
     Password: <%= password_field_tag :steward_password %>
   </p>
@@ -32,7 +32,9 @@
 	<div id='mutual_credit'>
 		Unit of Measure: <%=unit_of_measure_select('unit')%>
 		<br />
-		<input id="use_advanced" type="checkbox" name="taxable" value="1" > Show "taxable" question?
+		<input id="use_description" type="checkbox" name="use_description" value="1" checked> Include "description" field
+		<br />
+		<input id="use_taxable" type="checkbox" name="use_taxable" value="1" > Include "taxable" question
 	</div>
 	<div id='reputation'  style="display:none;">
 		Rating Type: <select name="rating_type">

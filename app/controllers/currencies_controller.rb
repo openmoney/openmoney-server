@@ -42,7 +42,7 @@ class CurrenciesController < ApplicationController
     else
       case params[:type]
       when "mutual_credit"
-        currency_spec = default_mutual_credit_currency(params[:taxable],params[:unit])
+        currency_spec = default_mutual_credit_currency(params[:use_description],params[:use_taxable],params[:unit])
       when "reputation"
         r = { 'type' => 'integer',
           'description' => {
@@ -89,14 +89,14 @@ class CurrenciesController < ApplicationController
         	},
           'rating' => r,
         }
-      	currency_spec['summary_type'] = 'mean(rating)'
+      	currency_spec['summary_type'] = 'average(rating)'
       	currency_spec['input_form'] = {
       	  'en' => ":declaring_account rates :accepting_account as :rating :rate",
       	  'es' => ":declaring_account califica :accepting_account como :rating :rate"
       	}
       	currency_spec['summary_form'] = {
-      	  'en' => ":Overall rating: :mean_accepted (from :count_accepted total ratings)",
-          'es' => "Calificacíon: :mean_accepted (de :count_accepted calificacíones)"
+      	  'en' => ":Overall rating: :average_accepted (from :count_accepted total ratings)",
+          'es' => "Calificacíon: :average_accepted (de :count_accepted calificacíones)"
       	}        
     	end  
     end
