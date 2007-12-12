@@ -30,7 +30,9 @@ Rails::Initializer.run do |config|
   # (create the session table with 'rake db:sessions:create')
   # config.action_controller.session_store = :active_record_store
 
-  config.action_controller.session = { :session_key => "_rubyom_session", :secret => "cotopaxi314" }
+  config.action_controller.session = { 
+    :session_key => "_rubyom_session", 
+    :secret => "849fb63a18e03638e8850b7eb104d331cotopaxi314" }
  
   # Use SQL instead of Active Record's schema dumper when creating the test database.
   # This is necessary if your schema can't be completely dumped by the schema dumper, 
