@@ -292,7 +292,9 @@ class OMRL
           @flow_declarer = $1
           @flow_id = $2
         else
-          raise "omrl '#{@omrl}' insufficiently specified.  It could be either an account a currency, or a context."
+          context = @omrl
+          @kind = CONTEXT
+#          raise "omrl '#{@omrl}' insufficiently specified.  It could be either an account a currency, or a context."
         end
       end
     end
