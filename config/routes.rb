@@ -8,7 +8,7 @@ ActionController::Routing::Routes.draw do |map|
 #  end
   account_regex = /[^\/]*/
   currency_regex = /[^\/]*/
-#  context_regex = /[^\/]*/
+  context_regex = /[^\/]*/
   #TODO at some point accounts and currency portions of the URLs should have a real regexp match intstead of /.*/ (which is currently there because periods are not valid by default)
   map.connect 'clients/:client/:account/input_form', :controller => 'clients', :action => 'input_form',:conditions => {:method => :post}, :requirements => { :account =>account_regex }
   map.connect 'clients/:client/:account/history', :controller => 'clients', :action => 'history',:conditions => {:method => :post}, :requirements => { :account =>account_regex }
@@ -32,8 +32,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':entity_type', :controller => 'entities'
   map.connect ':entity_type/:id/:extra.:format', :controller => 'entities', :action => 'show'
   map.connect ':entity_type/:id/:extra', :controller => 'entities', :action => 'show'
-  map.connect ':entity_type/:id.:format', :controller => 'entities', :action => 'show'
-  map.connect ':entity_type/:id', :controller => 'entities', :action => 'show'
+  map.connect ':entity_type/:id.:format', :controller => 'entities', :action => 'show', :requirements => { :id =>context_regex }
+  map.connect ':entity_type/:id', :controller => 'entities', :action => 'show', :requirements => { :id =>context_regex }
 
   
 #  map.resources :accounts, :controller => "entities"
