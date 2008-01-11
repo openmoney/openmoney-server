@@ -190,6 +190,8 @@ protected
   ######################################################################################
   # 
   def create_link(from_omrl,to_omrl,link_type,link_specification = nil)
+    from_omrl = from_omrl.downcase
+    to_omrl = to_omrl.downcase
     link_params = {:link_type => link_type,:omrl => to_omrl}
     link_params[:specification] = link_specification if link_specification
     from_entity = Entity.find_by_omrl(from_omrl)

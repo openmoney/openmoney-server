@@ -75,7 +75,7 @@ class OMRL
   def initialize(o = '')
     # this clone is here because there was a side-effect that the omrl string object was being
     # modified by some function in OMRL and it was messing things up externally.
-    omrl = o.is_a?(Fixnum) ? o.to_s : o.clone
+    omrl = o.is_a?(Fixnum) ? o.to_s : o.clone.downcase
     @omrl = omrl
     @type = nil
     @kind = nil
