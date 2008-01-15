@@ -75,9 +75,9 @@ class Link < ActiveRecord::Base
         raise "context parameter must be omrl String, and Entity, or an entity_id Fixnum"
       end
 
-      conditions = ["link_type = 'names' and entity_id = ? and specification like ?", entity_id,"%name: #{name}%"]
+      conditions = ["link_type = 'names' and entity_id = ? and specification like ?", entity_id,"%name: #{name}\n%"]
     else
-      conditions = ["link_type = 'names' and specification like ?", "%name: #{name}%"]
+      conditions = ["link_type = 'names' and specification like ?", "%name: #{name}\n%"]
     end
     links = Link.find(:all, :conditions => conditions)
     return nil if links.size == 0
