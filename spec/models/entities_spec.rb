@@ -8,10 +8,10 @@ describe "converting to xml" do
   end
 
   it "should show summaries if specified" do
-    xml = entities(:currency_bucks).to_xml(:summaries => ['count','volume','mwl^ca'])
+    xml = entities(:currency_bucks).to_xml(:summaries => ['count','volume','ca.mwl'])
     xml.should =~ /summaries/
-    xml.should =~ /mwl\^ca:/
-    xml.should_not =~ /zippy\^us:/
+    xml.should =~ /ca.mwl:/
+    xml.should_not =~ /us.zippy:/
   end
 end
 
@@ -106,37 +106,21 @@ describe "fixtures" do
   fixtures :links
 
   it "should produce the entities omrls" do
-    entities(:account_zippy).omrl.should == "zippy^us."
-    entities(:currency_bucks).omrl.should == "bucks~us."
-    entities(:flow_tx1).omrl.should == 'zippy#7^us.'
-    entities(:account_mwl).omrl.should == "mwl^ca."
-    entities(:context_us).omrl.should == "us."
-    entities(:context_ca).omrl.should == "ca."
-  end
-  
-  it "find_by_omrl should find unspecified relative omrls" do
-    Entity.find_by_omrl("mwl^").should == entities(:account_mwl)
-#    Entity.find_by_omrl("zippy#7").should == entities(:flow_tx1)  see TODO below
-    Entity.find_by_omrl("bob^").should be_nil
+    entities(:account_zippy).omrl.should == "us.zippy"
+    entities(:currency_bucks).omrl.should == "us.bucks"
+    entities(:flow_tx1).omrl.should == 'us.zippy/7'
+    entities(:account_mwl).omrl.should == "ca.mwl"
+    entities(:context_us).omrl.should == "us"
+    entities(:context_ca).omrl.should == "ca"
   end
 
-  it "find_by_omrl should find specified relative omrl" do
-    Entity.find_by_omrl("mwl^").should == entities(:account_mwl)
-    Entity.find_by_omrl("bucks~").should == entities(:currency_bucks)
 
-#    Entity.find_by_omrl("zippy#7^").should == entities(:flow_tx1)
-#TODO figure out how/if this should work.  Right now you can't confirm
-# the declarer because the declares link is stored as the full omrl (zippy^us.)
-# so the relative omrl doesn't match in the search.
-
-    Entity.find_by_omrl("bob^").should be_nil
-  end
-
-  it "find_by_omrl should find absolute omrls" do
-    Entity.find_by_omrl("mwl^ca").should == entities(:account_mwl)
-    Entity.find_by_omrl("bucks~us").should == entities(:currency_bucks)
-    Entity.find_by_omrl("zippy#7^us").should == entities(:flow_tx1)
-    Entity.find_by_omrl("ca.").should == entities(:context_ca)
+  it "find_by_omrl should find omrls" do
+    Entity.find_by_omrl("ca.mwl").should == entities(:account_mwl)
+    Entity.find_by_omrl("us.bucks").should == entities(:currency_bucks)
+    Entity.find_by_omrl("us.zippy/7").should == entities(:flow_tx1)
+    Entity.find_by_omrl("ca").should == entities(:context_ca)
+    Entity.find_by_omrl("bob").should be_nil
 #    Entity.find_by_omrl("zippy#7^ca").should be_nil
 #TODO this above thing is weird.  If we have code in there to check if this OMRL is actually what it 
 # says, then linking in a new flow fails because the check prevents us from finding the flow in the linking
@@ -223,7 +207,7 @@ def create_link(from,to,link_type)
     eto.save
   end
   l = Link.new({
-    :omrl => (to == nil) ? "" : eto.url_omrl,
+    :omrl => (to == nil) ? "" : eto.url,
     :link_type => link_type
   })
   l.specification = {'flow'=>'test'}.to_yaml if link_type == 'approves'

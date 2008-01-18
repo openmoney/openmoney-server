@@ -5,7 +5,7 @@ create_canada_context:
   event_type: "CreateContext"
   specification:
     name: ca
-    parent_context: .
+    parent_context: 
     context_specification:
       description: Canada
   state:
@@ -15,7 +15,7 @@ create_us_context:
   event_type: "CreateContext"
   specification:
     name: us
-    parent_context: .
+    parent_context: 
     context_specification: 
       description: The USA
   state:
@@ -35,7 +35,7 @@ create_zippy_account:
   event_type: "CreateAccount"
   specification:
     name: zippy
-    parent_context: us.
+    parent_context: us
     account_specification: 
       description: "Eric Harris-Braun"
   state:
@@ -45,7 +45,7 @@ create_bucks_currency:
   event_type: "CreateCurrency"
   specification:
     name: bucks
-    parent_context: us.
+    parent_context: us
     currency_specification:
       description: "Eric's cool currency"
   state:
@@ -54,16 +54,16 @@ join_bucks_zippy:
   created_at: 2007-03-14 11:11:40
   event_type: "JoinCurrency"
   specification:
-    currency: bucks^us
-    account: zippy^us
+    currency: us.bucks
+    account: us.zippy
   state:
 join_bucks_mwl:
   id: 7
   created_at: 2007-03-14 11:11:40
   event_type: "JoinCurrency"
   specification:
-    currency: bucks^us
-    account: mwl^ca
+    currency: us.bucks
+    account: ca.mwl
   state:
 ack_flow_zippy_mwl_in_bucks:
   id: 8
@@ -73,8 +73,8 @@ ack_flow_zippy_mwl_in_bucks:
     flow_specification: 
       amount: 10
       description: some stuff
-    declaring_account: zippy^us
-    accepting_account: mwl^ca
+    declaring_account: us.zippy
+    accepting_account: ca.mwl
     currency: bucks~us.
   state:
 create_ny_context:
@@ -83,7 +83,7 @@ create_ny_context:
   event_type: "CreateContext"
   specification:
     name: ny
-    parent_context: us.
+    parent_context: us
     context_specification:
       description: New York state
   state:
@@ -93,7 +93,7 @@ create_fish_account:
   event_type: "CreateAccount"
   specification:
     name: fish
-    parent_context: ny.us
+    parent_context: us.ny
     account_specification: 
       description: "Test Fish account"
   state:

@@ -71,7 +71,7 @@ describe "searching for naming links" do
     Link.find_naming_link("ny", entities(:context_us)).should == links(:names_context_ny_in_us)
   end
   it "should find links when contexts are specified as strings" do
-    Link.find_naming_link('zippy','ny.us').should == links(:names_account_zippyny_ny_us)
+    Link.find_naming_link('zippy','us.ny').should == links(:names_account_zippyny_ny_us)
   end
   it "should find links when contexts are specified entity ids" do
     Link.find_naming_link('zippy',entities(:context_us).id).should == links(:names_account_zippy_in_us)
@@ -107,7 +107,8 @@ describe "searching for entities linked by 'declares'" do
   end
   
   it "should not find flows that dont exist" do
-    fake_flow_omrl = OMRL.new(entities(:flow_tx1).omrl).entity << ".ca"
+    omrl = entities(:flow_tx1).omrl
+    fake_flow_omrl = OMRL.new_flow(OMRL.new(omrl).flow_declarer,33).to_s
     Link.find_declaring_entity(fake_flow_omrl).should == nil
   end
 end
