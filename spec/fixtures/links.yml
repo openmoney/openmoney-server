@@ -47,7 +47,7 @@ names_account_mwl_in_ca:
 declares_flow_tx1:
   id: 6
   entity_id: 5
-  omrl: "us.zippy/7"
+  omrl: "zippy.us/7"
   link_type: declares
   specification:
   created_at: 2007-03-16 11:27:41
@@ -55,7 +55,7 @@ declares_flow_tx1:
 accpets_flow_tx1:
   id: 7
   entity_id: 6
-  omrl: "us.zippy/7"
+  omrl: "zippy.us/7"
   link_type: accepts
   specification:
   created_at: 2007-03-16 11:27:41
@@ -63,7 +63,7 @@ accpets_flow_tx1:
 approves_flow_tx1:
   id: 8
   entity_id: 4
-  omrl: "us.zippy/7"
+  omrl: "zippy.us/7"
   link_type: approves
   specification:
   created_at: 2007-03-16 11:27:41

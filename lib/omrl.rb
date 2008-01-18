@@ -44,7 +44,7 @@ class OMRL
       o.to_s.downcase
     end
     
-    omrl = "#{context}.#{omrl}" if context && context != ''
+    omrl = "#{omrl}.#{context}" if context && context != ''
     @omrl = omrl
     @url = nil
     @name = nil
@@ -63,14 +63,14 @@ class OMRL
   # returns the entity, i.e. the part before the separator
   def entity_name
     parse
-    return @names.last
+    return @names.first
   end
 
   ######################################################################################
   # returns the parent_context, i.e. all but the last name
   def parent_context
     parse
-    return @names.first(@names.length-1).join('.') if !@names.empty?
+    return @names.last(@names.length-1).join('.') if !@names.empty?
     nil
   end
   

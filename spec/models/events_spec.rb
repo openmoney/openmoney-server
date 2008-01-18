@@ -40,7 +40,7 @@ describe "Creating and enmeshing a context event" do
     @e = Event.create({
         :event_type => "CreateContext",
         :specification => <<-eos
-parent_context: .
+parent_context: 
 name: ec
 context_specification:
   description: Ecuador
@@ -67,13 +67,13 @@ eos
   end
   
   it "should create a context entity" do
-    e = Entity.find_by_omrl("ec.")
+    e = Entity.find_by_omrl("ec")
     e.should_not be_nil
     e.entity_type.should == "context"
   end
 
   it "which should be available through created_entity" do
-    e = Entity.find_by_omrl("ec.")
+    e = Entity.find_by_omrl("ec")
     @e.created_entity.should == e
   end
     
@@ -112,7 +112,7 @@ describe "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks
   end
 
   it "us context should exist and should be a context and be correctly linked" do
-    e = Entity.find_by_omrl("us.")
+    e = Entity.find_by_omrl("us")
     e.should_not be_nil
     e.entity_type.should == "context"
     links = e.links
@@ -124,31 +124,31 @@ describe "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks
   end
 
   it "bucks currency should exist and be linked to context, accounts and flow" do
-    e = Entity.find_by_omrl("bucks~us.")
+    e = Entity.find_by_omrl("bucks.us")
     e.should_not be_nil
     e.entity_type.should == "currency"
     links = e.links
 #    links.should == ""
     links.should have(3).items
     links[0].link_type.should == "is_used_by"
-    links[0].omrl.should == "zippy^us."
+    links[0].omrl.should == "zippy.us"
     links[1].link_type.should == "is_used_by"
-    links[1].omrl.should == "mwl^ca."
+    links[1].omrl.should == "mwl.ca"
     links[2].link_type.should == "approves"
-    links[2].omrl.should =~ /zippy\#[0-9]+/
+    links[2].omrl.should =~ /zippy.us\/[0-9]+/
   end
 
   it "ecuador context should not exist" do
-    Entity.find_by_omrl("ec.").should == nil
+    Entity.find_by_omrl("ec").should == nil
   end
 
   it "mwl account should exist and should be an account and linked to flow tx1" do
-    e = Entity.find_by_omrl("mwl^")
+    e = Entity.find_by_omrl("mwl.ca")
     e.should_not be_nil
     e.entity_type.should == "account"
     links = e.links
     links.should have(1).items
-    links[0].omrl.should =~ /zippy\#[0-9]+/
+    links[0].omrl.should =~ /zippy.us\/[0-9]+/
   end
 
   it "should not be possible to enmesh a repeat CreateContext event (dup)" do
@@ -157,7 +157,7 @@ describe "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks
         :specification => <<-eos
           context_specification:
             description: Canada
-          parent_context: .
+          parent_context: 
           name: ca
     eos
         })
@@ -170,12 +170,12 @@ describe "Given root,ca & us context; mwl.ca & zippy.us accounts joined to bucks
     e = Event.create({
       :event_type => "JoinCurrency",
       :specification => <<-eos
-        currency: bucks~us.
-        account: mwl^ca
+        currency: bucks.us
+        account: mwl.ca
   eos
       })
     enmesh_result = e.enmesh
-    e.errors.full_messages.should == ["Specification - enmeshing error: duplicate link attempt: bucks~us. already is_used_by mwl^ca."]
+    e.errors.full_messages.should == ["Specification - enmeshing error: duplicate link attempt: bucks.us already is_used_by mwl.ca"]
     enmesh_result.should be_false
   end
 

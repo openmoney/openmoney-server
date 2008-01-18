@@ -79,15 +79,15 @@ currency_bucks:
       es: ":declaring_account reconoce :accepting_account por :description en la cantidad de :amount (ingreso imponible :taxable)  :acknowledge_flow"
       en: ":declaring_account acknowledges :accepting_account for :description in the amount of :amount (taxable :taxable) :acknowledge_flow"
     summaries: 
-      us.zippy: 
+      zippy.us: 
         volume: 25
         count: 3
         balance: -15
-      us.art: 
+      art.us: 
         count: 2
         volume: 15
         balance: 5
-      ca.mwl: 
+      mwl.ca: 
         volume: 10
         count: 1
         balance: 10
@@ -117,8 +117,8 @@ flow_tx1:
   entity_type: flow
   access_control: 
   specification: 
-    declaring_account: us.zippy
-    accepting_account: ca.mwl
+    declaring_account: zippy.us
+    accepting_account: mwl.ca
     currency: bucks
     description: goodies!
     amount: 10      
@@ -138,7 +138,7 @@ account_zippyny:
   entity_type: account
   access_control: 
   specification:
-    parent_context: us.ny
+    parent_context: ny.us
 account_unlinked:
   id: 10
   created_at: 2007-03-14 11:11:40
@@ -146,6 +146,6 @@ account_unlinked:
   entity_type: account
   access_control: 
   specification:
-    parent_context: us.ny
+    parent_context: ny.us
 
 

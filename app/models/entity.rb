@@ -160,7 +160,7 @@ class Entity < ActiveRecord::Base
     return nil if !names
 
     name = names.shift
-    context = names.reverse.join('.')
+    context = names.join('.')
     OMRL.new(name,context).to_s
   end
     

@@ -8,10 +8,10 @@ describe "converting to xml" do
   end
 
   it "should show summaries if specified" do
-    xml = entities(:currency_bucks).to_xml(:summaries => ['count','volume','ca.mwl'])
+    xml = entities(:currency_bucks).to_xml(:summaries => ['count','volume','mwl.ca'])
     xml.should =~ /summaries/
-    xml.should =~ /ca.mwl:/
-    xml.should_not =~ /us.zippy:/
+    xml.should =~ /mwl.ca:/
+    xml.should_not =~ /zippy.us:/
   end
 end
 
@@ -106,19 +106,19 @@ describe "fixtures" do
   fixtures :links
 
   it "should produce the entities omrls" do
-    entities(:account_zippy).omrl.should == "us.zippy"
-    entities(:currency_bucks).omrl.should == "us.bucks"
-    entities(:flow_tx1).omrl.should == 'us.zippy/7'
-    entities(:account_mwl).omrl.should == "ca.mwl"
+    entities(:account_zippy).omrl.should == "zippy.us"
+    entities(:currency_bucks).omrl.should == "bucks.us"
+    entities(:flow_tx1).omrl.should == 'zippy.us/7'
+    entities(:account_mwl).omrl.should == "mwl.ca"
     entities(:context_us).omrl.should == "us"
     entities(:context_ca).omrl.should == "ca"
   end
 
 
   it "find_by_omrl should find omrls" do
-    Entity.find_by_omrl("ca.mwl").should == entities(:account_mwl)
-    Entity.find_by_omrl("us.bucks").should == entities(:currency_bucks)
-    Entity.find_by_omrl("us.zippy/7").should == entities(:flow_tx1)
+    Entity.find_by_omrl("mwl.ca").should == entities(:account_mwl)
+    Entity.find_by_omrl("bucks.us").should == entities(:currency_bucks)
+    Entity.find_by_omrl("zippy.us/7").should == entities(:flow_tx1)
     Entity.find_by_omrl("ca").should == entities(:context_ca)
     Entity.find_by_omrl("bob").should be_nil
 #    Entity.find_by_omrl("zippy#7^ca").should be_nil
