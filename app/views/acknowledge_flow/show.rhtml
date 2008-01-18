@@ -5,5 +5,6 @@
 <form action="/acknowledge_flow/<%= @currency_omrl %>" method="post">
 	Credentials: Tag <%= text_field_tag(:tag) %> Password <%= password_field_tag %><br />
 	<%= input_form(@currency.get_specification,:language => params[:lang]) %>
+	<%= hidden_field_tag(:uid,Time.now.to_i )%>
 </form>
 

@@ -19,8 +19,8 @@ module Summary
         result[flow[:declaring_account]] = update_summary(klass,field,flow,flow[:declaring_account],:declaring_account)
         result[flow[:accepting_account]] = update_summary(klass,field,flow,flow[:accepting_account],:accepting_account)
         update_summary(klass,field,flow,flow[:currency],nil)
-        update_summary(klass,field,flow,OMRL.new(flow[:declaring_account]).context,:declaring_account)
-        update_summary(klass,field,flow,OMRL.new(flow[:accepting_account]).context,:accepting_account)
+        update_summary(klass,field,flow,OMRL.new(flow[:declaring_account]).parent_context,:declaring_account)
+        update_summary(klass,field,flow,OMRL.new(flow[:accepting_account]).parent_context,:accepting_account)
       end
     rescue Exception => e
       raise e

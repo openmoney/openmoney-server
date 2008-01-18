@@ -25,6 +25,7 @@ class AcknowledgeFlowController < ApplicationController
      {:event_type => "AcknowledgeFlow",
       :specification => {
         "credentials" => {params["declaring_account"] => {:tag => params[:tag], :password=>params[:password]}},
+        "flow_uid" => params[:uid],
         "flow_specification" => params["flow_spec"],
         "declaring_account" => params["declaring_account"],
         "accepting_account" => params["accepting_account"],

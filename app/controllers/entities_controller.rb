@@ -49,7 +49,7 @@ class EntitiesController < ApplicationController
 
     if @entity
       if params[:extra] == 'summary'
-        c = @entity.omrl.chop
+        c = @entity.omrl
         e = params[:entity_omrl]
         e ||= c
 #        authority = case OMRL.new(e).kind

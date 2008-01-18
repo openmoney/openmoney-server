@@ -74,9 +74,10 @@ class Entity < ActiveRecord::Base
   
   def allow_link?(link)
     credentials = link.specification_attribute('credentials')
-    credential = credentials[self.omrl.chop] if credentials  #TODO this chop sucks
+    credential = credentials[self.omrl] if credentials
     if !valid_credentials(credential,link.link_type)
-      logger.info "IVALID CREDENTIAL" << credential.inspect << " for " << link.link_type
+      logger.info "INVALID CREDENTIAL" << credential.inspect << " for " << link.link_type
+      logger.info "CREDENTIALS ARE:" << credentials.inspect
       @link_error = "invalid credential"
       return false
     end 
@@ -135,7 +136,7 @@ class Entity < ActiveRecord::Base
   ######################################################################################
   # return an omrl for this entity
 
-  def url_omrl(relative = true)
+  def url
     if local?
       "/entities/#{id}"
     else
@@ -143,7 +144,7 @@ class Entity < ActiveRecord::Base
     end
   end
   
-  def omrl_name(relative = false)
+  def omrl
     
     #TODO deal with the multiple omrls for the same entitiy
     
@@ -159,26 +160,10 @@ class Entity < ActiveRecord::Base
     return nil if !names
 
     name = names.shift
-    context = relative ? nil : (names.join('.') << '.')
-    case entity_type
-    when "context"
-      OMRL.new_context(name,context).to_s
-    when "currency"
-      OMRL.new_currency(name,context).to_s
-    when "account"
-      OMRL.new_account(name,context).to_s
-    end
+    context = names.reverse.join('.')
+    OMRL.new(name,context).to_s
   end
-  
-  #TODO this allways returns a relative OMRL!
-  def omrl(relative = false,type = OMRL::OM_NAME)
-    if type == OMRL::OM_NAME
-      omrl_name(relative)
-    else
-      url_omrl(relative)
-    end
-  end
-  
+    
   #confirm access to this entity via the access control configuration
   def valid_credentials(credential,authority)
     return true if access_control.nil?

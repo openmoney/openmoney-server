@@ -83,7 +83,7 @@ class Event < ActiveRecord::Base
           begin
             result = yield entity
           rescue Exception => e
-            errs  << e.to_s#   << e.backtrace.split(/,/).join("\n")
+            errs  << e.to_s   << e.backtrace.split(/,/).join("\n")
             logger.info "ENMESH ERROR" << e.to_s unless logger.nil?
             entity.destroy
             result = false
@@ -106,13 +106,12 @@ class Event < ActiveRecord::Base
       # make sure parent context is the fully sepcified form by adding the period onto the end of it
       # if it's not already there.
       load_specification
-      @specification['parent_context'] = "#{@specification['parent_context']}." if @specification['parent_context'] !~ /\.$/
       
       #TODO if there is a failure in creating the extra links we should unwind the creation of the other links
       # and then re-raise an error so that the entity can be deleted
       credentials = {'credentials' => @specification['credentials']}
       create_enmesh(entity_type,validations,['parent_context']) do |entity|
-        create_link(@specification['parent_context'],entity.url_omrl,'names',{'name' => @specification['name']}.update(credentials).to_yaml)
+        create_link(@specification['parent_context'],entity.url,'names',{'name' => @specification['name']}.update(credentials).to_yaml)
 
         #TODO we haven't added credentials into this part yet.
         extra_links_from.each {|spec,link_type| create_link(entity.omrl,@specification[spec],link_type)}  if extra_links_from.is_a?(Hash)
@@ -162,7 +161,7 @@ class Event < ActiveRecord::Base
   ######################################################################################
   class AcknowledgeFlow < CreateEvent
     def enmesh
-      create_enmesh('flow',{'flow_specification' => :required,'declaring_account' => :required,'accepting_account' => :required,'currency' => :required},%w(declaring_account accepting_account currency)) do |entity|
+      create_enmesh('flow',{'flow_uid' => :required, 'flow_specification' => :required,'declaring_account' => :required,'accepting_account' => :required,'currency' => :required},%w(declaring_account accepting_account currency)) do |entity|
         links = []
         
         #TODO, we need to figure out a way to make this all transactional accross the net
