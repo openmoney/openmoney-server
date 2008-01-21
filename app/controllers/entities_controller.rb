@@ -51,7 +51,11 @@ class EntitiesController < ApplicationController
       if params[:extra] == 'summary'
         c = @entity.omrl
         e = params[:entity_omrl]
-        e ||= c
+        if e
+          s = SummaryEntry.find(:all,:conditions => ['entity_omrl = ? and currency_omrl = ?',e,c])
+        else
+          s = SummaryEntry.find(:all,:conditions => ['currency_omrl = ?',c])
+        end
 #        authority = case OMRL.new(e).kind
 #        when ACCOUNT
 #        when CONTEXT
@@ -61,12 +65,13 @@ class EntitiesController < ApplicationController
 #        end
 #        @entity.valid_credentials(@credentials,authority)
         
-        s = SummaryEntry.find(:first,:conditions => ['entity_omrl = ? and currency_omrl = ?',e,c])
-        if s && @summary =  s.summary
+        if s && !s.empty?
+          @summaries = {}
+          s.each {|x| @summaries[x.entity_omrl] = x.summary}
           respond_to do |format|
             options = {:methods => [:updated_at],:except => [:id]}
             format.html { render :template => 'entities/summary' }
-            format.xml  { render :xml => @summary.to_xml(options) }
+            format.xml  { render :xml => @summaries.to_xml(options) }
           end
         else
           render_status 404            

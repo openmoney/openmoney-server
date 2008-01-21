@@ -1,1 +1,3 @@
-<%= render_summary(@entity.get_specification['summary_form'],@summary) %>
+<% @summaries.each do |omrl,summary|%>
+<p><%= h omrl %>: <%= render_summary(@entity.get_specification['summary_form'],summary) %></p>
+<% end %>
