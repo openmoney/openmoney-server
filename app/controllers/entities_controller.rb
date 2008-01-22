@@ -9,9 +9,8 @@
 # gotta figure out how to fix that.
 
 class EntitiesController < ApplicationController
-
+  
   before_filter :check_for_entity_type
-  before_filter :check_for_credentials
   # GET /entities
   # GET /entities.xml
   def index
@@ -22,8 +21,6 @@ class EntitiesController < ApplicationController
         account_omrl = OMRL.new(params[:used_by]).to_s
         @entities = @entities.collect {|e| e.links.any?{|l| l.link_type == 'is_used_by' && l.omrl == account_omrl} ? e : nil }.reject {|e| e == nil}
       end
-#      summary_list = check_for_account_summaries
-#      options[:summaries] = summary_list
     end
 
     if params[:entity_type] == "flows"
@@ -36,8 +33,6 @@ class EntitiesController < ApplicationController
     end
   end
   
-
-
   # GET /entities/1
   # GET /entities/1.xml
   def show
@@ -48,42 +43,21 @@ class EntitiesController < ApplicationController
     end
 
     if @entity
-      if params[:extra] == 'summary'
-        c = @entity.omrl
-        e = params[:entity_omrl]
-        if e
-          s = SummaryEntry.find(:all,:conditions => ['entity_omrl = ? and currency_omrl = ?',e,c])
-        else
-          s = SummaryEntry.find(:all,:conditions => ['currency_omrl = ?',c])
-        end
-#        authority = case OMRL.new(e).kind
-#        when ACCOUNT
-#        when CONTEXT
-#          'view_context_summaries'
-#        when CURRENCY
-#          'view_curency_summary'
-#        end
-#        @entity.valid_credentials(@credentials,authority)
-        
-        if s && !s.empty?
-          @summaries = {}
-          s.each {|x| @summaries[x.entity_omrl] = x.summary}
-          respond_to do |format|
-            options = {:methods => [:updated_at],:except => [:id]}
-            format.html { render :template => 'entities/summary' }
-            format.xml  { render :xml => @summaries.to_xml(options) }
+      respond_to do |format|
+        options = {:methods => [:omrl]}
+        @summaries = get_summaries(@entity,params[:summaries],params[:credentials]) if params.has_key?(:summaries)
+        format.html # show.rhtml
+        format.xml  do
+          xml_str = @entity.to_xml(options) do |xml|
+            if @summaries
+              @summaries.each do |omrl,summary|
+                xml.summary :omrl => omrl do
+                  summary.attributes.each {|k,v| xml.tag!(k,v) if k != 'id'}
+                end
+              end
+            end
           end
-        else
-          render_status 404            
-        end
-#          summary_list = check_for_currency_summaries(@entity)
-#         summary_list.concat(check_for_account_summaries)
-#          options[:summaries] = summary_list
-      else
-        respond_to do |format|
-          options = {:methods => [:omrl]}
-          format.html # show.rhtml
-          format.xml  { render :xml => @entity.to_xml(options) }
+          render :xml =>  xml_str
         end
       end
     else
@@ -159,35 +133,35 @@ class EntitiesController < ApplicationController
   end
   
   private
-
-  def check_for_credentials
-    if params[:credentials]
-      params[:credentials] =~ /(.*?)\.(.*)/
-      @credentials = {:tag => $1, :password => $2}
-    end
-  end
- 
+   
   def check_for_entity_type
     @conditions =  (params[:entity_type]) ? {:conditions => ["entity_type = ? ", params[:entity_type].singularize]} : {}
 #    render_text @conditions
   end
-  
-  def check_for_account_summaries
-    summary_list = []
-    params.each do |key,value|
-      if key =~/^account_(.*)/
-        omrl = $1
-        e = Entity.find_by_omrl($1)
-        summary_list << omrl if e && e.valid_credentials(:password => value)
-      end
-    end
-    summary_list
-  end
 
-  def check_for_currency_summaries(entity)
-    summary_list = []
-    if entity.valid_credentials(:password => params[:password])
-      summary_list << 'count' << 'volume'
+  def get_summaries(currency,entity_omrl,credentials)
+    currency_omrl = currency.omrl
+    credential = credentials[currency_omrl] if credentials
+    validated = currency.valid_credentials(credential,'view_summaries')
+    
+#    authenticate_or_request_with_http_basic do |user_name, password|
+#      validated = currency.valid_credentials({:tag =>user_name, :password=>password},'view_summaries')
+#      raise validated
+#    end
+    
+    if entity_omrl && entity_omrl != ''
+      if !validated
+        credential = credentials[entity_omrl] if credentials
+        entity = Entity.find_by_omrl(entity_omrl)
+        validated = entity.valid_credentials(credential,'view_summaries') if entity
+      end
+      s = SummaryEntry.find(:all,:conditions => ['entity_omrl = ? and currency_omrl = ?',entity_omrl,currency_omrl]) if validated
+    else
+      s = SummaryEntry.find(:all,:conditions => ['currency_omrl = ?',currency_omrl]) if validated
     end
+    summaries = {}
+    s.each {|x| summaries[x.entity_omrl] = x.summary} if s
+    summaries
   end
+  
 end
