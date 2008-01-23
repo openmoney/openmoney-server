@@ -159,8 +159,9 @@ class Entity < ActiveRecord::Base
   def valid_credentials(credential,authority)
     return true if access_control.nil?
     return true if default_authorities.include?(authority)
-    if ac = YAML.load(access_control)
+    if ac = HashWithIndifferentAccess.new(YAML.load(access_control))
       return false if credential == nil
+      credential.symbolize_keys!
       ac = ac[credential[:tag]]
       return false if ac.nil?
       pass = credential[:password]
@@ -253,6 +254,8 @@ class Entity < ActiveRecord::Base
           return {'summary' => Summary.update_summaries('Balance',summary_field,flow)}
         when "average"
           return {'summary' => Summary.update_summaries('Average',summary_field,flow)}
+        else
+          raise 'unknown summary type:'<< summary_type.inspect
         end
       end
       
