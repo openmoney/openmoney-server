@@ -1,20 +1,20 @@
-<% @header='Create Context' %>
+<% @header='Create Namespace' %>
 <%= error_messages_for :event %>
 
 <form action="/contexts" method="post">
-	Please provide a credential to give to the parent context:<br /> Tag <%= text_field_tag(:tag,'steward') %> Password <%= password_field_tag %><br />
+	Please provide a credential to give to the parent namespace:<br /> Tag <%= text_field_tag(:tag,'steward') %> Password <%= password_field_tag %><br />
   <hr>
   <p>
-    <b>Steward's Context Access Credential</b><br />
+    <b>Steward's Namespace Access Credential</b><br />
  	Tag <%= text_field_tag(:steward_tag,'steward') %>
     Password: <%= password_field_tag :steward_password,params[:steward_password] %>
   </p>
 
-	Context name: <%= text_field_tag (:name,params[:name]) %> in <%= contexts_select(:parent_context,params[:parent_context]) %>
+	Namespace name: <%= text_field_tag (:name,params[:name]) %> in <%= contexts_select(:parent_context,params[:parent_context]) %>
 	<br />
 	Description: <%= text_field_tag (:description,params[:description],:size => 50) %>
 	<br />
-	<%= submit_tag("Create Context") %>
+	<%= submit_tag("Create Namespace") %>
     
 </form>
 
