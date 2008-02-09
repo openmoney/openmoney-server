@@ -51,7 +51,7 @@ class EntitiesController < ApplicationController
           xml_str = @entity.to_xml(options) do |xml|
             if @summaries
               @summaries.each do |omrl,summary|
-                xml.summary :omrl => omrl do
+                xml.summary :omrl => omrl,:type => Entity.find_by_omrl(omrl).entity_type do
                   summary.attributes.each {|k,v| xml.tag!(k,v) if k != 'id'}
                 end
               end
@@ -139,7 +139,7 @@ class EntitiesController < ApplicationController
 #    render_text @conditions
   end
 
-  def get_summaries(currency,entity_omrl,credentials)
+  def get_summaries(currency,entity_omrl,credentials,entity_types=nil) #entity_types=['account','currency']
     currency_omrl = currency.omrl
     credential = credentials[currency_omrl] if credentials
     validated = currency.valid_credentials(credential,'view_summaries')
@@ -158,6 +158,7 @@ class EntitiesController < ApplicationController
       s = SummaryEntry.find(:all,:conditions => ['entity_omrl = ? and currency_omrl = ?',entity_omrl,currency_omrl]) if validated
     else
       s = SummaryEntry.find(:all,:conditions => ['currency_omrl = ?',currency_omrl]) if validated
+      s.reject! {|se| !entity_types.include?(Entity.find_by_omrl(se.entity_omrl).entity_type) } if entity_types  
     end
     summaries = {}
     s.each {|x| summaries[x.entity_omrl] = x.summary} if s
