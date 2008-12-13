@@ -4,9 +4,6 @@
 [submodule "vendor/plugins/rspec-rails"]
 	path = vendor/plugins/rspec-rails
 	url = git://github.com/dchelimsky/rspec-rails.git
-[submodule "mainline"]
-	path = mainline
-	url = git://gitorious.org/openmoney-plugin/mainline.git
 [submodule "vendor/plugins/om"]
 	path = vendor/plugins/om
 	url = git://github.com/openmoney/openmoney-plugin.git
