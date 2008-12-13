@@ -7,3 +7,6 @@
 [submodule "mainline"]
 	path = mainline
 	url = git://gitorious.org/openmoney-plugin/mainline.git
+[submodule "vendor/plugins/om"]
+	path = vendor/plugins/om
+	url = git://github.com/openmoney/openmoney-plugin.git
