@@ -1,26 +1,27 @@
-== Welcome to rubyom
+== Welcome to openmoney-server
 
 Quick Start    
-	This quick-start is intended for developers and early adopters who want to get started running an open money client.
+	This quick-start is intended for developers and early adopters who want to get started running an open money client/server.
 
 	Step 1: Install Prerequisites
 		Ruby
 		Database: You can use any database that Rails supports. We’ve been developing on MySQL 5
 		Rails
-		Subversion
+		Git
 
-	Step 2: Install rubyom
-		Do an svn install from rubyforge with:
-		svn checkout http://openmoney.rubyforge.org/svn/rubyom/trunk rubyom
+	Step 2: Install openmoney-server
+		Clone the git repository with:
+		git clone git://github.com/openmoney/openmoney-server.git
 
 		Then do the standard rails set-up actions, i.e.
-		create a database “rubyom_development” (this will vary depending on which database you chose)
+		create a database “omserver_development” (this will vary depending on which database you chose)
+		cd config
+		cp database_example.yml database_yml
 		edit config/database.yml with the database passwords and and setup according to which database you chose.
 
 		Once you have set up the database then you can:
-		cd rubyom
 		rake db:migrate
 		ruby script/server -p 3001
 
 	Step 3: Try it out!
-		You should now have the client running an accessible at: localhost:3000
+		You should now have the server running an accessible at: localhost:3001
